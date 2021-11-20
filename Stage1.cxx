@@ -91,4 +91,3 @@ void analyzeStage1()
 
    infile->Close();
 }
-
