@@ -70,7 +70,7 @@ TTreeReaderArray<Double_t> truthvtx_z = {treereader, "truthvtx.z"};
 
 //===========================================================
 // here's the event processing...
-void analyzeStage1()
+void myAnalyzeStage1()
 {
    TFile* infile = TFile::Open("stage1.root");
    TTree* tree   = (TTree*)infile->Get("stage1");
