@@ -33,7 +33,7 @@ double *crossProduct(double *a, double *b)
 
 
 // Triple product between vectors a, b, c with three coordinates each. Triple
-// product is defined as (a, b x c).
+// product is defined as a * (b x c).
 double tripleProduct(double *a, double *b, double *c)
 {
     double *crossp = crossProduct(b, c);
@@ -45,7 +45,7 @@ double tripleProduct(double *a, double *b, double *c)
 }
 
 
-// Input an array with three elements and output the norm sqrt{\vb{a}\cdot\vb{a}}
+// Input an array with three elements and output the norm sqrt(a * a)
 double norm(double *a)
 {
     double norm;
@@ -57,7 +57,7 @@ double norm(double *a)
 }
 
 
-// Relative Vector that points from a to b
+// Relative vector that points from a to b
 double *relativeVector(double *a, double *b)
 {
     static double relative[3];
@@ -70,8 +70,7 @@ double *relativeVector(double *a, double *b)
 }
 
 
-// Input two vectors a, b with three elemets each. Output the unit vector that points
-// from a to b.
+// Input a vector a with three elemets. Output the unit vector of a.
 double *unitVector(double *a)
 {
     static double unitvector[3];
@@ -87,7 +86,7 @@ double *unitVector(double *a)
 }
 
 
-//  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
 // Input two points of the line, a and b. Ouput a pointer to the first element of
@@ -184,21 +183,22 @@ double *displacedVertex(double *r1, double *rr1, double *r2, double *rr2)
 }
 
 
-//  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
-// Computes the minimum value of array's first column distance[elementCount][3] and stores
-// the indexes of the same row.
-double *minimumArrayValue(double distance[][3], int elementCount)
+// Computes the minimum value of array's first column distance[elementCount][4] and leaves other
+// columns elements intact.
+double *minimumArrayValue(double distance[][4], int elementCount)
 {
     // First element the minimum value. Second and third the indexes of disranceelementCount3]
     // in the same row.
-    static double minimum[3];
+    static double minimum[4];
 
     // Initialize with the first row of distance[elementCount][3]
-    minimum[0] = distance[0][0];
-    minimum[1] = distance[0][1];
-    minimum[2] = distance[0][2];
+    minimum[0] = distance[0][0]; 
+    minimum[1] = distance[0][1]; 
+    minimum[2] = distance[0][2]; 
+    minimum[3] = distance[0][3];
 
     // Go throught the array
     double element;
@@ -212,6 +212,7 @@ double *minimumArrayValue(double distance[][3], int elementCount)
             minimum[0] = element;
             minimum[1] = distance[i][1];
             minimum[2] = distance[i][2];
+            minimum[3] = distance[i][3];
         }
     }
 
@@ -219,7 +220,7 @@ double *minimumArrayValue(double distance[][3], int elementCount)
 }
 
 
-// Calculates the distance between Point1(x1, y1, z1) and (x2, y2, z2)
+// Calculates the distance between points: (x1, y1, z1) and (x2, y2, z2).
 double Error(double x1, double y1, double z1, double x2, double y2, double z2)
 {
     double error;
@@ -255,6 +256,7 @@ void newmyAnalyzeStage1()
     // For time capture
     clock_t tStart = clock();
 
+    // Histograms
     TH2 *H = new TH2D("H", "Absolute Error In Relation to (Minimum) Distance of Trajectories;Distance;Absolute Error;Count", 20, 0, 0.15, 30, 0, 6.5);
     TH1 *h1 = new TH1D("h1", "Absolute Error;Error;Counts", 50, 0, 6.5);
     TH1 *h2 = new TH1D("hist", "Minimum Trajectory Distance to Each Event;Distance;Counts", 40, 0, 0.15);
@@ -263,14 +265,16 @@ void newmyAnalyzeStage1()
     TTree* tree   = (TTree*)infile->Get("stage1");
     treereader.SetTree(tree);
 
+
     // Line_i Points
     double a[3], b[3];
     // Line_j Points
     double aa[3], bb[3];
 
     // Array that gathers the distances between line i and j and stores them in the first column.
-    //  The second and the third column store information about line_i and line_j, respectively (the index).
-    double distance_ij[100][3];
+    // The second, third and forth column store the coordinates of the displaced vertex resulting from
+    // line_i and line_j.
+    double distance_ij[100][4];
     // Elements Counter for distance_ij
     int elementCount;
     // Counters for distance_ij array elemets
@@ -278,20 +282,19 @@ void newmyAnalyzeStage1()
 
 
     // The minimum distance of all the possible pair of lines for every event (total events = 4299)
-    // The first column contains the least distance for every event. The other two to which two lines
-    // it is refering to (the indexes).
-    double leastDistance[4299][3];
+    // The first column contains the least distance for every event. The other three store the coordinates
+    // of the displaced vertex resulting from the lines that produce the minimum distance.
+    double leastDistance[4299][4];
     double *least_Distance;
 
 
     // Stores the coordinates of each displaced vertex of any event in rows
     double displacedVertexArray[4299][3];
     double *displaced_Vertex;
-
-    double A[3], B[3];
-    double AA[3], BB[3];
-    // Counters
-    int I, J;
+    // Coordinates for displaced vertex produced by line_i and line_j
+    double DV[3];
+    // Dot products of displaced vertex and the first points of line_i and line_j.
+    double dotProd_i, dotProd_j;
 
 
     // The distance of the truth displaced vertex from the calculated displaced vertex.
@@ -322,11 +325,24 @@ void newmyAnalyzeStage1()
                     aa[0] = track_x0[j]; aa[1] = track_y0[j]; aa[2] = track_z0[j];
                     bb[0] = track_x1[j]; bb[1] = track_y1[j]; bb[2] = track_z1[j];
 
-                    distance_ij[count_j][0] = distance(a, b, aa, bb);
-                    distance_ij[count_j][1] = i;
-                    distance_ij[count_j][2] = j;
+                    displaced_Vertex = displacedVertex(a, b, aa, bb);
+                    DV[0] = displaced_Vertex[0];
+                    DV[1] = displaced_Vertex[1];
+                    DV[2] = displaced_Vertex[2];
 
-                    count_j++;
+                    dotProd_i = dotProduct(DV, a);
+                    dotProd_j = dotProduct(DV, aa);
+                    
+                    if(dotProd_i>0 || dotProd_j>0)
+                    {
+                        distance_ij[count_j][0] = distance(a, b, aa, bb);
+
+                        distance_ij[count_j][1] = DV[0];
+                        distance_ij[count_j][2] = DV[1];
+                        distance_ij[count_j][3] = DV[2];
+
+                        count_j++;      
+                    }
                 }
             }
 
@@ -336,24 +352,15 @@ void newmyAnalyzeStage1()
             least_Distance = minimumArrayValue(distance_ij, elementCount);
 
             leastDistance[event][0] = least_Distance[0];    // distance for event
-            leastDistance[event][1] = least_Distance[1];    // index of line_i 
-            leastDistance[event][2] = least_Distance[2];    // index of line_j
+            leastDistance[event][1] = least_Distance[1];    // DV_x
+            leastDistance[event][2] = least_Distance[2];    // DV_y
+            leastDistance[event][3] = least_Distance[3];    // DV_z
 
             h2->Fill(leastDistance[event][0]);
 
-            // To find th displaced vertex coordinates
-            I = leastDistance[event][1];
-            J = leastDistance[event][2];
-
-            A[0] = track_x0[I]; A[1] = track_y0[I]; A[2] = track_z0[I];
-            B[0] = track_x1[I]; B[1] = track_y1[I]; B[2] = track_z1[I];
-            AA[0] = track_x0[J]; AA[1] = track_y0[J]; AA[2] = track_z0[J];
-            BB[0] = track_x1[J]; BB[1] = track_y1[J]; BB[2] = track_z1[J];
-
-            displaced_Vertex = displacedVertex(A, B, AA, BB);
-            displacedVertexArray[event][0] = displaced_Vertex[0];
-            displacedVertexArray[event][1] = displaced_Vertex[1];
-            displacedVertexArray[event][2] = displaced_Vertex[2];
+            displacedVertexArray[event][0] = leastDistance[event][1];
+            displacedVertexArray[event][1] = leastDistance[event][2];
+            displacedVertexArray[event][2] = leastDistance[event][3];
 
             absoluteError[event] = Error(displacedVertexArray[event][0], displacedVertexArray[event][1], displacedVertexArray[event][2], truthvtx_x[0], truthvtx_y[0], truthvtx_z[0]);
 
