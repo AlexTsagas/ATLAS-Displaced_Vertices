@@ -186,7 +186,7 @@ double *displacedVertex(double *r1, double *rr1, double *r2, double *rr2)
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
-void NewMyCode()
+void new_MyCode()
 {
     // line1
     double a[3] = {0, 0, 0};
