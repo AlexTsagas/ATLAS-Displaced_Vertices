@@ -251,7 +251,7 @@ TTreeReaderArray<Double_t> truthvtx_z = {treereader, "truthvtx.z"};
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
-void newmyAnalyzeStage1()
+void new_myAnalyzeStage1()
 {
     // For time capture
     clock_t tStart = clock();
