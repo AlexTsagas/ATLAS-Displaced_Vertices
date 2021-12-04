@@ -86,6 +86,24 @@ double *unitVector(double *a)
 }
 
 
+// Compute the coordinates of the unit vector pointing from a to b
+double *relativeUnitVector(double *a, double *b)
+{
+    static double unitRelAB[3];
+
+    double *rel_AB = relativeVector(a, b);
+    double relAB[3] = {rel_AB[0], rel_AB[1], rel_AB[2]};
+
+    double *unitRel_AB = unitVector(relAB);
+    for(int i=0; i<3; i++)
+    {
+        unitRelAB[i] = unitRel_AB[i];
+    }
+
+    return unitRelAB;
+}
+
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
@@ -293,8 +311,18 @@ void new_myAnalyzeStage1()
     double *displaced_Vertex;
     // Coordinates for displaced vertex produced by line_i and line_j
     double DV[3];
-    // Dot products of displaced vertex and the first points of line_i and line_j.
+
+
+    // Unit vectors from DV to a, b, aa, bb, respectively.
+    double unitRelDVa[3], unitRelDVb[3], unitRelDVaa[3], unitRelDVbb[3];
+    double *unitRel_DVa, *unitRel_DVb, *unitRel_DVaa, *unitRel_DVbb;
+
+    // Dot products of relative vectors that has to do with line_i and line_j
     double dotProd_i, dotProd_j;
+    double prodSum;
+    // Limits
+    double theta = 90;
+    double epsilon1 = cos(M_PI * theta/180), epsilon2 = cos(0);
 
 
     // The distance of the truth displaced vertex from the calculated displaced vertex.
@@ -325,15 +353,37 @@ void new_myAnalyzeStage1()
                     aa[0] = track_x0[j]; aa[1] = track_y0[j]; aa[2] = track_z0[j];
                     bb[0] = track_x1[j]; bb[1] = track_y1[j]; bb[2] = track_z1[j];
 
+                    // Displaced Vertex Coordinates
                     displaced_Vertex = displacedVertex(a, b, aa, bb);
                     DV[0] = displaced_Vertex[0];
                     DV[1] = displaced_Vertex[1];
                     DV[2] = displaced_Vertex[2];
 
-                    dotProd_i = dotProduct(DV, a);
-                    dotProd_j = dotProduct(DV, aa);
+                    // Relative unit vector from Dv to a
+                    unitRel_DVa = relativeUnitVector(DV, a);
+                    unitRelDVa[0] = unitRel_DVa[0]; unitRelDVa[1] = unitRel_DVa[1]; unitRelDVa[2] = unitRel_DVa[2];
+
+                    // Relative unit vector from Dv to b
+                    unitRel_DVb = relativeUnitVector(DV, b);
+                    unitRelDVb[0] = unitRel_DVb[0]; unitRelDVb[1] = unitRel_DVb[1]; unitRelDVb[2] = unitRel_DVb[2];
+
+                    // Relative unit vector from Dv to aa
+                    unitRel_DVaa = relativeUnitVector(DV, aa);
+                    unitRelDVaa[0] = unitRel_DVaa[0]; unitRelDVaa[1] = unitRel_DVaa[1]; unitRelDVaa[2] = unitRel_DVaa[2];
+
+                    // Relative unit vector from Dv to bb
+                    unitRel_DVbb = relativeUnitVector(DV, bb);
+                    unitRelDVbb[0] = unitRel_DVbb[0]; unitRelDVbb[1] = unitRel_DVbb[1]; unitRelDVbb[2] = unitRel_DVbb[2];
+
+                    // cos(θ_i) where θ_i is the angle between DVa and DVb vectors
+                    dotProd_i = dotProduct(unitRelDVa, unitRel_DVb);
+                    // cos(θ_j) where θ_j is the angle between DVaa and DVbb vectors
+                    dotProd_j = dotProduct(unitRelDVaa, unitRel_DVbb);
+
+                    prodSum = dotProd_i + dotProd_j;
                     
-                    if(dotProd_i>0 || dotProd_j>0)
+                    // epsilon1 < cosΘ_i <= epsilon2, epsilon1 < cosΘ_j <= epsilon2, 
+                    if(prodSum>=2*epsilon1 && prodSum<2*epsilon2)
                     {
                         distance_ij[count_j][0] = distance(a, b, aa, bb);
 
