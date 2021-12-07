@@ -104,7 +104,7 @@ double *relativeUnitVector(double *a, double *b)
 }
 
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
 // Input two points of the line, a and b. Ouput a pointer to the first element of
@@ -201,7 +201,7 @@ double *displacedVertex(double *r1, double *rr1, double *r2, double *rr2)
 }
 
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
 // Computes the minimum value of array's first column distance[elementCount][4] and leaves other
@@ -249,7 +249,7 @@ double Error(double x1, double y1, double z1, double x2, double y2, double z2)
 }
 
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 // Readers to access the data
 TTreeReader treereader;
@@ -267,7 +267,7 @@ TTreeReaderArray<Double_t> truthvtx_x = {treereader, "truthvtx.x"};
 TTreeReaderArray<Double_t> truthvtx_y = {treereader, "truthvtx.y"};
 TTreeReaderArray<Double_t> truthvtx_z = {treereader, "truthvtx.z"};
 
-// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 void new_myAnalyzeStage1()
 {
@@ -275,9 +275,14 @@ void new_myAnalyzeStage1()
     clock_t tStart = clock();
 
     // Histograms
+    // 3D //
     TH2 *H = new TH2D("H", "Absolute Error In Relation to (Minimum) Distance of Trajectories;Distance;Absolute Error;Count", 20, 0, 0.15, 30, 0, 6.5);
+    TH1 *HH = new TH2D("HH", "Distance R (of DV) from O in xy Plane with Respect to Z Coordinate;R;Z;Counts", 40, 0, 30, 40, 0, 40);
+    // 2D //
     TH1 *h1 = new TH1D("h1", "Absolute Error;Error;Counts", 50, 0, 6.5);
-    TH1 *h2 = new TH1D("hist", "Minimum Trajectory Distance to Each Event;Distance;Counts", 40, 0, 0.15);
+    TH1 *h2 = new TH1D("h2", "Minimum Trajectory Distance to Each Event;Distance;Counts", 40, 0, 0.15);
+    TH1 *h3 = new TH1D("h3", "Distance R of DV From O in xy Plane;R;Counts", 40, 0, 30);
+    TH1 *h4 = new TH1D("h4", "Z Coordinate of DV;Z;Counts", 40, 0, 40);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -335,6 +340,10 @@ void new_myAnalyzeStage1()
 
     // Integers for for loops
     int i, j;
+
+    // For Histograms
+    double distance_xyplane;
+    double DV_Z;
 
 
     while (treereader.Next()) 
@@ -408,6 +417,15 @@ void new_myAnalyzeStage1()
 
             h2->Fill(leastDistance[event][0]);
 
+            distance_xyplane = sqrt(leastDistance[event][1]*leastDistance[event][1]+leastDistance[event][2]*leastDistance[event][2]);
+
+            h3->Fill(distance_xyplane);
+
+            DV_Z = leastDistance[event][3];
+
+            h4->Fill(DV_Z);
+            HH->Fill(distance_xyplane, DV_Z);
+
             displacedVertexArray[event][0] = leastDistance[event][1];
             displacedVertexArray[event][1] = leastDistance[event][2];
             displacedVertexArray[event][2] = leastDistance[event][3];
@@ -422,8 +440,8 @@ void new_myAnalyzeStage1()
         }
     }
 
-    TCanvas *c = new TCanvas("c", "Distance - Absolute Error", 1200, 500);
-    c->Divide(3,1);
+    TCanvas *c = new TCanvas("c", "Distance - Absolute Error", 1300, 750);
+    c->Divide(3,2);
 
     c->cd(1);
     h1->SetFillColor(kBlue-2);
@@ -440,8 +458,23 @@ void new_myAnalyzeStage1()
     H->SetMinimum(0);
     H->Draw("LEGO1");
 
+    c->cd(4);
+    h3->SetFillColor(kYellow);
+    h3->SetMinimum(0);
+    h3->Draw();
+
+    c->cd(5);
+    h4->SetFillColor(kOrange+7);
+    h4->SetMinimum(0);
+    h4->Draw();
+
+    c->cd(6);
+    HH->SetFillColor(kBlue-9);
+    HH->SetMinimum(0);
+    HH->Draw("LEGO1");
+
     // Print time needed for the program to complete
-    printf("Time taken: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
+    printf("\nTime taken: %.2fs\n\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
 
     infile->Close();
     }
