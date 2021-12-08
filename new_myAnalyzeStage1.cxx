@@ -277,12 +277,12 @@ void new_myAnalyzeStage1()
     // Histograms
     // 3D //
     TH2 *H = new TH2D("H", "Absolute Error In Relation to (Minimum) Distance of Trajectories;Distance;Absolute Error;Count", 20, 0, 0.15, 30, 0, 6.5);
-    TH1 *HH = new TH2D("HH", "Distance R (of DV) from O in xy Plane with Respect to Z Coordinate;R;Z;Counts", 40, 0, 30, 40, 0, 40);
+    TH1 *HH = new TH2D("HH", "Distance R (of DV) from Detector's Center with Respect to Z Coordinate;R;Z;Counts", 40, 0, 40, 40, -40, 40);
     // 2D //
     TH1 *h1 = new TH1D("h1", "Absolute Error;Error;Counts", 50, 0, 6.5);
     TH1 *h2 = new TH1D("h2", "Minimum Trajectory Distance to Each Event;Distance;Counts", 40, 0, 0.15);
-    TH1 *h3 = new TH1D("h3", "Distance R of DV From O in xy Plane;R;Counts", 40, 0, 30);
-    TH1 *h4 = new TH1D("h4", "Z Coordinate of DV;Z;Counts", 40, 0, 40);
+    TH1 *h3 = new TH1D("h3", "Distance R of DV From Detector's Center;R;Counts", 40, 0, 40);
+    TH1 *h4 = new TH1D("h4", "Z Coordinate of DV;Z;Counts", 40, -40, 40);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -342,7 +342,7 @@ void new_myAnalyzeStage1()
     int i, j;
 
     // For Histograms
-    double distance_xyplane;
+    double distance_xyz;
     double DV_Z;
 
 
@@ -417,14 +417,14 @@ void new_myAnalyzeStage1()
 
             h2->Fill(leastDistance[event][0]);
 
-            distance_xyplane = sqrt(leastDistance[event][1]*leastDistance[event][1]+leastDistance[event][2]*leastDistance[event][2]);
+            distance_xyz = sqrt(leastDistance[event][1]*leastDistance[event][1]+leastDistance[event][2]*leastDistance[event][2]+leastDistance[event][3]*leastDistance[event][3]);
 
-            h3->Fill(distance_xyplane);
+            h3->Fill(distance_xyz);
 
             DV_Z = leastDistance[event][3];
 
             h4->Fill(DV_Z);
-            HH->Fill(distance_xyplane, DV_Z);
+            HH->Fill(distance_xyz, DV_Z);
 
             displacedVertexArray[event][0] = leastDistance[event][1];
             displacedVertexArray[event][1] = leastDistance[event][2];
@@ -440,7 +440,7 @@ void new_myAnalyzeStage1()
         }
     }
 
-    TCanvas *c = new TCanvas("c", "Distance - Absolute Error", 1300, 750);
+    TCanvas *c = new TCanvas("c", "Distance of Trajectories and DV from Detector's Center - Absolute Error - Z Coordinate", 1300, 750);
     c->Divide(3,2);
 
     c->cd(1);
