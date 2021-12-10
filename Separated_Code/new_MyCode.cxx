@@ -183,6 +183,28 @@ double *displacedVertex(double *r1, double *rr1, double *r2, double *rr2)
 }
 
 
+// Input two points A, B, from where the line (ε) passes, and a point P to
+// calculate the distance from (ε) to P.
+double LinePointDistance(double *a, double *b, double *p)
+{   
+    // Vector perpendicular to the line
+    double *n_p = relativeVector(a, b);
+    double n[3] = {n_p[0], n_p[1], n_p[2]};
+
+    // Vector from A to P
+    double *AP_p = relativeVector(a, p);
+    double AP[3] = {AP_p[0], AP_p[1], AP_p[2]};
+
+    // Non Normalized Distance
+    double *D_p = crossProduct(AP, n);
+    double D[3] = {D_p[0], D_p[1], D_p[2]};
+
+    double distance = norm(D)/norm(n);
+
+    return distance;
+}
+
+
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
@@ -194,9 +216,16 @@ void new_MyCode()
 
     // line2
     double aa[3] = {0, 0, 1};
-    double bb[3] = {0, 1, 1};
+    double bb[3] = {0, 1, 0.55};
+
+    // Point
+    double p[3] = {0,1.5,0};
 
     displacedVertex(a, b, aa, bb);
+
+    //  
+    cout<<"\n\nDistance from Point P to line is: "<<LinePointDistance(a, b, p)<<"\n\n";
+    // 
 
     // Distance
     double d = distance(a, b, aa, bb);
