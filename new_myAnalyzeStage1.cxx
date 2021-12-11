@@ -267,13 +267,14 @@ double LinePointDistance(double *a, double *b, double *p)
     double *D_p = crossProduct(AP, n);
     double D[3] = {D_p[0], D_p[1], D_p[2]};
 
+    // The actual distance (normalized)
     double distance = norm(D)/norm(n);
 
     return distance;
 }
 
 
-// Computes the minimum value from array[elementCount] elements
+// Computes the minimum value from array[elementCount]'s elements
 double minimumValuefromArrayElements(double *array, int elementCount)
 {
     // initialize the minimum
@@ -313,7 +314,7 @@ TTreeReaderArray<Double_t> truthvtx_x = {treereader, "truthvtx.x"};
 TTreeReaderArray<Double_t> truthvtx_y = {treereader, "truthvtx.y"};
 TTreeReaderArray<Double_t> truthvtx_z = {treereader, "truthvtx.z"};
 
-// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+// ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ //
 
 void new_myAnalyzeStage1()
 {
@@ -322,7 +323,7 @@ void new_myAnalyzeStage1()
 
     // Histograms
     // 3D //
-    TH2 *H = new TH2D("H", "Absolute Error In Relation to (Minimum) Distance of Trajectories;Distance;Absolute Error;Count", 20, 0, 0.15, 30, 0, 6.5);
+    TH2 *H = new TH2D("H", "Absolute Error in Relation to (Minimum) Distance of Trajectories;Distance;Absolute Error;Count", 20, 0, 0.15, 30, 0, 6.5);
     TH1 *HH = new TH2D("HH", "Distance R (of DV) from Detector's Center with Respect to Z Coordinate;R;Z;Counts", 40, 0, 40, 40, -40, 40);
     // 2D //
     TH1 *h1 = new TH1D("h1", "Absolute Error;Error;Counts", 50, 0, 6.5);
@@ -382,9 +383,9 @@ void new_myAnalyzeStage1()
     // The m^th element is the calculated error of m^th event
     double absoluteError[4299];
 
-    // The distance between Dv and line_i is stored in DvTrajectoryDistance[i]
-    // (for an event)
+    // The distance between Dv and line_i is stored in DvTrajectoryDistance[i] (for an event)
     double DvTrajectoryDistance[15];
+    // Counter for DvTrajectoryDistance's elements
     int elementNumber = 0;
     // The minimum of all distances (for an event)
     double DvTrajectory;
@@ -396,8 +397,8 @@ void new_myAnalyzeStage1()
     int i, j;
 
     // For Histograms
-    double distance_xyz;
-    double DV_Z;
+    double distance_xyz; // Distance of DV from begining of axis
+    double DV_Z; // z coordinate of DV
 
 
     while (treereader.Next()) 
@@ -476,13 +477,14 @@ void new_myAnalyzeStage1()
 
             distance_xyz = sqrt(leastDistance[event][1]*leastDistance[event][1]+leastDistance[event][2]*leastDistance[event][2]+leastDistance[event][3]*leastDistance[event][3]);
 
-            h3->Fill(distance_xyz); // Distance of Dv from begining of axis
+            h3->Fill(distance_xyz);
 
             DV_Z = leastDistance[event][3];
 
-            h4->Fill(DV_Z); // z coordinate of DV
-            HH->Fill(distance_xyz, DV_Z); // 3D Hist with distance of Dv from begining of axis and z coordinate of DV
+            h4->Fill(DV_Z);
+            HH->Fill(distance_xyz, DV_Z);
 
+            // Assigning coordinates to DV Array
             displacedVertexArray[event][0] = leastDistance[event][1]; // DV_x
             displacedVertexArray[event][1] = leastDistance[event][2]; // DV_y
             displacedVertexArray[event][2] = leastDistance[event][3]; // DV_z
@@ -491,8 +493,9 @@ void new_myAnalyzeStage1()
 
             h1->Fill(absoluteError[event]); // Distance of calculated DV from truth DV (Error)
  
-            H->Fill(leastDistance[event][0], absoluteError[event]); // 3D Hist with Error and distance between the closest trajectories
+            H->Fill(leastDistance[event][0], absoluteError[event]);
 
+            // Calculating the distance from DV of the third trajectory (if there is one)
             elementNumber = 0;
             for(i=0; i<*track_n; i++)
             {
@@ -545,25 +548,25 @@ void new_myAnalyzeStage1()
 
     c1->Print();
 
-    // TCanvas *c2 = new TCanvas("c2", "Distance of Trajectories and DV from Detector's Center - Z Coordinate - 3D Histogram", 1300, 400);
-    // c2->Divide(3,1);
+    TCanvas *c2 = new TCanvas("c2", "Distance of Trajectories and DV from Detector's Center - Z Coordinate - 3D Histogram", 1300, 400);
+    c2->Divide(3,1);
 
-    // c2->cd(1);
-    // h3->SetFillColor(kYellow);
-    // h3->SetMinimum(0);
-    // h3->Draw();
+    c2->cd(1);
+    h3->SetFillColor(kYellow);
+    h3->SetMinimum(0);
+    h3->Draw();
 
-    // c2->cd(2);
-    // h4->SetFillColor(kOrange+7);
-    // h4->SetMinimum(0);
-    // h4->Draw();
+    c2->cd(2);
+    h4->SetFillColor(kOrange+7);
+    h4->SetMinimum(0);
+    h4->Draw();
 
-    // c2->cd(3);
-    // HH->SetFillColor(kBlue-9);
-    // HH->SetMinimum(0);
-    // HH->Draw("LEGO1");
+    c2->cd(3);
+    HH->SetFillColor(kBlue-9);
+    HH->SetMinimum(0);
+    HH->Draw("LEGO1");
 
-    // c2->Print();
+    c2->Print();
 
     // Print time needed for the program to complete
     printf("\nTime taken: %.2fs\n\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
