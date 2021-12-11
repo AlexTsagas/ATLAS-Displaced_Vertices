@@ -204,19 +204,19 @@ double *displacedVertex(double *r1, double *rr1, double *r2, double *rr2)
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
-// Computes the minimum value of array's first column distance[elementCount][4] and leaves other
-// columns elements intact.
-double *minimumArrayValue(double distance[][4], int elementCount)
+// Computes the minimum value of array's first column distance[elementCount][6] and leaves other
+// columns' elements intact.
+double *minimumArrayValue(double distance[][6], int elementCount)
 {
     // First element the minimum value. Second and third the indexes of disranceelementCount3]
     // in the same row.
-    static double minimum[4];
+    static double minimum[6];
 
     // Initialize with the first row of distance[elementCount][3]
-    minimum[0] = distance[0][0]; 
-    minimum[1] = distance[0][1]; 
-    minimum[2] = distance[0][2]; 
-    minimum[3] = distance[0][3];
+    for(int i=0; i<6; i++)
+    {
+        minimum[i] = distance[0][i];
+    }
 
     // Go throught the array
     double element;
@@ -228,9 +228,11 @@ double *minimumArrayValue(double distance[][4], int elementCount)
         if(minimum[0] >= element)
         {
             minimum[0] = element;
-            minimum[1] = distance[i][1];
-            minimum[2] = distance[i][2];
-            minimum[3] = distance[i][3];
+
+            for(int j=1; j<6; j++)
+            {
+                minimum[j] = distance[i][j];
+            }
         }
     }
 
@@ -246,6 +248,50 @@ double Error(double x1, double y1, double z1, double x2, double y2, double z2)
     error = sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1));
 
     return error;
+}
+
+
+// Input two points A, B, from where the line (ε) passes, and a point P to
+// calculate the distance from (ε) to P.
+double LinePointDistance(double *a, double *b, double *p)
+{   
+    // Vector perpendicular to the line
+    double *n_p = relativeVector(a, b);
+    double n[3] = {n_p[0], n_p[1], n_p[2]};
+
+    // Vector from A to P
+    double *AP_p = relativeVector(a, p);
+    double AP[3] = {AP_p[0], AP_p[1], AP_p[2]};
+
+    // Non Normalized Distance
+    double *D_p = crossProduct(AP, n);
+    double D[3] = {D_p[0], D_p[1], D_p[2]};
+
+    double distance = norm(D)/norm(n);
+
+    return distance;
+}
+
+
+// Computes the minimum value from array[elementCount] elements
+double minimumValuefromArrayElements(double *array, int elementCount)
+{
+    // initialize the minimum
+    double minimum = array[0];
+    
+    double element;
+
+    for(int i=1; i<elementCount; i++)
+    {
+        element = array[i];
+
+        if(minimum >= element)
+        {
+            minimum = element;
+        }
+    }
+
+    return minimum;
 }
 
 
@@ -283,6 +329,7 @@ void new_myAnalyzeStage1()
     TH1 *h2 = new TH1D("h2", "Minimum Trajectory Distance to Each Event;Distance;Counts", 40, 0, 0.15);
     TH1 *h3 = new TH1D("h3", "Distance R of DV From Detector's Center;R;Counts", 40, 0, 40);
     TH1 *h4 = new TH1D("h4", "Z Coordinate of DV;Z;Counts", 40, -40, 40);
+    TH1 *h5 = new TH1D("h5", "Smallest Distance D of Third Trajectory from Dv;D;Counts", 50, 0, 0.6);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -296,8 +343,8 @@ void new_myAnalyzeStage1()
 
     // Array that gathers the distances between line i and j and stores them in the first column.
     // The second, third and forth column store the coordinates of the displaced vertex resulting from
-    // line_i and line_j.
-    double distance_ij[100][4];
+    // line_i and line_j. The fifth and sixth store the i-th and j-th lines' indexes, respactively.
+    double distance_ij[100][6];
     // Elements Counter for distance_ij
     int elementCount;
     // Counters for distance_ij array elemets
@@ -306,8 +353,9 @@ void new_myAnalyzeStage1()
 
     // The minimum distance of all the possible pair of lines for every event (total events = 4299)
     // The first column contains the least distance for every event. The other three store the coordinates
-    // of the displaced vertex resulting from the lines that produce the minimum distance.
-    double leastDistance[4299][4];
+    // of the displaced vertex resulting from the lines that produce the minimum distance. The fifth and 
+    // sixth store the i-th and j-th lines' indexes, respactively.
+    double leastDistance[4299][6];
     double *least_Distance;
 
 
@@ -330,10 +378,16 @@ void new_myAnalyzeStage1()
     double epsilon1 = cos(M_PI * theta/180), epsilon2 = cos(0);
 
 
-    // The distance of the truth displaced vertex from the calculated displaced vertex.
+    // The distance between truth DV and computed DV.
     // The m^th element is the calculated error of m^th event
     double absoluteError[4299];
 
+    // The distance between Dv and line_i is stored in DvTrajectoryDistance[i]
+    // (for an event)
+    double DvTrajectoryDistance[15];
+    int elementNumber = 0;
+    // The minimum of all distances (for an event)
+    double DvTrajectory;
     
     // Event Counter
     int event = 0;
@@ -368,6 +422,7 @@ void new_myAnalyzeStage1()
                     DV[1] = displaced_Vertex[1];
                     DV[2] = displaced_Vertex[2];
 
+                    // To limit the Cases //
                     // Relative unit vector from Dv to a
                     unitRel_DVa = relativeUnitVector(DV, a);
                     unitRelDVa[0] = unitRel_DVa[0]; unitRelDVa[1] = unitRel_DVa[1]; unitRelDVa[2] = unitRel_DVa[2];
@@ -400,6 +455,9 @@ void new_myAnalyzeStage1()
                         distance_ij[count_j][2] = DV[1];
                         distance_ij[count_j][3] = DV[2];
 
+                        distance_ij[count_j][4] = i;
+                        distance_ij[count_j][5] = j;
+                        
                         count_j++;      
                     }
                 }
@@ -409,69 +467,103 @@ void new_myAnalyzeStage1()
             elementCount = count_j;
 
             least_Distance = minimumArrayValue(distance_ij, elementCount);
+            for(int k=0; k<6; k++)
+            {
+                leastDistance[event][k] = least_Distance[k]; 
+            }
 
-            leastDistance[event][0] = least_Distance[0];    // distance for event
-            leastDistance[event][1] = least_Distance[1];    // DV_x
-            leastDistance[event][2] = least_Distance[2];    // DV_y
-            leastDistance[event][3] = least_Distance[3];    // DV_z
-
-            h2->Fill(leastDistance[event][0]);
+            h2->Fill(leastDistance[event][0]); // Distance between the closest trajectories
 
             distance_xyz = sqrt(leastDistance[event][1]*leastDistance[event][1]+leastDistance[event][2]*leastDistance[event][2]+leastDistance[event][3]*leastDistance[event][3]);
 
-            h3->Fill(distance_xyz);
+            h3->Fill(distance_xyz); // Distance of Dv from begining of axis
 
             DV_Z = leastDistance[event][3];
 
-            h4->Fill(DV_Z);
-            HH->Fill(distance_xyz, DV_Z);
+            h4->Fill(DV_Z); // z coordinate of DV
+            HH->Fill(distance_xyz, DV_Z); // 3D Hist with distance of Dv from begining of axis and z coordinate of DV
 
-            displacedVertexArray[event][0] = leastDistance[event][1];
-            displacedVertexArray[event][1] = leastDistance[event][2];
-            displacedVertexArray[event][2] = leastDistance[event][3];
+            displacedVertexArray[event][0] = leastDistance[event][1]; // DV_x
+            displacedVertexArray[event][1] = leastDistance[event][2]; // DV_y
+            displacedVertexArray[event][2] = leastDistance[event][3]; // DV_z
 
             absoluteError[event] = Error(displacedVertexArray[event][0], displacedVertexArray[event][1], displacedVertexArray[event][2], truthvtx_x[0], truthvtx_y[0], truthvtx_z[0]);
 
-            h1->Fill(absoluteError[event]);
+            h1->Fill(absoluteError[event]); // Distance of calculated DV from truth DV (Error)
+ 
+            H->Fill(leastDistance[event][0], absoluteError[event]); // 3D Hist with Error and distance between the closest trajectories
 
-            H->Fill(leastDistance[event][0], absoluteError[event]);
+            elementNumber = 0;
+            for(i=0; i<*track_n; i++)
+            {
+                if(i!=leastDistance[event][4] && i!=leastDistance[event][5])
+                {
+                    DV[0] =  displacedVertexArray[event][0]; 
+                    DV[1] =  displacedVertexArray[event][1]; 
+                    DV[2] =  displacedVertexArray[event][2];
+
+                    a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
+                    b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
+
+                    DvTrajectoryDistance[elementNumber] =  LinePointDistance(a, b, DV);
+
+                    elementNumber++;
+                }
+            }
+
+            DvTrajectory = minimumValuefromArrayElements(DvTrajectoryDistance, elementNumber);
+
+            h5->Fill(DvTrajectory);
 
             event++;
         }
     }
 
-    TCanvas *c = new TCanvas("c", "Distance of Trajectories and DV from Detector's Center - Absolute Error - Z Coordinate", 1300, 750);
-    c->Divide(3,2);
+    // Histograms
+    TCanvas *c1 = new TCanvas("c1", "DV Errors - Distance Between Trajectories - Distance of Dv from Third Trajectory - 3D Histogram", 900, 700);
+    c1->Divide(2,2);
 
-    c->cd(1);
+    c1->cd(1);
     h1->SetFillColor(kBlue-2);
     h1->SetMinimum(0);
     h1->Draw();
 
-    c->cd(2);
+    c1->cd(3);
     h2->SetFillColor(kGreen-7);
     h2->SetMinimum(0);
     h2->Draw();
 
-    c->cd(3);
+    c1->cd(2);
     H->SetFillColor(kRed);
     H->SetMinimum(0);
     H->Draw("LEGO1");
 
-    c->cd(4);
-    h3->SetFillColor(kYellow);
-    h3->SetMinimum(0);
-    h3->Draw();
+    c1->cd(4);
+    h5->SetFillColor(kViolet);
+    h5->SetMinimum(0);
+    h5->Draw();
 
-    c->cd(5);
-    h4->SetFillColor(kOrange+7);
-    h4->SetMinimum(0);
-    h4->Draw();
+    c1->Print();
 
-    c->cd(6);
-    HH->SetFillColor(kBlue-9);
-    HH->SetMinimum(0);
-    HH->Draw("LEGO1");
+    // TCanvas *c2 = new TCanvas("c2", "Distance of Trajectories and DV from Detector's Center - Z Coordinate - 3D Histogram", 1300, 400);
+    // c2->Divide(3,1);
+
+    // c2->cd(1);
+    // h3->SetFillColor(kYellow);
+    // h3->SetMinimum(0);
+    // h3->Draw();
+
+    // c2->cd(2);
+    // h4->SetFillColor(kOrange+7);
+    // h4->SetMinimum(0);
+    // h4->Draw();
+
+    // c2->cd(3);
+    // HH->SetFillColor(kBlue-9);
+    // HH->SetMinimum(0);
+    // HH->Draw("LEGO1");
+
+    // c2->Print();
 
     // Print time needed for the program to complete
     printf("\nTime taken: %.2fs\n\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
