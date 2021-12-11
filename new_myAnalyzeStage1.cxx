@@ -476,6 +476,7 @@ void new_myAnalyzeStage1()
             h2->Fill(leastDistance[event][0]); // Distance between the closest trajectories
 
             distance_xyz = sqrt(leastDistance[event][1]*leastDistance[event][1]+leastDistance[event][2]*leastDistance[event][2]+leastDistance[event][3]*leastDistance[event][3]);
+            // distance_xyz = sqrt(truthvtx_x[0]*truthvtx_x[0]+truthvtx_y[0]*truthvtx_y[0]+truthvtx_z[0]*truthvtx_z[0]);
 
             h3->Fill(distance_xyz);
 
