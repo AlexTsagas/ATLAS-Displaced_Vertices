@@ -497,20 +497,23 @@ void new_myAnalyzeStage1()
 
             // Calculating the distance from DV of the third trajectory (if there is one)
             elementNumber = 0;
-            for(i=0; i<*track_n; i++)
+            if(*track_n>2)
             {
-                if(i!=leastDistance[event][4] && i!=leastDistance[event][5])
+                for(i=0; i<*track_n; i++)
                 {
-                    DV[0] =  displacedVertexArray[event][0]; 
-                    DV[1] =  displacedVertexArray[event][1]; 
-                    DV[2] =  displacedVertexArray[event][2];
+                    if(i!=leastDistance[event][4] && i!=leastDistance[event][5])
+                    {
+                        DV[0] =  displacedVertexArray[event][0]; 
+                        DV[1] =  displacedVertexArray[event][1]; 
+                        DV[2] =  displacedVertexArray[event][2];
 
-                    a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
-                    b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
+                        a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
+                        b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
 
-                    DvTrajectoryDistance[elementNumber] =  LinePointDistance(a, b, DV);
+                        DvTrajectoryDistance[elementNumber] =  LinePointDistance(a, b, DV);
 
-                    elementNumber++;
+                        elementNumber++;
+                    }
                 }
             }
 
@@ -525,6 +528,8 @@ void new_myAnalyzeStage1()
     // Histograms
     TCanvas *c1 = new TCanvas("c1", "DV Errors - Distance Between Trajectories - Distance of Dv from Third Trajectory - 3D Histogram", 900, 700);
     c1->Divide(2,2);
+
+    gStyle->SetOptStat(1111111);
 
     c1->cd(1);
     h1->SetFillColor(kBlue-2);
