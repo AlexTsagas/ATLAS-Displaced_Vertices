@@ -571,7 +571,7 @@ void new_myAnalyzeStage1()
                 displacedVertexArray[1] = leastDistance[2]; // DV_y
                 displacedVertexArray[2] = leastDistance[3]; // DV_z
 
-                // TODO: Make a loop to find all possible errors and store the minimum for every displayed vertex excluding one DV_thruth every time
+                // TODO: Make a loop to find all possible errors and store the minimum for every displayed vertex excluding one DV_truth every time
 
                 absoluteError = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[0], truthvtx_y[0], truthvtx_z[0]);
 
