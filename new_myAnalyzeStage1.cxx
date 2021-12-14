@@ -471,11 +471,9 @@ void new_myAnalyzeStage1()
     double DV_Z; // z coordinate of DV
 
 
-    // ---------------------
-
-    // Stores indexed of lines that have been used to calculate a DV
+    // Stores indexes of lines that have been used to calculate a DV
     int usedLineIndex[30];
-    // Initialize all values to -1
+    // Initialize all values to -1 so as not to coincide with other events
     for(int k=0; k<30; k++)
     {
         usedLineIndex[k] = -1;
@@ -483,7 +481,7 @@ void new_myAnalyzeStage1()
     // Counter for usedLineIndex[30] elements
     int countLine;
 
-    // ---------------------
+    // ------------------------------------------------------------------------------------------------------------------------------------------------------ //
 
     // Event Loop
     while (treereader.Next()) 
@@ -492,6 +490,7 @@ void new_myAnalyzeStage1()
         if(*truthvtx_n==1)
         {   
             countLine = 0;
+            // Initialize all values to -1 so as not to coincide with other events
             for(int k=0; k<30; k++)
             {
                 usedLineIndex[k] = -1;
@@ -572,10 +571,14 @@ void new_myAnalyzeStage1()
                 displacedVertexArray[1] = leastDistance[2]; // DV_y
                 displacedVertexArray[2] = leastDistance[3]; // DV_z
 
+                // TODO: Make a loop to find all possible errors and store the minimum for every displayed vertex excluding one DV_thruth every time
+
                 absoluteError = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[0], truthvtx_y[0], truthvtx_z[0]);
 
                 h1->Fill(absoluteError); // Distance of calculated DV from truth DV (Error)
                 H->Fill(leastDistance[0], absoluteError);
+
+                // TODO: Check if this is viable when you work with more than 1 DVs
 
                 // Calculating the distance from DV of the third trajectory (if there is one)
                 if(*track_n>2)
