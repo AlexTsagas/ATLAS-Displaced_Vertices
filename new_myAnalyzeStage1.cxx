@@ -106,7 +106,7 @@ double *relativeUnitVector(double *a, double *b)
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-// Readers to access the data
+// Readers to access the data from .root file
 TTreeReader treereader;
 
 TTreeReaderValue<ULong_t> eventNumber = {treereader, "eventNumber"};
@@ -217,7 +217,6 @@ double *displacedVertex(double *r1, double *rr1, double *r2, double *rr2)
 
     return displacedvertex;
 }
-
 
 
 // Computes the minimum value of array's first column distance[elementCount][6] and leaves other
@@ -342,13 +341,12 @@ double CaseDV(double *DV, double *a, double *b, double *aa, double *bb)
 }
 
 
-
 // Calculates the distance of the closest third trajectory to the DV
 double ThirdTrajectoryDistance(double *DV, int trackNumber, int j, int k)
 {
     int elementNumber = 0;
     double a[3], b[3], aa[3], bb[3];
-    double DvTrajectoryDistance[25];
+    double DvTrajectoryDistance[20];
 
     for(int i=0; i<trackNumber; i++)
     {
@@ -366,6 +364,32 @@ double ThirdTrajectoryDistance(double *DV, int trackNumber, int j, int k)
     double DvTrajectory = minimumValuefromArrayElements(DvTrajectoryDistance, elementNumber);
 
     return DvTrajectory;
+}
+
+
+// Returns false if there is an element of array equal to i and true otherwise
+bool TrajectoryUsed(int *array, int i)
+{
+    int used = 1;
+
+    // 30 elements in array
+    for(int k=0; k<30; k++)
+    {
+        if(i == array[k])
+        {
+            used = 0;
+            break;
+        }
+    }
+
+    if(used==0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 
@@ -421,7 +445,7 @@ void new_myAnalyzeStage1()
     // Coordinates for displaced vertex produced by line_i and line_j
     double DV[3];
 
-    // To apply the case for DVs
+    // To apple the case for DVs
     double prodSum;
     // Limits
     double theta = 90;
@@ -447,93 +471,132 @@ void new_myAnalyzeStage1()
     double DV_Z; // z coordinate of DV
 
 
+    // ---------------------
+
+    // Stores indexed of lines that have been used to calculate a DV
+    int usedLineIndex[30];
+    // Initialize all values to -1
+    for(int k=0; k<30; k++)
+    {
+        usedLineIndex[k] = -1;
+    }
+    // Counter for usedLineIndex[30] elements
+    int countLine;
+
+    // ---------------------
+
+    // Event Loop
     while (treereader.Next()) 
     {
+        // Loop in events with 1 DV
         if(*truthvtx_n==1)
         {   
-            count_j = 0;
-
-            for(i=0; i<*track_n; i++)
+            countLine = 0;
+            for(int k=0; k<30; k++)
             {
-                a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
-                b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
+                usedLineIndex[k] = -1;
+            }
 
-                for(j=i+1; j<*track_n; j++)
-                {   
-                    aa[0] = track_x0[j]; aa[1] = track_y0[j]; aa[2] = track_z0[j];
-                    bb[0] = track_x1[j]; bb[1] = track_y1[j]; bb[2] = track_z1[j];
+            // Loop to find each DV. In total we have *truthvtx_n DVs
+            for(int DvNumber=0; DvNumber<*truthvtx_n; DvNumber++)
+            {
+                count_j = 0;
 
-                    // Displaced Vertex Coordinates
-                    displaced_Vertex = displacedVertex(a, b, aa, bb);
-                    DV[0] = displaced_Vertex[0];
-                    DV[1] = displaced_Vertex[1];
-                    DV[2] = displaced_Vertex[2];
-
-                    // Apply case for DVs
-                    prodSum = CaseDV(DV, a, b, aa, bb);
-                    
-                    // epsilon1 < cosΘ_i <= epsilon2, epsilon1 < cosΘ_j <= epsilon2, 
-                    if(prodSum>=2*epsilon1 && prodSum<2*epsilon2)
+                // Find the DV
+                for(i=0; i<*track_n; i++)
+                {
+                    if(TrajectoryUsed(usedLineIndex, i))
                     {
-                        distance_ij[count_j][0] = distance(a, b, aa, bb);
+                        a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
+                        b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
 
-                        distance_ij[count_j][1] = DV[0];
-                        distance_ij[count_j][2] = DV[1];
-                        distance_ij[count_j][3] = DV[2];
+                        for(j=i+1; j<*track_n; j++)
+                        {  
+                            if(TrajectoryUsed(usedLineIndex, j))
+                            {
+                                aa[0] = track_x0[j]; aa[1] = track_y0[j]; aa[2] = track_z0[j];
+                                bb[0] = track_x1[j]; bb[1] = track_y1[j]; bb[2] = track_z1[j];
 
-                        distance_ij[count_j][4] = i;
-                        distance_ij[count_j][5] = j;
-                        
-                        count_j++;      
+                                // Displaced Vertex Coordinates
+                                displaced_Vertex = displacedVertex(a, b, aa, bb);
+                                DV[0] = displaced_Vertex[0];
+                                DV[1] = displaced_Vertex[1];
+                                DV[2] = displaced_Vertex[2];
+
+                                // Apply case for DVs
+                                prodSum = CaseDV(DV, a, b, aa, bb);
+                                
+                                // epsilon1 < cosΘ_i <= epsilon2, epsilon1 < cosΘ_j <= epsilon2, 
+                                if(prodSum>=2*epsilon1 && prodSum<2*epsilon2)
+                                {
+                                    distance_ij[count_j][0] = distance(a, b, aa, bb);
+
+                                    distance_ij[count_j][1] = DV[0];
+                                    distance_ij[count_j][2] = DV[1];
+                                    distance_ij[count_j][3] = DV[2];
+
+                                    distance_ij[count_j][4] = i;
+                                    distance_ij[count_j][5] = j;
+                                    
+                                    count_j++;      
+                                }
+                            } 
+                        }
                     }
+                }   
+
+                // The number of elements in distance_ij columns
+                elementCount = count_j;
+
+                // leastDistance[6] = (Distacne, DV_x, DV_y, DV_z, indexes_i, index_j)
+                least_Distance = minimumArrayValue(distance_ij, elementCount);
+                for(int k=0; k<6; k++)
+                {
+                    leastDistance[k] = least_Distance[k]; 
+                }
+
+                h2->Fill(leastDistance[0]);
+
+                distance_xyz = sqrt(leastDistance[1]*leastDistance[1] + leastDistance[2]*leastDistance[2] + leastDistance[3]*leastDistance[3]);
+                // distance_xyz = sqrt(truthvtx_x[0]*truthvtx_x[0] + truthvtx_y[0]*truthvtx_y[0] + truthvtx_z[0]*truthvtx_z[0]);
+
+                h3->Fill(distance_xyz);
+
+                DV_Z = leastDistance[3];
+
+                h4->Fill(DV_Z);
+                HH->Fill(distance_xyz, DV_Z);
+                
+                // Assigning coordinates to DV Array
+                displacedVertexArray[0] = leastDistance[1]; // DV_x
+                displacedVertexArray[1] = leastDistance[2]; // DV_y
+                displacedVertexArray[2] = leastDistance[3]; // DV_z
+
+                absoluteError = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[0], truthvtx_y[0], truthvtx_z[0]);
+
+                h1->Fill(absoluteError); // Distance of calculated DV from truth DV (Error)
+                H->Fill(leastDistance[0], absoluteError);
+
+                // Calculating the distance from DV of the third trajectory (if there is one)
+                if(*track_n>2)
+                {
+                    DvTrajectory = ThirdTrajectoryDistance(displacedVertexArray, *track_n, leastDistance[4], leastDistance[5]);
+                }
+
+                h5->Fill(DvTrajectory);
+
+                // Store line indexes that have been used to calculate a DV
+                for(int k=0; k<2; k++)
+                {
+                    usedLineIndex[countLine] = least_Distance[4+k];
+                    countLine++;
                 }
             }
-
-            // The number of elements in distance_ij columns
-            elementCount = count_j;
-
-            least_Distance = minimumArrayValue(distance_ij, elementCount);
-            for(int k=0; k<6; k++)
-            {
-                leastDistance[k] = least_Distance[k]; 
-            }
-
-            h2->Fill(leastDistance[0]); // Distance between the closest trajectories
-
-            distance_xyz = sqrt(leastDistance[1]*leastDistance[1]+leastDistance[2]*leastDistance[2]+leastDistance[3]*leastDistance[3]);
-            // distance_xyz = sqrt(truthvtx_x[0]*truthvtx_x[0]+truthvtx_y[0]*truthvtx_y[0]+truthvtx_z[0]*truthvtx_z[0]);
-
-            h3->Fill(distance_xyz);
-
-            DV_Z = leastDistance[3];
-
-            h4->Fill(DV_Z);
-            HH->Fill(distance_xyz, DV_Z);
-
-            // Assigning coordinates to DV Array
-            displacedVertexArray[0] = leastDistance[1]; // DV_x
-            displacedVertexArray[1] = leastDistance[2]; // DV_y
-            displacedVertexArray[2] = leastDistance[3]; // DV_z
-
-            absoluteError = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[0], truthvtx_y[0], truthvtx_z[0]);
-
-            h1->Fill(absoluteError); // Distance of calculated DV from truth DV (Error)
- 
-            H->Fill(leastDistance[0], absoluteError);
-
-            // Calculating the distance from DV of the third trajectory (if there is one)
-            if(*track_n>2)
-            {
-                DvTrajectory = ThirdTrajectoryDistance(displacedVertexArray, *track_n, leastDistance[4], leastDistance[5]);
-            }
-
-            h5->Fill(DvTrajectory);
-
             event++;
         }
     }
 
-    // Histograms
+    // Canvas 1
     TCanvas *c1 = new TCanvas("c1", "DV Errors - Distance Between Trajectories - Distance of Dv from Third Trajectory - 3D Histogram", 900, 700);
     c1->Divide(2,2);
 
@@ -561,6 +624,7 @@ void new_myAnalyzeStage1()
 
     c1->Print();
 
+    // Canvas 2
     TCanvas *c2 = new TCanvas("c2", "Distance of Trajectories and DV from Detector's Center - Z Coordinate - 3D Histogram", 1300, 400);
     c2->Divide(3,1);
 
