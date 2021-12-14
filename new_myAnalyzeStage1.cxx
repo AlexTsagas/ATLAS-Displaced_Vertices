@@ -296,6 +296,36 @@ double minimumValuefromArrayElements(double *array, int elementCount)
 }
 
 
+// Cases to choose if a point is a DV
+double CaseDV(double *DV, double *a, double *b, double *aa, double *bb)
+{
+    // Relative unit vector from Dv to a
+    double *unitRel_DVa = relativeUnitVector(DV, a);
+    double unitRelDVa[3] = {unitRel_DVa[0], unitRel_DVa[1], unitRel_DVa[2]};
+
+    // Relative unit vector from Dv to b
+    double *unitRel_DVb = relativeUnitVector(DV, b);
+    double unitRelDVb[3] = {unitRel_DVb[0], unitRel_DVb[1], unitRel_DVb[2]};
+
+    // Relative unit vector from Dv to aa
+    double *unitRel_DVaa = relativeUnitVector(DV, aa);
+    double unitRelDVaa[3] = {unitRel_DVaa[0], unitRel_DVaa[1], unitRel_DVaa[2]};
+
+    // Relative unit vector from Dv to bb
+    double *unitRel_DVbb = relativeUnitVector(DV, bb);
+    double unitRelDVbb[3] = {unitRel_DVbb[0], unitRel_DVbb[1], unitRel_DVbb[2]};
+
+    // cos(θ_i) where θ_i is the angle between DVa and DVb vectors
+    double dotProd_i = dotProduct(unitRelDVa, unitRelDVb);
+    // cos(θ_j) where θ_j is the angle between DVaa and DVbb vectors
+    double dotProd_j = dotProduct(unitRelDVaa, unitRelDVbb);
+
+    double prodSum = dotProd_i + dotProd_j;
+
+    return prodSum;
+}
+
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 // Readers to access the data
@@ -366,17 +396,12 @@ void new_myAnalyzeStage1()
     // Coordinates for displaced vertex produced by line_i and line_j
     double DV[3];
 
-
-    // Unit vectors from DV to a, b, aa, bb, respectively.
-    double unitRelDVa[3], unitRelDVb[3], unitRelDVaa[3], unitRelDVbb[3];
-    double *unitRel_DVa, *unitRel_DVb, *unitRel_DVaa, *unitRel_DVbb;
-
-    // Dot products of relative vectors that has to do with line_i and line_j
-    double dotProd_i, dotProd_j;
+    // To apple the case for DVs
     double prodSum;
     // Limits
     double theta = 90;
-    double epsilon1 = cos(M_PI * theta/180), epsilon2 = cos(0);
+    double epsilon1 = cos(M_PI * theta/180);
+    double epsilon2 = cos(0);
 
 
     // The distance between truth DV and computed DV.
@@ -403,7 +428,7 @@ void new_myAnalyzeStage1()
 
     while (treereader.Next()) 
     {
-        if(*truthvtx_n==1) 
+        if(*truthvtx_n==1)
         {   
             count_j = 0;
 
@@ -423,29 +448,8 @@ void new_myAnalyzeStage1()
                     DV[1] = displaced_Vertex[1];
                     DV[2] = displaced_Vertex[2];
 
-                    // To limit the Cases //
-                    // Relative unit vector from Dv to a
-                    unitRel_DVa = relativeUnitVector(DV, a);
-                    unitRelDVa[0] = unitRel_DVa[0]; unitRelDVa[1] = unitRel_DVa[1]; unitRelDVa[2] = unitRel_DVa[2];
-
-                    // Relative unit vector from Dv to b
-                    unitRel_DVb = relativeUnitVector(DV, b);
-                    unitRelDVb[0] = unitRel_DVb[0]; unitRelDVb[1] = unitRel_DVb[1]; unitRelDVb[2] = unitRel_DVb[2];
-
-                    // Relative unit vector from Dv to aa
-                    unitRel_DVaa = relativeUnitVector(DV, aa);
-                    unitRelDVaa[0] = unitRel_DVaa[0]; unitRelDVaa[1] = unitRel_DVaa[1]; unitRelDVaa[2] = unitRel_DVaa[2];
-
-                    // Relative unit vector from Dv to bb
-                    unitRel_DVbb = relativeUnitVector(DV, bb);
-                    unitRelDVbb[0] = unitRel_DVbb[0]; unitRelDVbb[1] = unitRel_DVbb[1]; unitRelDVbb[2] = unitRel_DVbb[2];
-
-                    // cos(θ_i) where θ_i is the angle between DVa and DVb vectors
-                    dotProd_i = dotProduct(unitRelDVa, unitRel_DVb);
-                    // cos(θ_j) where θ_j is the angle between DVaa and DVbb vectors
-                    dotProd_j = dotProduct(unitRelDVaa, unitRel_DVbb);
-
-                    prodSum = dotProd_i + dotProd_j;
+                    // Apply case for DVs
+                    prodSum = CaseDV(DV, a, b, aa, bb);
                     
                     // epsilon1 < cosΘ_i <= epsilon2, epsilon1 < cosΘ_j <= epsilon2, 
                     if(prodSum>=2*epsilon1 && prodSum<2*epsilon2)
