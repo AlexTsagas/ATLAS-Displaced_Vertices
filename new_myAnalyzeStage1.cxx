@@ -106,6 +106,24 @@ double *relativeUnitVector(double *a, double *b)
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
+// Readers to access the data
+TTreeReader treereader;
+
+TTreeReaderValue<ULong_t> eventNumber = {treereader, "eventNumber"};
+TTreeReaderValue<Int_t> track_n = {treereader, "track_n"};
+TTreeReaderValue<Int_t> truthvtx_n = {treereader, "truthvtx_n"};
+TTreeReaderArray<Double_t> track_x0 = {treereader, "track.x0"};
+TTreeReaderArray<Double_t> track_y0 = {treereader, "track.y0"};
+TTreeReaderArray<Double_t> track_z0 = {treereader, "track.z0"};
+TTreeReaderArray<Double_t> track_x1 = {treereader, "track.x1"};
+TTreeReaderArray<Double_t> track_y1 = {treereader, "track.y1"};
+TTreeReaderArray<Double_t> track_z1 = {treereader, "track.z1"};
+TTreeReaderArray<Double_t> truthvtx_x = {treereader, "truthvtx.x"};
+TTreeReaderArray<Double_t> truthvtx_y = {treereader, "truthvtx.y"};
+TTreeReaderArray<Double_t> truthvtx_z = {treereader, "truthvtx.z"};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+
 
 // Input two points of the line, a and b. Ouput a pointer to the first element of
 // the array containing line points in relation with t
@@ -200,8 +218,6 @@ double *displacedVertex(double *r1, double *rr1, double *r2, double *rr2)
     return displacedvertex;
 }
 
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
 // Computes the minimum value of array's first column distance[elementCount][6] and leaves other
@@ -326,23 +342,32 @@ double CaseDV(double *DV, double *a, double *b, double *aa, double *bb)
 }
 
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-// Readers to access the data
-TTreeReader treereader;
+// Calculates the distance of the closest third trajectory to the DV
+double ThirdTrajectoryDistance(double *DV, int trackNumber, int j, int k)
+{
+    int elementNumber = 0;
+    double a[3], b[3], aa[3], bb[3];
+    double DvTrajectoryDistance[25];
 
-TTreeReaderValue<ULong_t> eventNumber = {treereader, "eventNumber"};
-TTreeReaderValue<Int_t> track_n = {treereader, "track_n"};
-TTreeReaderValue<Int_t> truthvtx_n = {treereader, "truthvtx_n"};
-TTreeReaderArray<Double_t> track_x0 = {treereader, "track.x0"};
-TTreeReaderArray<Double_t> track_y0 = {treereader, "track.y0"};
-TTreeReaderArray<Double_t> track_z0 = {treereader, "track.z0"};
-TTreeReaderArray<Double_t> track_x1 = {treereader, "track.x1"};
-TTreeReaderArray<Double_t> track_y1 = {treereader, "track.y1"};
-TTreeReaderArray<Double_t> track_z1 = {treereader, "track.z1"};
-TTreeReaderArray<Double_t> truthvtx_x = {treereader, "truthvtx.x"};
-TTreeReaderArray<Double_t> truthvtx_y = {treereader, "truthvtx.y"};
-TTreeReaderArray<Double_t> truthvtx_z = {treereader, "truthvtx.z"};
+    for(int i=0; i<trackNumber; i++)
+    {
+        if(i!=j && i!=k)
+        {
+            a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
+            b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
+
+            DvTrajectoryDistance[elementNumber] =  LinePointDistance(a, b, DV);
+
+            elementNumber++;
+        }
+    }
+
+    double DvTrajectory = minimumValuefromArrayElements(DvTrajectoryDistance, elementNumber);
+
+    return DvTrajectory;
+}
+
 
 // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ //
 
@@ -386,17 +411,17 @@ void new_myAnalyzeStage1()
     // The first column contains the least distance for every event. The other three store the coordinates
     // of the displaced vertex resulting from the lines that produce the minimum distance. The fifth and 
     // sixth store the i-th and j-th lines' indexes, respactively.
-    double leastDistance[4299][6];
+    double leastDistance[6];
     double *least_Distance;
 
 
     // Stores the coordinates of each displaced vertex of any event in rows
-    double displacedVertexArray[4299][3];
+    double displacedVertexArray[3];
     double *displaced_Vertex;
     // Coordinates for displaced vertex produced by line_i and line_j
     double DV[3];
 
-    // To apple the case for DVs
+    // To apply the case for DVs
     double prodSum;
     // Limits
     double theta = 90;
@@ -406,13 +431,9 @@ void new_myAnalyzeStage1()
 
     // The distance between truth DV and computed DV.
     // The m^th element is the calculated error of m^th event
-    double absoluteError[4299];
+    double absoluteError;
 
-    // The distance between Dv and line_i is stored in DvTrajectoryDistance[i] (for an event)
-    double DvTrajectoryDistance[15];
-    // Counter for DvTrajectoryDistance's elements
-    int elementNumber = 0;
-    // The minimum of all distances (for an event)
+    // The minimun distance of the third trajectory to the DV
     double DvTrajectory;
     
     // Event Counter
@@ -474,55 +495,37 @@ void new_myAnalyzeStage1()
             least_Distance = minimumArrayValue(distance_ij, elementCount);
             for(int k=0; k<6; k++)
             {
-                leastDistance[event][k] = least_Distance[k]; 
+                leastDistance[k] = least_Distance[k]; 
             }
 
-            h2->Fill(leastDistance[event][0]); // Distance between the closest trajectories
+            h2->Fill(leastDistance[0]); // Distance between the closest trajectories
 
-            distance_xyz = sqrt(leastDistance[event][1]*leastDistance[event][1]+leastDistance[event][2]*leastDistance[event][2]+leastDistance[event][3]*leastDistance[event][3]);
+            distance_xyz = sqrt(leastDistance[1]*leastDistance[1]+leastDistance[2]*leastDistance[2]+leastDistance[3]*leastDistance[3]);
             // distance_xyz = sqrt(truthvtx_x[0]*truthvtx_x[0]+truthvtx_y[0]*truthvtx_y[0]+truthvtx_z[0]*truthvtx_z[0]);
 
             h3->Fill(distance_xyz);
 
-            DV_Z = leastDistance[event][3];
+            DV_Z = leastDistance[3];
 
             h4->Fill(DV_Z);
             HH->Fill(distance_xyz, DV_Z);
 
             // Assigning coordinates to DV Array
-            displacedVertexArray[event][0] = leastDistance[event][1]; // DV_x
-            displacedVertexArray[event][1] = leastDistance[event][2]; // DV_y
-            displacedVertexArray[event][2] = leastDistance[event][3]; // DV_z
+            displacedVertexArray[0] = leastDistance[1]; // DV_x
+            displacedVertexArray[1] = leastDistance[2]; // DV_y
+            displacedVertexArray[2] = leastDistance[3]; // DV_z
 
-            absoluteError[event] = Error(displacedVertexArray[event][0], displacedVertexArray[event][1], displacedVertexArray[event][2], truthvtx_x[0], truthvtx_y[0], truthvtx_z[0]);
+            absoluteError = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[0], truthvtx_y[0], truthvtx_z[0]);
 
-            h1->Fill(absoluteError[event]); // Distance of calculated DV from truth DV (Error)
+            h1->Fill(absoluteError); // Distance of calculated DV from truth DV (Error)
  
-            H->Fill(leastDistance[event][0], absoluteError[event]);
+            H->Fill(leastDistance[0], absoluteError);
 
             // Calculating the distance from DV of the third trajectory (if there is one)
-            elementNumber = 0;
             if(*track_n>2)
             {
-                for(i=0; i<*track_n; i++)
-                {
-                    if(i!=leastDistance[event][4] && i!=leastDistance[event][5])
-                    {
-                        DV[0] =  displacedVertexArray[event][0]; 
-                        DV[1] =  displacedVertexArray[event][1]; 
-                        DV[2] =  displacedVertexArray[event][2];
-
-                        a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
-                        b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
-
-                        DvTrajectoryDistance[elementNumber] =  LinePointDistance(a, b, DV);
-
-                        elementNumber++;
-                    }
-                }
+                DvTrajectory = ThirdTrajectoryDistance(displacedVertexArray, *track_n, leastDistance[4], leastDistance[5]);
             }
-
-            DvTrajectory = minimumValuefromArrayElements(DvTrajectoryDistance, elementNumber);
 
             h5->Fill(DvTrajectory);
 
