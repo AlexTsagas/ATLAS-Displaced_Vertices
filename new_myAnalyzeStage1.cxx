@@ -219,9 +219,9 @@ double *displacedVertex(double *r1, double *rr1, double *r2, double *rr2)
 }
 
 
-// Computes the minimum value of array's first column distance[elementCount][6] and leaves other
-// columns' elements intact.
-double *minimumArrayValue(double distance[][6], int elementCount)
+// Computes the minimum value of array's first column distance[elementCount][6] and
+// leaves other columns' elements intact.
+double *minimumArrayValueSix(double distance[][6], int elementCount)
 {
     // First element the minimum value. Second and third the indexes of disranceelementCount3]
     // in the same row.
@@ -393,6 +393,35 @@ bool TrajectoryUsed(int *array, int i)
 }
 
 
+// Computes the minimum value of array's first column absoluteError[elementCount][2] and 
+// leaves other columns' elements intact. //! Note: The mean must be different than -1
+double *minimumArrayValueTwo(double absoluteError[][2], int elementCount)
+{
+    // First element the minimum value. Second the index of DV_truth used
+    static double minimum[2];
+
+    // Initialize with the first row of absoluteError[elementCount][2]
+    minimum[0] = absoluteError[0][0];
+    minimum[1] = absoluteError[0][1];
+
+    // Go throught the aboluteError array
+    double element;
+
+    for(int i=1; i<elementCount; i++)
+    {
+        element = absoluteError[i][0];
+
+        if(element != -1 && minimum[0] >= element)
+        {
+            minimum[0] = element;
+            minimum[1] = absoluteError[i][1];
+        }
+    }
+
+    return minimum;
+}
+
+
 // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ //
 
 void new_myAnalyzeStage1()
@@ -405,7 +434,7 @@ void new_myAnalyzeStage1()
     TH2 *H = new TH2D("H", "Absolute Error in Relation to (Minimum) Distance of Trajectories;Distance;Absolute Error;Count", 20, 0, 0.15, 30, 0, 6.5);
     TH1 *HH = new TH2D("HH", "Distance R (of DV) from Detector's Center with Respect to Z Coordinate;R;Z;Counts", 40, 0, 40, 40, -40, 40);
     // 2D //
-    TH1 *h1 = new TH1D("h1", "Absolute Error;Error;Counts", 50, 0, 6.5);
+    TH1 *h1 = new TH1D("h1", "Absolute Error;Error;Counts", 50, 0, 14);
     TH1 *h2 = new TH1D("h2", "Minimum Trajectory Distance to Each Event;Distance;Counts", 40, 0, 0.15);
     TH1 *h3 = new TH1D("h3", "Distance R of DV From Detector's Center;R;Counts", 40, 0, 40);
     TH1 *h4 = new TH1D("h4", "Z Coordinate of DV;Z;Counts", 40, -40, 40);
@@ -452,10 +481,26 @@ void new_myAnalyzeStage1()
     double epsilon1 = cos(M_PI * theta/180);
     double epsilon2 = cos(0);
 
+    //!
+    // First Column: Errors of DV_truth[i] with DV_reco (in i^th row),
+    // Second Column: Index of DV_truth used in rows, respectively.
+    double absoluteError[10][2];
+    int absoluteErrorCounter;
+    // First Column: The minimum error for each DV_reco,
+    // Second Column: Index of DV_truth used.
+    double minAbsoluteError[2];
+    double *min_AbsoluteError;
 
-    // The distance between truth DV and computed DV.
-    // The m^th element is the calculated error of m^th event
-    double absoluteError;
+    //! 
+
+    int usedErrorIndex[30];
+    // Initialize all to -1
+    for(int k=0; k<30; k++)
+    {
+        usedErrorIndex[k] = -1;
+    }
+    int indexCounter;
+    //! 
 
     // The minimun distance of the third trajectory to the DV
     double DvTrajectory;
@@ -487,7 +532,7 @@ void new_myAnalyzeStage1()
     while (treereader.Next()) 
     {
         // Loop in events with 1 DV
-        if(*truthvtx_n==1)
+        if(*truthvtx_n>=1)
         {   
             countLine = 0;
             // Initialize all values to -1 so as not to coincide with other events
@@ -495,6 +540,15 @@ void new_myAnalyzeStage1()
             {
                 usedLineIndex[k] = -1;
             }
+            // !
+            absoluteErrorCounter = 0;
+            indexCounter = 0;
+            // Initialize all values to -1 so as not to coincide with other events
+            for(int k=0; k<30; k++)
+            {
+                usedErrorIndex[k] = -1;
+            }
+            // !
 
             // Loop to find each DV. In total we have *truthvtx_n DVs
             for(int DvNumber=0; DvNumber<*truthvtx_n; DvNumber++)
@@ -548,7 +602,7 @@ void new_myAnalyzeStage1()
                 elementCount = count_j;
 
                 // leastDistance[6] = (Distacne, DV_x, DV_y, DV_z, indexes_i, index_j)
-                least_Distance = minimumArrayValue(distance_ij, elementCount);
+                least_Distance = minimumArrayValueSix(distance_ij, elementCount);
                 for(int k=0; k<6; k++)
                 {
                     leastDistance[k] = least_Distance[k]; 
@@ -573,10 +627,30 @@ void new_myAnalyzeStage1()
 
                 // TODO: Make a loop to find all possible errors and store the minimum for every displayed vertex excluding one DV_truth every time
 
-                absoluteError = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[0], truthvtx_y[0], truthvtx_z[0]);
+                //!
+                for(int k=0; k<*truthvtx_n; k++)
+                {
+                    if(TrajectoryUsed(usedErrorIndex, k))
+                    {
+                        // Error of DV_truth[k] and DV_reco
+                        absoluteError[absoluteErrorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[k], truthvtx_y[k], truthvtx_z[k]); 
+                        // Index of DV_truth used
+                        absoluteError[absoluteErrorCounter][1] = k;
 
-                h1->Fill(absoluteError); // Distance of calculated DV from truth DV (Error)
-                H->Fill(leastDistance[0], absoluteError);
+                        absoluteErrorCounter++;
+                    }
+                }
+
+                min_AbsoluteError = minimumArrayValueTwo(absoluteError, absoluteErrorCounter);
+                minAbsoluteError[0] = min_AbsoluteError[0]; // Minimum Error 
+                minAbsoluteError[1] = min_AbsoluteError[1]; // Index of DV_truth used
+
+                usedErrorIndex[indexCounter] = minAbsoluteError[1];
+                indexCounter++;
+                //!
+
+                h1->Fill(minAbsoluteError[0]); // Distance of calculated DV from truth DV (Error)
+                H->Fill(leastDistance[0], minAbsoluteError[0]);
 
                 // TODO: Check if this is viable when you work with more than 1 DVs
 
