@@ -1,6 +1,6 @@
 // Functions for Vector Operations //
 
-// Print array[3] elements
+// Print array[3] elements - Used for coordinates of vectors in 3D space
 void printCoordinates(double *array)
 {
     cout<<"("<<array[0]<<", "<<array[1]<<", "<<array[2]<<")"<<endl;
@@ -110,17 +110,20 @@ double *relativeUnitVector(double *a, double *b)
 TTreeReader treereader;
 
 TTreeReaderValue<ULong_t> eventNumber = {treereader, "eventNumber"};
-TTreeReaderValue<Int_t> track_n = {treereader, "track_n"};
-TTreeReaderValue<Int_t> truthvtx_n = {treereader, "truthvtx_n"};
-TTreeReaderArray<Double_t> track_x0 = {treereader, "track.x0"};
-TTreeReaderArray<Double_t> track_y0 = {treereader, "track.y0"};
-TTreeReaderArray<Double_t> track_z0 = {treereader, "track.z0"};
-TTreeReaderArray<Double_t> track_x1 = {treereader, "track.x1"};
-TTreeReaderArray<Double_t> track_y1 = {treereader, "track.y1"};
-TTreeReaderArray<Double_t> track_z1 = {treereader, "track.z1"};
-TTreeReaderArray<Double_t> truthvtx_x = {treereader, "truthvtx.x"};
-TTreeReaderArray<Double_t> truthvtx_y = {treereader, "truthvtx.y"};
-TTreeReaderArray<Double_t> truthvtx_z = {treereader, "truthvtx.z"};
+TTreeReaderValue<Int_t> track_n = {treereader, "track_n"};              // Number of tracks
+TTreeReaderValue<Int_t> truthvtx_n = {treereader, "truthvtx_n"};        // Number of DVs
+// First point of trajectory
+TTreeReaderArray<Double_t> track_x0 = {treereader, "track.x0"};         // x coordinate
+TTreeReaderArray<Double_t> track_y0 = {treereader, "track.y0"};         // y coordinate
+TTreeReaderArray<Double_t> track_z0 = {treereader, "track.z0"};         // z coordinate
+// Second point of trajectory
+TTreeReaderArray<Double_t> track_x1 = {treereader, "track.x1"};         // x coordinate
+TTreeReaderArray<Double_t> track_y1 = {treereader, "track.y1"};         // y coordinate
+TTreeReaderArray<Double_t> track_z1 = {treereader, "track.z1"};         // z coordinate
+// The DV_truth
+TTreeReaderArray<Double_t> truthvtx_x = {treereader, "truthvtx.x"};     // x coordinate
+TTreeReaderArray<Double_t> truthvtx_y = {treereader, "truthvtx.y"};     // y coordinate
+TTreeReaderArray<Double_t> truthvtx_z = {treereader, "truthvtx.z"};     // z coordinate
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
@@ -311,7 +314,7 @@ double minimumValuefromArrayElements(double *array, int elementCount)
 }
 
 
-// Cases to choose if a point is a DV
+// Cases to choose if a point is a DV or not
 double CaseDV(double *DV, double *a, double *b, double *aa, double *bb)
 {
     // Relative unit vector from Dv to a
@@ -367,34 +370,28 @@ double ThirdTrajectoryDistance(double *DV, int trackNumber, int j, int k)
 }
 
 
-// Returns false if there is an element of array equal to i and true otherwise
-bool TrajectoryUsed(int *array, int i)
+// Returns true if at least one element in array equals to i
+// and false if all elements in array are different to i.
+bool IndexUsed(int *array, int i)
 {
-    int used = 1;
+    bool used = false;
 
     // 30 elements in array
     for(int k=0; k<30; k++)
     {
         if(i == array[k])
         {
-            used = 0;
+            used = true;
             break;
         }
     }
 
-    if(used==0)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+    return used;
 }
 
 
 // Computes the minimum value of array's first column absoluteError[elementCount][2] and 
-// leaves other columns' elements intact. //! Note: The mean must be different than -1
+// leaves other columns' elements intact. //! The min must be different than -1
 double *minimumArrayValueTwo(double absoluteError[][2], int elementCount)
 {
     // First element the minimum value. Second the index of DV_truth used
@@ -434,7 +431,7 @@ void new_myAnalyzeStage1()
     TH2 *H = new TH2D("H", "Absolute Error in Relation to (Minimum) Distance of Trajectories;Distance;Absolute Error;Count", 20, 0, 0.15, 30, 0, 6.5);
     TH1 *HH = new TH2D("HH", "Distance R (of DV) from Detector's Center with Respect to Z Coordinate;R;Z;Counts", 40, 0, 40, 40, -40, 40);
     // 2D //
-    TH1 *h1 = new TH1D("h1", "Absolute Error;Error;Counts", 50, 0, 14);
+    TH1 *h1 = new TH1D("h1", "Absolute Error;Error;Counts", 50, 0, 6.5);
     TH1 *h2 = new TH1D("h2", "Minimum Trajectory Distance to Each Event;Distance;Counts", 40, 0, 0.15);
     TH1 *h3 = new TH1D("h3", "Distance R of DV From Detector's Center;R;Counts", 40, 0, 40);
     TH1 *h4 = new TH1D("h4", "Z Coordinate of DV;Z;Counts", 40, -40, 40);
@@ -454,13 +451,13 @@ void new_myAnalyzeStage1()
     // The second, third and forth column store the coordinates of the displaced vertex resulting from
     // line_i and line_j. The fifth and sixth store the i-th and j-th lines' indexes, respactively.
     double distance_ij[100][6];
-    // Elements Counter for distance_ij
+    // Elements counter for distance_ij
     int elementCount;
     // Counters for distance_ij array elemets
     int count_j;
 
 
-    // The minimum distance of all the possible pair of lines for every event (total events = 4299)
+    // The minimum distance of all the possible pair of lines for every event
     // The first column contains the least distance for every event. The other three store the coordinates
     // of the displaced vertex resulting from the lines that produce the minimum distance. The fifth and 
     // sixth store the i-th and j-th lines' indexes, respactively.
@@ -474,14 +471,14 @@ void new_myAnalyzeStage1()
     // Coordinates for displaced vertex produced by line_i and line_j
     double DV[3];
 
-    // To apple the case for DVs
+    // To apply the case for DVs
     double prodSum;
     // Limits
     double theta = 90;
     double epsilon1 = cos(M_PI * theta/180);
     double epsilon2 = cos(0);
 
-    //!
+
     // First Column: Errors of DV_truth[i] with DV_reco (in i^th row),
     // Second Column: Index of DV_truth used in rows, respectively.
     double absoluteError[10][2];
@@ -490,41 +487,30 @@ void new_myAnalyzeStage1()
     // Second Column: Index of DV_truth used.
     double minAbsoluteError[2];
     double *min_AbsoluteError;
-
-    //! 
-
+    // Stores the indexes of the used DV_thuth
     int usedErrorIndex[30];
-    // Initialize all to -1
-    for(int k=0; k<30; k++)
-    {
-        usedErrorIndex[k] = -1;
-    }
     int indexCounter;
-    //! 
 
+    // !
     // The minimun distance of the third trajectory to the DV
     double DvTrajectory;
-    
+    // !
+
+    // Stores indexes of lines that have been used to calculate a DV
+    int usedLineIndex[30];
+    // Counter for usedLineIndex[30] elements
+    int countLine;
+
     // Event Counter
     int event = 0;
 
     // Integers for for loops
     int i, j;
 
+
     // For Histograms
     double distance_xyz; // Distance of DV from begining of axis
     double DV_Z; // z coordinate of DV
-
-
-    // Stores indexes of lines that have been used to calculate a DV
-    int usedLineIndex[30];
-    // Initialize all values to -1 so as not to coincide with other events
-    for(int k=0; k<30; k++)
-    {
-        usedLineIndex[k] = -1;
-    }
-    // Counter for usedLineIndex[30] elements
-    int countLine;
 
     // ------------------------------------------------------------------------------------------------------------------------------------------------------ //
 
@@ -534,38 +520,38 @@ void new_myAnalyzeStage1()
         // Loop in events with 1 DV
         if(*truthvtx_n>=1)
         {   
+            // Renew for every event
             countLine = 0;
-            // Initialize all values to -1 so as not to coincide with other events
-            for(int k=0; k<30; k++)
-            {
-                usedLineIndex[k] = -1;
-            }
-            // !
-            absoluteErrorCounter = 0;
             indexCounter = 0;
             // Initialize all values to -1 so as not to coincide with other events
             for(int k=0; k<30; k++)
             {
+                usedLineIndex[k] = -1;
                 usedErrorIndex[k] = -1;
             }
-            // !
 
             // Loop to find each DV. In total we have *truthvtx_n DVs
             for(int DvNumber=0; DvNumber<*truthvtx_n; DvNumber++)
             {
+                absoluteErrorCounter = 0;
                 count_j = 0;
+                for(int k=0; k<10; k++)
+                {
+                    absoluteError[k][0] = -1;
+                    absoluteError[k][1] = -1;
+                }
 
                 // Find the DV
                 for(i=0; i<*track_n; i++)
                 {
-                    if(TrajectoryUsed(usedLineIndex, i))
+                    if(!IndexUsed(usedLineIndex, i))
                     {
                         a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
                         b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
 
                         for(j=i+1; j<*track_n; j++)
                         {  
-                            if(TrajectoryUsed(usedLineIndex, j))
+                            if(!IndexUsed(usedLineIndex, j))
                             {
                                 aa[0] = track_x0[j]; aa[1] = track_y0[j]; aa[2] = track_z0[j];
                                 bb[0] = track_x1[j]; bb[1] = track_y1[j]; bb[2] = track_z1[j];
@@ -596,7 +582,7 @@ void new_myAnalyzeStage1()
                             } 
                         }
                     }
-                }   
+                }  
 
                 // The number of elements in distance_ij columns
                 elementCount = count_j;
@@ -606,6 +592,13 @@ void new_myAnalyzeStage1()
                 for(int k=0; k<6; k++)
                 {
                     leastDistance[k] = least_Distance[k]; 
+                }
+
+                // Store line indexes that have been used to calculate a DV
+                for(int k=4; k<6; k++)
+                {
+                    usedLineIndex[countLine] = least_Distance[k];
+                    countLine++;
                 }
 
                 h2->Fill(leastDistance[0]);
@@ -625,12 +618,9 @@ void new_myAnalyzeStage1()
                 displacedVertexArray[1] = leastDistance[2]; // DV_y
                 displacedVertexArray[2] = leastDistance[3]; // DV_z
 
-                // TODO: Make a loop to find all possible errors and store the minimum for every displayed vertex excluding one DV_truth every time
-
-                //!
                 for(int k=0; k<*truthvtx_n; k++)
                 {
-                    if(TrajectoryUsed(usedErrorIndex, k))
+                    if(!IndexUsed(usedErrorIndex, k))
                     {
                         // Error of DV_truth[k] and DV_reco
                         absoluteError[absoluteErrorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[k], truthvtx_y[k], truthvtx_z[k]); 
@@ -641,13 +631,12 @@ void new_myAnalyzeStage1()
                     }
                 }
 
-                min_AbsoluteError = minimumArrayValueTwo(absoluteError, absoluteErrorCounter);
+                min_AbsoluteError = minimumArrayValueTwo(absoluteError, 10);
                 minAbsoluteError[0] = min_AbsoluteError[0]; // Minimum Error 
                 minAbsoluteError[1] = min_AbsoluteError[1]; // Index of DV_truth used
 
                 usedErrorIndex[indexCounter] = minAbsoluteError[1];
                 indexCounter++;
-                //!
 
                 h1->Fill(minAbsoluteError[0]); // Distance of calculated DV from truth DV (Error)
                 H->Fill(leastDistance[0], minAbsoluteError[0]);
@@ -661,13 +650,6 @@ void new_myAnalyzeStage1()
                 }
 
                 h5->Fill(DvTrajectory);
-
-                // Store line indexes that have been used to calculate a DV
-                for(int k=0; k<2; k++)
-                {
-                    usedLineIndex[countLine] = least_Distance[4+k];
-                    countLine++;
-                }
             }
             event++;
         }
