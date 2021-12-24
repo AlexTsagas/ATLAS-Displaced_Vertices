@@ -489,13 +489,16 @@ void new_myAnalyzeStage1()
     // First Column: Errors of DV_truth[i] with DV_reco (in i^th row),
     // Second Column: Index of DV_truth used in rows, respectively.
     double errorXYZ[10][2];
+    // Counter for errorXYZ array elements
     int errorCounter;
     // First Column: The minimum error for each DV_reco,
     // Second Column: Index of DV_truth used.
     double minErrorXYZ[2];
     double *min_ErrorXYZ;
+
     // Stores the indexes of the used DV_thuth
     int usedErrorIndex[30];
+    // Counter for usedErrorIndex array elements
     int indexCounter;
 
 
@@ -638,8 +641,6 @@ void new_myAnalyzeStage1()
 
                 error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
                 error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
-
-                // TODO: Check if this is viable when you work with more than 1 DVs
 
                 //! Calculating the distance from DV of the third trajectory (if there is one)
                 if(*track_n>2)
