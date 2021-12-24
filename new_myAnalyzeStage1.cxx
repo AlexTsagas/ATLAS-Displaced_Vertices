@@ -390,28 +390,28 @@ bool IndexUsed(int *array, int i)
 }
 
 
-// Computes the minimum value of array's first column absoluteError[elementCount][2] and 
+// Computes the minimum value of array's first column error[elementCount][2] and 
 // leaves other columns' elements intact. //! The min must be different than -1
-double *minimumArrayValueTwo(double absoluteError[][2], int elementCount)
+double *minimumArrayValueTwo(double error[][2], int elementCount)
 {
     // First element the minimum value. Second the index of DV_truth used
     static double minimum[2];
 
-    // Initialize with the first row of absoluteError[elementCount][2]
-    minimum[0] = absoluteError[0][0];
-    minimum[1] = absoluteError[0][1];
+    // Initialize with the first row of error[elementCount][2]
+    minimum[0] = error[0][0];
+    minimum[1] = error[0][1];
 
-    // Go throught the aboluteError array
+    // Go throught the error array
     double element;
 
     for(int i=1; i<elementCount; i++)
     {
-        element = absoluteError[i][0];
+        element = error[i][0];
 
         if(element != -1 && minimum[0] >= element)
         {
             minimum[0] = element;
-            minimum[1] = absoluteError[i][1];
+            minimum[1] = error[i][1];
         }
     }
 
@@ -427,35 +427,28 @@ void new_myAnalyzeStage1()
     clock_t tStart = clock();
 
     // Histograms
-    // 3D //
-    TH2 *H = new TH2D("H", "Absolute Error in Relation to (Minimum) Distance of Trajectories;Distance;Absolute Error;Count", 20, 0, 0.15, 30, 0, 6.5);
-    TH1 *HH = new TH2D("HH", "Distance R (of DV) from Detector's Center with Respect to Z Coordinate;R;Z;Counts", 40, 0, 40, 40, -40, 40);
-    // 2D //
-    TH1 *h1 = new TH1D("h1", "Absolute Error;Error;Counts", 50, 0, 6.5);
-    TH1 *h2 = new TH1D("h2", "Minimum Trajectory Distance to Each Event;Distance;Counts", 40, 0, 0.15);
-    TH1 *h3 = new TH1D("h3", "Distance R of DV From Detector's Center;R;Counts", 40, 0, 40);
-    TH1 *h4 = new TH1D("h4", "Z Coordinate of DV;Z;Counts", 40, -40, 40);
-    TH1 *h5 = new TH1D("h5", "Smallest Distance D of Third Trajectory from Dv;D;Counts", 50, 0, 0.6);
+    TH1 *error_XYZ = new TH1D("error_XYZ", "Error in 3D Space;Error;Counts", 50, 0, 35);
+    TH1 *error_XY = new TH1D("error_XY", "Error in xy Plane;Error;Counts", 50, 0, 14);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
     treereader.SetTree(tree);
 
 
+    //! Search for DVs !//
     // Line_i Points
     double a[3], b[3];
     // Line_j Points
     double aa[3], bb[3];
 
     // Array that gathers the distances between line i and j and stores them in the first column.
-    // The second, third and forth column store the coordinates of the displaced vertex resulting from
+    // The second, third and forth columns store the coordinates of the displaced vertex resulting from
     // line_i and line_j. The fifth and sixth store the i-th and j-th lines' indexes, respactively.
     double distance_ij[100][6];
-    // Elements counter for distance_ij
+    // Greater than zero element counter for distance_ij array
     int elementCount;
-    // Counters for distance_ij array elemets
+    // Counter for distance_ij array elemets
     int count_j;
-
 
     // The minimum distance of all the possible pair of lines for every event
     // The first column contains the least distance for every event. The other three store the coordinates
@@ -464,8 +457,12 @@ void new_myAnalyzeStage1()
     double leastDistance[6];
     double *least_Distance;
 
+    // Stores indexes of lines that have been used to calculate a DV
+    int usedLineIndex[30];
+    // Counter for usedLineIndex[30] elements
+    int countLine;
 
-    // Stores the coordinates of each displaced vertex of any event in rows
+    // Stores the coordinates of each displaced vertex of any event
     double displacedVertexArray[3];
     double *displaced_Vertex;
     // Coordinates for displaced vertex produced by line_i and line_j
@@ -479,38 +476,41 @@ void new_myAnalyzeStage1()
     double epsilon2 = cos(0);
 
 
+    //! Errors in xy Plane !//
     // First Column: Errors of DV_truth[i] with DV_reco (in i^th row),
     // Second Column: Index of DV_truth used in rows, respectively.
-    double absoluteError[10][2];
-    int absoluteErrorCounter;
+    double errorXY[10][2];
     // First Column: The minimum error for each DV_reco,
     // Second Column: Index of DV_truth used.
-    double minAbsoluteError[2];
-    double *min_AbsoluteError;
+    double minErrorXY[2];
+    double *min_ErrorXY;
+
+    //! Errors in 3D Space !//
+    // First Column: Errors of DV_truth[i] with DV_reco (in i^th row),
+    // Second Column: Index of DV_truth used in rows, respectively.
+    double errorXYZ[10][2];
+    int errorCounter;
+    // First Column: The minimum error for each DV_reco,
+    // Second Column: Index of DV_truth used.
+    double minErrorXYZ[2];
+    double *min_ErrorXYZ;
     // Stores the indexes of the used DV_thuth
     int usedErrorIndex[30];
     int indexCounter;
+
 
     // !
     // The minimun distance of the third trajectory to the DV
     double DvTrajectory;
     // !
 
-    // Stores indexes of lines that have been used to calculate a DV
-    int usedLineIndex[30];
-    // Counter for usedLineIndex[30] elements
-    int countLine;
 
+    //! Other Parameters !//
     // Event Counter
     int event = 0;
 
     // Integers for for loops
     int i, j;
-
-
-    // For Histograms
-    double distance_xyz; // Distance of DV from begining of axis
-    double DV_Z; // z coordinate of DV
 
     // ------------------------------------------------------------------------------------------------------------------------------------------------------ //
 
@@ -518,7 +518,7 @@ void new_myAnalyzeStage1()
     while (treereader.Next()) 
     {
         // Loop in events with 1 DV
-        if(*truthvtx_n>=1)
+        if(*truthvtx_n==1)
         {   
             // Renew for every event
             countLine = 0;
@@ -533,15 +533,18 @@ void new_myAnalyzeStage1()
             // Loop to find each DV. In total we have *truthvtx_n DVs
             for(int DvNumber=0; DvNumber<*truthvtx_n; DvNumber++)
             {
-                absoluteErrorCounter = 0;
+                errorCounter = 0;
                 count_j = 0;
                 for(int k=0; k<10; k++)
                 {
-                    absoluteError[k][0] = -1;
-                    absoluteError[k][1] = -1;
+                    errorXYZ[k][0] = -1;
+                    errorXYZ[k][1] = -1;
+                    // 
+                    errorXY[k][0] = -1;
+                    errorXY[k][1] = -1;
                 }
 
-                // Find the DV
+                //! Find the DV
                 for(i=0; i<*track_n; i++)
                 {
                     if(!IndexUsed(usedLineIndex, i))
@@ -600,109 +603,71 @@ void new_myAnalyzeStage1()
                     usedLineIndex[countLine] = least_Distance[k];
                     countLine++;
                 }
-
-                h2->Fill(leastDistance[0]);
-
-                distance_xyz = sqrt(leastDistance[1]*leastDistance[1] + leastDistance[2]*leastDistance[2] + leastDistance[3]*leastDistance[3]);
-                // distance_xyz = sqrt(truthvtx_x[0]*truthvtx_x[0] + truthvtx_y[0]*truthvtx_y[0] + truthvtx_z[0]*truthvtx_z[0]);
-
-                h3->Fill(distance_xyz);
-
-                DV_Z = leastDistance[3];
-
-                h4->Fill(DV_Z);
-                HH->Fill(distance_xyz, DV_Z);
                 
                 // Assigning coordinates to DV Array
                 displacedVertexArray[0] = leastDistance[1]; // DV_x
                 displacedVertexArray[1] = leastDistance[2]; // DV_y
                 displacedVertexArray[2] = leastDistance[3]; // DV_z
 
+                //! Compute Errors
                 for(int k=0; k<*truthvtx_n; k++)
                 {
                     if(!IndexUsed(usedErrorIndex, k))
                     {
                         // Error of DV_truth[k] and DV_reco
-                        absoluteError[absoluteErrorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[k], truthvtx_y[k], truthvtx_z[k]); 
+                        errorXYZ[errorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[k], truthvtx_y[k], truthvtx_z[k]); 
+                        errorXY[errorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], 0, truthvtx_x[k], truthvtx_y[k], 0); 
                         // Index of DV_truth used
-                        absoluteError[absoluteErrorCounter][1] = k;
+                        errorXYZ[errorCounter][1] = k;
+                        errorXY[errorCounter][1] = k;
 
-                        absoluteErrorCounter++;
+                        errorCounter++;
                     }
                 }
 
-                min_AbsoluteError = minimumArrayValueTwo(absoluteError, 10);
-                minAbsoluteError[0] = min_AbsoluteError[0]; // Minimum Error 
-                minAbsoluteError[1] = min_AbsoluteError[1]; // Index of DV_truth used
+                min_ErrorXYZ = minimumArrayValueTwo(errorXYZ, 10);
+                minErrorXYZ[0] = min_ErrorXYZ[0]; // Minimum Error 
+                minErrorXYZ[1] = min_ErrorXYZ[1]; // Index of DV_truth used
 
-                usedErrorIndex[indexCounter] = minAbsoluteError[1];
+                min_ErrorXY = minimumArrayValueTwo(errorXY, 10);
+                minErrorXY[0] = min_ErrorXY[0]; // Minimum Error 
+                minErrorXY[1] = min_ErrorXY[1]; // Index of DV_truth used
+
+                usedErrorIndex[indexCounter] = minErrorXYZ[1];
                 indexCounter++;
 
-                h1->Fill(minAbsoluteError[0]); // Distance of calculated DV from truth DV (Error)
-                H->Fill(leastDistance[0], minAbsoluteError[0]);
+                error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
+                error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
 
                 // TODO: Check if this is viable when you work with more than 1 DVs
 
-                // Calculating the distance from DV of the third trajectory (if there is one)
+                //! Calculating the distance from DV of the third trajectory (if there is one)
                 if(*track_n>2)
                 {
                     DvTrajectory = ThirdTrajectoryDistance(displacedVertexArray, *track_n, leastDistance[4], leastDistance[5]);
                 }
-
-                h5->Fill(DvTrajectory);
             }
             event++;
         }
     }
 
     // Canvas 1
-    TCanvas *c1 = new TCanvas("c1", "DV Errors - Distance Between Trajectories - Distance of Dv from Third Trajectory - 3D Histogram", 900, 700);
-    c1->Divide(2,2);
+    TCanvas *c1 = new TCanvas("c1", "DV Errors in XYZ Space and xy Plane", 1400, 400);
+    c1->Divide(2,1);
 
     gStyle->SetOptStat(1111111);
 
     c1->cd(1);
-    h1->SetFillColor(kBlue-2);
-    h1->SetMinimum(0);
-    h1->Draw();
-
-    c1->cd(3);
-    h2->SetFillColor(kGreen-7);
-    h2->SetMinimum(0);
-    h2->Draw();
+    error_XYZ->SetFillColor(kBlue-2);
+    error_XYZ->SetMinimum(0);
+    error_XYZ->Draw();
 
     c1->cd(2);
-    H->SetFillColor(kRed);
-    H->SetMinimum(0);
-    H->Draw("LEGO1");
-
-    c1->cd(4);
-    h5->SetFillColor(kViolet);
-    h5->SetMinimum(0);
-    h5->Draw();
+    error_XY->SetFillColor(kRed);
+    error_XY->SetMinimum(0);
+    error_XY->Draw();
 
     c1->Print();
-
-    // Canvas 2
-    TCanvas *c2 = new TCanvas("c2", "Distance of Trajectories and DV from Detector's Center - Z Coordinate - 3D Histogram", 1300, 400);
-    c2->Divide(3,1);
-
-    c2->cd(1);
-    h3->SetFillColor(kYellow);
-    h3->SetMinimum(0);
-    h3->Draw();
-
-    c2->cd(2);
-    h4->SetFillColor(kOrange+7);
-    h4->SetMinimum(0);
-    h4->Draw();
-
-    c2->cd(3);
-    HH->SetFillColor(kBlue-9);
-    HH->SetMinimum(0);
-    HH->Draw("LEGO1");
-
-    c2->Print();
 
     // Print time needed for the program to complete
     printf("\nTime taken: %.2fs\n\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
