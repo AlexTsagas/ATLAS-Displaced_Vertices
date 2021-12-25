@@ -427,7 +427,7 @@ void new_myAnalyzeStage1()
     clock_t tStart = clock();
 
     // Histograms
-    TH1 *error_XYZ = new TH1D("error_XYZ", "Error in 3D Space;Error;Counts", 50, 0, 35);
+    TH1 *error_XYZ = new TH1D("error_XYZ", "Error in 3D Space;Error;Counts", 100, 0, 35);
     TH1 *error_XY = new TH1D("error_XY", "Error in xy Plane;Error;Counts", 50, 0, 14);
 
     TFile* infile = TFile::Open("stage1.root");
@@ -436,6 +436,11 @@ void new_myAnalyzeStage1()
 
 
     //! Search for DVs !//
+    // Condition to decide if a trajectory belongs to a DV without constructing it 
+    double Dcut1 = 0.2;
+    // Condition to decide if two trajectories form a DV
+    double Dcut2 = 0.35;
+
     // Line_i Points
     double a[3], b[3];
     // Line_j Points
@@ -450,12 +455,14 @@ void new_myAnalyzeStage1()
     // Counter for distance_ij array elemets
     int count_j;
 
-    // The minimum distance of all the possible pair of lines for every event
+    // The minimum distance of all the possible pair of trajectories for every event
     // The first column contains the least distance for every event. The other three store the coordinates
     // of the displaced vertex resulting from the lines that produce the minimum distance. The fifth and 
     // sixth store the i-th and j-th lines' indexes, respactively.
     double leastDistance[6];
     double *least_Distance;
+    // The minimum of all possible pair of trajectories
+    double leastdistance;
 
     // Stores indexes of lines that have been used to calculate a DV
     int usedLineIndex[30];
@@ -502,10 +509,10 @@ void new_myAnalyzeStage1()
     int indexCounter;
 
 
-    // !
+    //!  !//
     // The minimun distance of the third trajectory to the DV
     double DvTrajectory;
-    // !
+    //!  !//
 
 
     //! Other Parameters !//
@@ -514,6 +521,7 @@ void new_myAnalyzeStage1()
 
     // Integers for for loops
     int i, j;
+
 
     // ------------------------------------------------------------------------------------------------------------------------------------------------------ //
 
@@ -533,11 +541,12 @@ void new_myAnalyzeStage1()
                 usedErrorIndex[k] = -1;
             }
 
-            // Loop to find each DV. In total we have *truthvtx_n DVs
-            for(int DvNumber=0; DvNumber<*truthvtx_n; DvNumber++)
+            // Loop to find multiple DVs. If leastdistance <= Dcut2 
+            do
             {
-                errorCounter = 0;
                 count_j = 0;
+                leastdistance = 1; // TODO: Check if this is needed
+                errorCounter = 0;
                 for(int k=0; k<10; k++)
                 {
                     errorXYZ[k][0] = -1;
@@ -600,6 +609,13 @@ void new_myAnalyzeStage1()
                     leastDistance[k] = least_Distance[k]; 
                 }
 
+                // Condition to decide if there is a DV
+                leastdistance = leastDistance[0];
+                if(leastdistance > Dcut2)
+                {
+                    break;
+                }
+                
                 // Store line indexes that have been used to calculate a DV
                 for(int k=4; k<6; k++)
                 {
@@ -647,7 +663,9 @@ void new_myAnalyzeStage1()
                 {
                     DvTrajectory = ThirdTrajectoryDistance(displacedVertexArray, *track_n, leastDistance[4], leastDistance[5]);
                 }
-            }
+
+            } while(leastdistance > Dcut2);
+
             event++;
         }
     }
