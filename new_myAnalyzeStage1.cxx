@@ -537,12 +537,12 @@ void new_myAnalyzeStage1()
     while (treereader.Next()) 
     {
         // Loop in events with 1  DV
-        if(*truthvtx_n==3)
+        if(*truthvtx_n==1)
         {   
             // Renew for every event
-            DVnumber = 0;
-            countLine = 0;
-            indexCounter = 0;
+            DVnumber = 0; // number of DV_reco
+            countLine = 0; // element counter for usedLineIndex array
+            indexCounter = 0; // element counter for usedErrorIndex array
             elementNumber = 0;
             // Initialize all values to -1 so as not to coincide with other events
             for(int k=0; k<30; k++)
@@ -682,6 +682,10 @@ void new_myAnalyzeStage1()
                             usedLineIndex[countLine] = DvTrajectoryDistance[k][1];
                             countLine++;
                         }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
                 cout<<endl<<"Indexes Used: ";
@@ -741,7 +745,7 @@ void new_myAnalyzeStage1()
 
                     cout<<endl;
                 }
-            } while(countLine <= *track_n-1);
+            } while(countLine <= *track_n-2);
 
             event++;
 
