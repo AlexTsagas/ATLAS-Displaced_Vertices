@@ -574,7 +574,7 @@ void new_myAnalyzeStage1()
             {
                 //! Renew for every DV !//
                 // DvTrajectoryDistance element counter
-                DvTrajectoryCounter = 0; //TODO: Check if goes before that loop (don't think so!)
+                DvTrajectoryCounter = 0; //TODO: Check if goes before that loop (Ι doubt it!)
                 // Array distance_ij element counter
                 count_j = 0;
                 // Arrays errorXYZ and errorXY element counter
