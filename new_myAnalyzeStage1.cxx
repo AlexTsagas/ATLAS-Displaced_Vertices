@@ -428,9 +428,21 @@ void new_myAnalyzeStage1()
     // For time capture
     clock_t tStart = clock();
 
-    // Histograms
+    // Histograms for Canvas 1
     TH1 *error_XYZ = new TH1D("error_XYZ", "Error in 3D Space;Error;Counts", 100, 0, 35);
+    TH1 *error_XYZ_OneDV = new TH1D("error_XYZ_OneDV", "Error in 3D Space for One DV;Error;Counts", 100, 0, 35);
+    TH1 *error_XYZ_TwoDVs = new TH1D("error_XYZ_TwoDVs", "Error in 3D Space for Two DVs;Error;Counts", 100, 0, 35);
     TH1 *error_XY = new TH1D("error_XY", "Error in xy Plane;Error;Counts", 50, 0, 14);
+    TH1 *error_XY_OneDV = new TH1D("error_XY_OneDV", "Error in xy Plane for One DV;Error;Counts", 50, 0, 14);
+    TH1 *error_XY_TwoDVs = new TH1D("error_XY_TwoDVs", "Error in xy Plane for Two DVs;Error;Counts", 50, 0, 14);
+
+    // Histograms for Canvas 2
+    TH1 *performance = new TH1D("performance", "DV_reco that are Close to DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *clarity = new TH1D("clarity", "DV_reco Independent of Distance from DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *performance_OneDV = new TH1D("performance_OneDV", "DV_reco that are Close to DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *clarity_OneDV = new TH1D("clarity_OneDV", "DV_reco Independent of Distance from DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -439,9 +451,9 @@ void new_myAnalyzeStage1()
 
     //! Search for DVs !//
     // Condition to decide if a trajectory belongs to a DV without constructing it 
-    double Dcut1 = 0.2;
+    double Dcut1 = 0.6;
     // Condition to decide if two trajectories form a DV
-    double Dcut2 = 0.2;
+    double Dcut2 = 0.15;
 
     // Line_i Points
     double a[3], b[3];
@@ -523,7 +535,11 @@ void new_myAnalyzeStage1()
 
     //! Other Parameters !//
     // Dv Counter
-    int DVnumber;
+    int DVnumber_Total;
+    int DVnumber_Close;
+    // Conditions for DV_reco that are close
+    int limitXYZ = 35;
+    int limitXY = 14;
 
     // Event Counter
     int event = 1;
@@ -537,10 +553,11 @@ void new_myAnalyzeStage1()
     while (treereader.Next()) 
     {
         // Loop in events with 1  DV
-        if(*truthvtx_n==1)
+        if(*truthvtx_n>=1)
         {   
             // Renew for every event
-            DVnumber = 0; // number of DV_reco
+            DVnumber_Total = 0; // total number of DV_reco
+            DVnumber_Close = 0; // number of DV_reco that respect the conditions to be "close"
             countLine = 0; // element counter for usedLineIndex array
             indexCounter = 0; // element counter for usedErrorIndex array
             elementNumber = 0;
@@ -555,7 +572,6 @@ void new_myAnalyzeStage1()
             do
             {
                 count_j = 0;
-                // leastdistance = 10; // TODO: Check if this is needed
                 thirdTrajectoryDistance = 1; // TODO: Check if this is needed
                 errorCounter = 0;
                 for(int k=0; k<10; k++)
@@ -626,7 +642,7 @@ void new_myAnalyzeStage1()
                     break;
                 }
 
-                DVnumber++;
+                DVnumber_Total++;
                 
                 // Store line indexes that have been used to calculate a DV
                 for(int k=4; k<6; k++)
@@ -696,7 +712,7 @@ void new_myAnalyzeStage1()
                 cout<<endl;
 
                 //! Compute Errors
-                if(DVnumber <= *truthvtx_n)
+                if(DVnumber_Total <= *truthvtx_n)
                 {
                     cout<<"Error Index Used before loop: ";
                     for(int k=0; k<indexCounter; k++)
@@ -740,16 +756,60 @@ void new_myAnalyzeStage1()
                     }
                     cout<<"\tError: "<<minErrorXYZ[0]<<endl;
 
+                    //! Condition to calculate the DV_reco that respect limits
+                    if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY)
+                    {
+                        DVnumber_Close++;
+                    }
+
                     error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
                     error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
+
+                    if(*truthvtx_n == 1)
+                    {
+                        error_XYZ_OneDV->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
+                        error_XY_OneDV->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
+                    }
+                    else if(*truthvtx_n == 2)
+                    {
+                        error_XYZ_TwoDVs->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
+                        error_XY_TwoDVs->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
+                    }
 
                     cout<<endl;
                 }
             } while(countLine <= *track_n-2);
 
+            // Takes into consideration the DVs that respect limits
+            performance->Fill(*truthvtx_n-DVnumber_Close);
+            // One DV
+            if(*truthvtx_n == 1)
+            {
+                performance_OneDV->Fill(*truthvtx_n-DVnumber_Close);
+            }
+            // Two DVs
+            if(*truthvtx_n == 2)
+            {
+                performance_TwoDVs->Fill(*truthvtx_n-DVnumber_Close);
+            }
+
+            // Takes into consideration all the DVs
+            clarity->Fill(*truthvtx_n-DVnumber_Total);
+            // One DV
+            if(*truthvtx_n == 1)
+            {   
+                clarity_OneDV->Fill(*truthvtx_n-DVnumber_Total);
+            }
+            // Two DV
+            if(*truthvtx_n == 2)
+            {   
+                clarity_TwoDVs->Fill(*truthvtx_n-DVnumber_Total);
+            }
+
             event++;
 
-            cout<<"DVnumber: "<<DVnumber<<endl<<endl;
+            cout<<"DVnumber_Total: "<<DVnumber_Total<<endl;
+            cout<<"DVnumber_Close: "<<DVnumber_Close<<endl<<endl;
             for(int k=0; k<150; k++)
             {
                 cout<<"~";
@@ -759,13 +819,13 @@ void new_myAnalyzeStage1()
     }
 
     // Canvas 1
-    TCanvas *c1 = new TCanvas("c1", "DV Errors in XYZ Space and xy Plane", 1400, 400);
-    c1->Divide(2,1);
+    TCanvas *c1 = new TCanvas("c1", "DV Errors in XYZ Space and xy Plane", 800, 900);
+    c1->Divide(2,3);
 
     gStyle->SetOptStat(1111111);
 
     c1->cd(1);
-    error_XYZ->SetFillColor(kBlue-2);
+    error_XYZ->SetFillColor(kAzure+1);
     error_XYZ->SetMinimum(0);
     error_XYZ->Draw();
 
@@ -774,7 +834,65 @@ void new_myAnalyzeStage1()
     error_XY->SetMinimum(0);
     error_XY->Draw();
 
+    c1->cd(3);
+    error_XYZ_OneDV->SetFillColor(kOrange+7);
+    error_XYZ_OneDV->SetMinimum(0);
+    error_XYZ_OneDV->Draw();
+
+    c1->cd(4);
+    error_XY_OneDV->SetFillColor(kGreen);
+    error_XY_OneDV->SetMinimum(0);
+    error_XY_OneDV->Draw();
+
+    c1->cd(5);
+    error_XYZ_TwoDVs->SetFillColor(kMagenta);
+    error_XYZ_TwoDVs->SetMinimum(0);
+    error_XYZ_TwoDVs->Draw();
+
+    c1->cd(6);
+    error_XY_TwoDVs->SetFillColor(kYellow);
+    error_XY_TwoDVs->SetMinimum(0);
+    error_XY_TwoDVs->Draw();
+
     c1->Print();
+
+    // Canvas 2
+    TCanvas *c2 = new TCanvas("c2", "Performance and Clarity", 800, 900);
+    c2->Divide(2,3);
+
+    gStyle->SetOptStat(1111111);
+
+    c2->cd(1);
+    performance->SetFillColor(kAzure+1);
+    performance->SetMinimum(0);
+    performance->Draw();
+
+    c2->cd(2);
+    clarity->SetFillColor(kRed);
+    clarity->SetMinimum(0);
+    clarity->Draw();
+
+    c2->cd(3);
+    performance_OneDV->SetFillColor(kOrange+7);
+    performance_OneDV->SetMinimum(0);
+    performance_OneDV->Draw();
+
+    c2->cd(4);
+    clarity_OneDV->SetFillColor(kGreen);
+    clarity_OneDV->SetMinimum(0);
+    clarity_OneDV->Draw();
+
+    c2->cd(5);
+    performance_TwoDVs->SetFillColor(kMagenta);
+    performance_TwoDVs->SetMinimum(0);
+    performance_TwoDVs->Draw();
+
+    c2->cd(6);
+    clarity_TwoDVs->SetFillColor(kYellow);
+    clarity_TwoDVs->SetMinimum(0);
+    clarity_TwoDVs->Draw();
+
+    c2->Print();
 
     // Print time needed for the program to complete
     printf("\nTime taken: %.2fs\n\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
