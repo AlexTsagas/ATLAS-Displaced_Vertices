@@ -344,32 +344,6 @@ double CaseDV(double *DV, double *a, double *b, double *aa, double *bb)
 }
 
 
-// Calculates the distance of the closest third trajectory to the DV
-double ThirdTrajectoryDistance(double *DV, int trackNumber, int j, int k)
-{
-    int elementNumber = 0;
-    double a[3], b[3], aa[3], bb[3];
-    double DvTrajectoryDistance[20];
-
-    for(int i=0; i<trackNumber; i++)
-    {
-        if(i!=j && i!=k)
-        {
-            a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
-            b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
-
-            DvTrajectoryDistance[elementNumber] =  LinePointDistance(a, b, DV);
-
-            elementNumber++;
-        }
-    }
-
-    double DvTrajectory = minimumValuefromArrayElements(DvTrajectoryDistance, elementNumber);
-
-    return DvTrajectory;
-}
-
-
 // Returns true if at least one element in array equals to i
 // and false if all elements in array are different to i.
 bool IndexUsed(int *array, int i)
@@ -390,32 +364,95 @@ bool IndexUsed(int *array, int i)
 }
 
 
-// Computes the minimum value of array's first column error[elementCount][2] and 
+// Computes the minimum value of array's first column array[elementCount][2] and 
 // leaves other columns' elements intact. //! The min must be different than -1
-double *minimumArrayValueTwo(double error[][2], int elementCount)
+double *minimumArrayValueTwo(double array[][2], int elementCount)
 {
     // First element the minimum value. Second the index of DV_truth used
     static double minimum[2];
 
-    // Initialize with the first row of error[elementCount][2]
-    minimum[0] = error[0][0];
-    minimum[1] = error[0][1];
+    // Initialize with the first row of array[elementCount][2]
+    minimum[0] = array[0][0];
+    minimum[1] = array[0][1];
 
-    // Go throught the error array
+    // Go throught the array array
     double element;
 
     for(int i=1; i<elementCount; i++)
     {
-        element = error[i][0];
+        element = array[i][0];
 
         if(element != -1 && minimum[0] >= element)
         {
             minimum[0] = element;
-            minimum[1] = error[i][1];
+            minimum[1] = array[i][1];
         }
     }
 
     return minimum;
+}
+
+
+// Calculates the distance of the closest third trajectory to the DV and stores the
+// index of the trajectory used
+double *ThirdTrajectoryDistance(double *DV, int trackNumber, int *array)
+{
+    // Points that define the trajectory
+    double a[3], b[3];
+
+    // First Column: Stores the distances between trajectory_i and DV
+    // Second Column: Stores the index of the trajectory used, respectively
+    double DvTrajectoryDistance[20][2];
+    // DvTrajectoryDistance array element number
+    int elementNumber = 0;
+
+    for(int i=0; i<trackNumber; i++)
+    {
+        if(!IndexUsed(array, i))
+        {
+            // cout<<i<<endl;
+            a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
+            b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
+
+            DvTrajectoryDistance[elementNumber][0] =  LinePointDistance(a, b, DV);
+            DvTrajectoryDistance[elementNumber][1] = i;
+
+            elementNumber++;
+        }
+    }
+
+    double *Dv_Trajectory = minimumArrayValueTwo(DvTrajectoryDistance, elementNumber);
+    static double DvTrajectory[2] = {Dv_Trajectory[0], Dv_Trajectory[1]};
+
+    return DvTrajectory;
+}
+
+
+// Sorts the array elements in ascending order
+void ArraySorting(double array[][2], int elementCount)
+{
+    double temp0;
+    double temp1;
+
+    for(int i=0; i<elementCount; i++)
+    {
+        for(int j=i; j<elementCount; j++)
+        {
+            temp0 = array[i][0];
+
+            if(array[j][0] < temp0)
+            {
+                temp0 = array[j][0]; 
+                temp1 = array[j][1];
+
+                array[j][0] = array[i][0];
+                array[j][1] = array[i][1];
+                
+                array[i][0] = temp0;
+                array[i][1] = temp1;
+            }
+        }
+    }
 }
 
 
@@ -439,7 +476,7 @@ void new_myAnalyzeStage1()
     // Condition to decide if a trajectory belongs to a DV without constructing it 
     double Dcut1 = 0.2;
     // Condition to decide if two trajectories form a DV
-    double Dcut2 = 0.35;
+    double Dcut2 = 0.2;
 
     // Line_i Points
     double a[3], b[3];
@@ -509,31 +546,41 @@ void new_myAnalyzeStage1()
     int indexCounter;
 
 
-    //!  !//
-    // The minimun distance of the third trajectory to the DV
-    double DvTrajectory;
-    //!  !//
+    //! Distance from a DV to a different Trajectory than the two that constructed it !//
+    // Points that define the trajectory
+    double A[3], B[3];
+    // First Column: Stores the distances between trajectory_i and DV
+    // Second Column: Stores the index of the trajectory used, respectively
+    double DvTrajectoryDistance[20][2];
+    // DvTrajectoryDistance array element number
+    int elementNumber = 0;
+
+    double thirdTrajectoryDistance;
 
 
     //! Other Parameters !//
+    // Dv Counter
+    int DVnumber;
+
     // Event Counter
-    int event = 0;
+    int event = 1;
 
     // Integers for for loops
     int i, j;
-
 
     // ------------------------------------------------------------------------------------------------------------------------------------------------------ //
 
     // Event Loop
     while (treereader.Next()) 
     {
-        // Loop in events with 1 DV
-        if(*truthvtx_n==1)
+        // Loop in events with 1  DV
+        if(*truthvtx_n==3)
         {   
             // Renew for every event
+            DVnumber = 0;
             countLine = 0;
             indexCounter = 0;
+            elementNumber = 0;
             // Initialize all values to -1 so as not to coincide with other events
             for(int k=0; k<30; k++)
             {
@@ -545,7 +592,8 @@ void new_myAnalyzeStage1()
             do
             {
                 count_j = 0;
-                leastdistance = 1; // TODO: Check if this is needed
+                // leastdistance = 10; // TODO: Check if this is needed
+                thirdTrajectoryDistance = 1; // TODO: Check if this is needed
                 errorCounter = 0;
                 for(int k=0; k<10; k++)
                 {
@@ -599,6 +647,12 @@ void new_myAnalyzeStage1()
                     }
                 }  
 
+                // cout<<event<<"("<<*track_n<<"). ";
+                // for(int k=0; k<count_j-1; k++)
+                // {
+                //     cout<<distance_ij[k][0]<<" ";
+                // }
+
                 // The number of elements in distance_ij columns
                 elementCount = count_j;
 
@@ -611,10 +665,17 @@ void new_myAnalyzeStage1()
 
                 // Condition to decide if there is a DV
                 leastdistance = leastDistance[0];
+
+                // cout<<endl<<event<<". Least Distance: "<<leastDistance[0];
+
                 if(leastdistance > Dcut2)
                 {
                     break;
                 }
+
+                DVnumber++;
+
+                // cout<<endl<<event<<". DVnumber: "<<DVnumber;
                 
                 // Store line indexes that have been used to calculate a DV
                 for(int k=4; k<6; k++)
@@ -627,6 +688,58 @@ void new_myAnalyzeStage1()
                 displacedVertexArray[0] = leastDistance[1]; // DV_x
                 displacedVertexArray[1] = leastDistance[2]; // DV_y
                 displacedVertexArray[2] = leastDistance[3]; // DV_z
+
+
+                cout<<"Event (Dv_truth: "<<*truthvtx_n<<"): "<<event;
+                cout<<"\nIndexes (Tracks: "<<*track_n<<"): ";
+                for(int k=0; k<countLine; k++)
+                {
+                    cout<<usedLineIndex[k]<<" ";
+                }
+
+                //! Condition to take into consideration multiple trajectories that might belong to the same DV
+                if(*track_n - countLine >= 1)
+                {
+
+                    for(int i=0; i<*track_n; i++)
+                    {
+                        if(!IndexUsed(usedLineIndex, i))
+                        {
+                            A[0] = track_x0[i]; A[1] = track_y0[i]; A[2] = track_z0[i];
+                            B[0] = track_x1[i]; B[1] = track_y1[i]; B[2] = track_z1[i];
+
+                            DvTrajectoryDistance[elementNumber][0] =  LinePointDistance(A, B, DV);
+                            DvTrajectoryDistance[elementNumber][1] = i;
+
+                            cout<<"\t"<<DvTrajectoryDistance[elementNumber][0]<<"("<<i<<")"<<"  ";
+
+                            elementNumber++;
+                        }
+                    }
+
+                    // Sort the DvTrajectoryDistance elements in ascending order with respect to distances 
+                    ArraySorting(DvTrajectoryDistance, elementNumber);
+
+                    cout<<endl<<"element number: "<<elementNumber<<endl;
+                    for(int k=0; k<elementNumber; k++)
+                    {
+                        // The distance of third trajectory
+                        thirdTrajectoryDistance = DvTrajectoryDistance[k][0];
+
+                        if(thirdTrajectoryDistance <= Dcut1)
+                        {
+                            // The index of trajectory used
+                            usedLineIndex[countLine] = DvTrajectoryDistance[k][1];
+                            countLine++;
+                        }
+                    }
+                }
+                cout<<"Indexes Used: ";
+                for(int k=0; k<countLine; k++)
+                {
+                    cout<<usedLineIndex[k]<<" ";
+                }
+                cout<<endl;
 
                 //! Compute Errors
                 for(int k=0; k<*truthvtx_n; k++)
@@ -658,15 +771,11 @@ void new_myAnalyzeStage1()
                 error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
                 error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
 
-                //! Calculating the distance from DV of the third trajectory (if there is one)
-                if(*track_n>2)
-                {
-                    DvTrajectory = ThirdTrajectoryDistance(displacedVertexArray, *track_n, leastDistance[4], leastDistance[5]);
-                }
-
-            } while(leastdistance > Dcut2);
+            } while(leastdistance <= Dcut2 && countLine >= *track_n-1 && DVnumber < *truthvtx_n);
 
             event++;
+
+            cout<<"DVnumber: "<<DVnumber<<endl<<endl;
         }
     }
 
