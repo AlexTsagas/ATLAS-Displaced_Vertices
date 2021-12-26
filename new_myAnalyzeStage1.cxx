@@ -428,7 +428,7 @@ void new_myAnalyzeStage1()
     // For time capture
     clock_t tStart = clock();
 
-    // Histograms for Canvas 1
+    //! Histograms for Canvas 1 - Errors in XYZ Space and xy Plane !//
     TH1 *error_XYZ = new TH1D("error_XYZ", "Error in 3D Space;Error;Counts", 100, 0, 35);
     TH1 *error_XYZ_OneDV = new TH1D("error_XYZ_OneDV", "Error in 3D Space for One DV;Error;Counts", 100, 0, 35);
     TH1 *error_XYZ_TwoDVs = new TH1D("error_XYZ_TwoDVs", "Error in 3D Space for Two DVs;Error;Counts", 100, 0, 35);
@@ -436,7 +436,7 @@ void new_myAnalyzeStage1()
     TH1 *error_XY_OneDV = new TH1D("error_XY_OneDV", "Error in xy Plane for One DV;Error;Counts", 50, 0, 14);
     TH1 *error_XY_TwoDVs = new TH1D("error_XY_TwoDVs", "Error in xy Plane for Two DVs;Error;Counts", 50, 0, 14);
 
-    // Histograms for Canvas 2
+    //! Histograms for Canvas 2 - Number of DV_total and DV_close !//
     TH1 *performance = new TH1D("performance", "DV_reco that are Close to DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
     TH1 *clarity = new TH1D("clarity", "DV_reco Independent of Distance from DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
     TH1 *performance_OneDV = new TH1D("performance_OneDV", "DV_reco that are Close to DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
@@ -448,31 +448,27 @@ void new_myAnalyzeStage1()
     TTree* tree   = (TTree*)infile->Get("stage1");
     treereader.SetTree(tree);
 
-
     //! Search for DVs !//
     // Condition to decide if a trajectory belongs to a DV without constructing it 
-    double Dcut1 = 0.6;
+    double TrajectoryCut = 0.6;
     // Condition to decide if two trajectories form a DV
-    double Dcut2 = 0.15;
+    double DVcut = 0.15;
 
     // Line_i Points
     double a[3], b[3];
     // Line_j Points
     double aa[3], bb[3];
 
-    // Array that gathers the distances between line i and j and stores them in the first column.
-    // The second, third and forth columns store the coordinates of the displaced vertex resulting from
-    // line_i and line_j. The fifth and sixth store the i-th and j-th lines' indexes, respactively.
+    // First Column: Distance between line i and j.
+    // Second - Fourth Column: Coordinates of the displaced vertex resulting from line_i and line_j. 
+    // Fifth and Sixth Column: The i-th and j-th lines' indexes, respactively.
     double distance_ij[100][6];
-    // Greater than zero element counter for distance_ij array
-    int elementCount;
     // Counter for distance_ij array elemets
     int count_j;
 
-    // The minimum distance of all the possible pair of trajectories for every event
-    // The first column contains the least distance for every event. The other three store the coordinates
-    // of the displaced vertex resulting from the lines that produce the minimum distance. The fifth and 
-    // sixth store the i-th and j-th lines' indexes, respactively.
+    // First Column: the least distance for every event.
+    // Second - Fourth Column: Coordinates of the DV resulting from the lines that produce the minimum distance. 
+    // Fifth and Sixth Column: Lines indexes that produce the least distance.
     double leastDistance[6];
     double *least_Distance;
 
@@ -485,14 +481,15 @@ void new_myAnalyzeStage1()
     double displacedVertexArray[3];
     double *displaced_Vertex;
     // Coordinates for displaced vertex produced by line_i and line_j
+    // Used for application of the condition for the DVs
     double DV[3];
 
     // To apply the case for DVs
     double prodSum;
     // Limits
     double theta = 90;
-    double epsilon1 = cos(M_PI * theta/180);
-    double epsilon2 = cos(0);
+    double cos_min = cos(M_PI * theta/180);
+    double cos_max = cos(0);
 
 
     //! Errors in xy Plane !//
@@ -515,21 +512,21 @@ void new_myAnalyzeStage1()
     double minErrorXYZ[2];
     double *min_ErrorXYZ;
 
-    // Stores the indexes of the used DV_thuth
+    // Stores the indexes of the used DV_truth
     int usedErrorIndex[30];
     // Counter for usedErrorIndex array elements
-    int indexCounter;
+    int errorIndexCounter;
 
 
-    //! Distance from a DV to a different Trajectory than the two that constructed it !//
+    //! Distance from a DV to a different Trajectory from the two that constructed it !//
     // Points that define the trajectory
     double A[3], B[3];
     // First Column: Stores the distances between trajectory_i and DV
     // Second Column: Stores the index of the trajectory used, respectively
     double DvTrajectoryDistance[20][2];
     // DvTrajectoryDistance array element number
-    int elementNumber = 0;
-
+    int DvTrajectoryCounter;
+    // Distance of "third" trajectory to DV
     double thirdTrajectoryDistance;
 
 
@@ -537,7 +534,7 @@ void new_myAnalyzeStage1()
     // Dv Counter
     int DVnumber_Total;
     int DVnumber_Close;
-    // Conditions for DV_reco that are close
+    // Conditions for DV_reco that are "close"
     int limitXYZ = 35;
     int limitXY = 14;
 
@@ -552,15 +549,19 @@ void new_myAnalyzeStage1()
     // Event Loop
     while (treereader.Next()) 
     {
-        // Loop in events with 1  DV
+        // Loop in events with multiple DVs //TODO: (Not needed)
         if(*truthvtx_n>=1)
         {   
-            // Renew for every event
-            DVnumber_Total = 0; // total number of DV_reco
-            DVnumber_Close = 0; // number of DV_reco that respect the conditions to be "close"
-            countLine = 0; // element counter for usedLineIndex array
-            indexCounter = 0; // element counter for usedErrorIndex array
-            elementNumber = 0;
+            //! Renew for every event !//
+            // Total number of DV_reco
+            DVnumber_Total = 0; 
+            // Number of DV_reco that respect the conditions to be "close"
+            DVnumber_Close = 0; 
+            // element counter for usedLineIndex array
+            countLine = 0; 
+            // element counter for usedErrorIndex array
+            errorIndexCounter = 0; 
+
             // Initialize all values to -1 so as not to coincide with other events
             for(int k=0; k<30; k++)
             {
@@ -568,26 +569,32 @@ void new_myAnalyzeStage1()
                 usedErrorIndex[k] = -1;
             }
 
-            // Loop to find multiple DVs. If leastdistance <= Dcut2 
+            //! Loop to find multiple DVs !//
             do
             {
+                //! Renew for every DV !//
+                // DvTrajectoryDistance element counter
+                DvTrajectoryCounter = 0; //TODO: Check if goes before that loop (don't think so!)
+                // Array distance_ij element counter
                 count_j = 0;
-                thirdTrajectoryDistance = 1; // TODO: Check if this is needed
+                // Arrays errorXYZ and errorXY element counter
                 errorCounter = 0;
+
+                // Initialize all to -1 so as not to coincide with other DVs
                 for(int k=0; k<10; k++)
                 {
                     errorXYZ[k][0] = -1;
                     errorXYZ[k][1] = -1;
-                    // 
                     errorXY[k][0] = -1;
                     errorXY[k][1] = -1;
                 }
                 
-                //! Find the DV
+                //! Find the DV !//
                 for(i=0; i<*track_n; i++)
                 {
                     if(!IndexUsed(usedLineIndex, i))
                     {
+                        // line_i
                         a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
                         b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
 
@@ -595,27 +602,31 @@ void new_myAnalyzeStage1()
                         {  
                             if(!IndexUsed(usedLineIndex, j))
                             {
+                                // line_j
                                 aa[0] = track_x0[j]; aa[1] = track_y0[j]; aa[2] = track_z0[j];
                                 bb[0] = track_x1[j]; bb[1] = track_y1[j]; bb[2] = track_z1[j];
 
-                                // Displaced Vertex Coordinates
+                                // DV Coordinates formed by line_i and line_j
                                 displaced_Vertex = displacedVertex(a, b, aa, bb);
                                 DV[0] = displaced_Vertex[0];
                                 DV[1] = displaced_Vertex[1];
                                 DV[2] = displaced_Vertex[2];
 
-                                // Apply case for DVs
+                                // Apply case for DV
                                 prodSum = CaseDV(DV, a, b, aa, bb);
                                 
-                                // epsilon1 < cosΘ_i <= epsilon2, epsilon1 < cosΘ_j <= epsilon2, 
-                                if(prodSum>=2*epsilon1 && prodSum<2*epsilon2)
+                                // cos_min < cosΘ_i <= cos_max, cos_min < cosΘ_j <= cos_max, 
+                                if(prodSum>=2*cos_min && prodSum<2*cos_max)
                                 {
+                                    // Distance between line_i and line_j
                                     distance_ij[count_j][0] = distance(a, b, aa, bb);
 
+                                    // DV coordinates
                                     distance_ij[count_j][1] = DV[0];
                                     distance_ij[count_j][2] = DV[1];
                                     distance_ij[count_j][3] = DV[2];
 
+                                    // Used lines indexes
                                     distance_ij[count_j][4] = i;
                                     distance_ij[count_j][5] = j;
                                     
@@ -626,25 +637,23 @@ void new_myAnalyzeStage1()
                     }
                 }  
 
-                // The number of elements in distance_ij columns
-                elementCount = count_j;
-
                 // leastDistance[6] = (Distacne, DV_x, DV_y, DV_z, indexes_i, index_j)
-                least_Distance = minimumArrayValueSix(distance_ij, elementCount);
+                least_Distance = minimumArrayValueSix(distance_ij, count_j);
                 for(int k=0; k<6; k++)
                 {
                     leastDistance[k] = least_Distance[k]; 
                 }
 
-                //! Condition to decide if there is a DV
-                if(leastDistance[0] > Dcut2)
+                //! Condition to decide if there is a DV !//
+                if(leastDistance[0] > DVcut)
                 {
                     break;
                 }
 
+                // If it passes the previous condition it means that we have a DV
                 DVnumber_Total++;
                 
-                // Store line indexes that have been used to calculate a DV
+                // Store line indexes that have been used to calculate the DV
                 for(int k=4; k<6; k++)
                 {
                     usedLineIndex[countLine] = least_Distance[k];
@@ -664,7 +673,7 @@ void new_myAnalyzeStage1()
                     cout<<usedLineIndex[k]<<" ";
                 }
 
-                //! Condition to take into consideration multiple trajectories that might belong to the same DV
+                //! Condition to take into consideration multiple trajectories that might belong to the same DV !//
                 if(*track_n - countLine >= 1)
                 {
                     cout<<endl<<"Distances: ";
@@ -672,27 +681,30 @@ void new_myAnalyzeStage1()
                     {
                         if(!IndexUsed(usedLineIndex, i))
                         {
+                            // line_i
                             A[0] = track_x0[i]; A[1] = track_y0[i]; A[2] = track_z0[i];
                             B[0] = track_x1[i]; B[1] = track_y1[i]; B[2] = track_z1[i];
 
-                            DvTrajectoryDistance[elementNumber][0] =  LinePointDistance(A, B, DV);
-                            DvTrajectoryDistance[elementNumber][1] = i;
+                            // Distance from the Dv to line_i
+                            DvTrajectoryDistance[DvTrajectoryCounter][0] =  LinePointDistance(A, B, DV);
+                            // Index of line_i
+                            DvTrajectoryDistance[DvTrajectoryCounter][1] = i;
 
-                            cout<<DvTrajectoryDistance[elementNumber][0]<<"("<<i<<")"<<"  ";
+                            cout<<DvTrajectoryDistance[DvTrajectoryCounter][0]<<"("<<i<<")"<<"  ";
 
-                            elementNumber++;
+                            DvTrajectoryCounter++;
                         }
                     }
 
                     // Sort the DvTrajectoryDistance elements in ascending order with respect to distances 
-                    ArraySorting(DvTrajectoryDistance, elementNumber);
+                    ArraySorting(DvTrajectoryDistance, DvTrajectoryCounter);
 
-                    for(int k=0; k<elementNumber; k++)
+                    for(int k=0; k<DvTrajectoryCounter; k++)
                     {
                         // The distance of third trajectory
                         thirdTrajectoryDistance = DvTrajectoryDistance[k][0];
 
-                        if(thirdTrajectoryDistance <= Dcut1)
+                        if(thirdTrajectoryDistance <= TrajectoryCut)
                         {
                             // The index of trajectory used
                             usedLineIndex[countLine] = DvTrajectoryDistance[k][1];
@@ -704,18 +716,18 @@ void new_myAnalyzeStage1()
                         }
                     }
                 }
-                cout<<endl<<"Indexes Used: ";
+                cout<<endl<<"Indexes used after taking trajectories into account: ";
                 for(int k=0; k<countLine; k++)
                 {
                     cout<<usedLineIndex[k]<<" ";
                 }
                 cout<<endl;
 
-                //! Compute Errors
+                //! Compute Errors !//
                 if(DVnumber_Total <= *truthvtx_n)
                 {
                     cout<<"Error Index Used before loop: ";
-                    for(int k=0; k<indexCounter; k++)
+                    for(int k=0; k<errorIndexCounter; k++)
                     {
                         cout<<usedErrorIndex[k]<<" ";
                     }
@@ -746,17 +758,17 @@ void new_myAnalyzeStage1()
                     minErrorXYZ[1] = min_ErrorXYZ[1]; 
                     minErrorXY[1] = min_ErrorXY[1];
 
-                    usedErrorIndex[indexCounter] = minErrorXYZ[1];
-                    indexCounter++;
+                    usedErrorIndex[errorIndexCounter] = minErrorXYZ[1];
+                    errorIndexCounter++;
 
                     cout<<"Error Index Used: ";
-                    for(int k=0; k<indexCounter; k++)
+                    for(int k=0; k<errorIndexCounter; k++)
                     {
                         cout<<usedErrorIndex[k]<<" ";
                     }
                     cout<<"\tError: "<<minErrorXYZ[0]<<endl;
 
-                    //! Condition to calculate the DV_reco that respect limits
+                    //! Condition to calculate the DV_reco that respect limits !//
                     if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY)
                     {
                         DVnumber_Close++;
