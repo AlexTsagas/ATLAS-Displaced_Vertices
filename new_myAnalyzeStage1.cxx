@@ -393,41 +393,6 @@ double *minimumArrayValueTwo(double array[][2], int elementCount)
 }
 
 
-// Calculates the distance of the closest third trajectory to the DV and stores the
-// index of the trajectory used
-double *ThirdTrajectoryDistance(double *DV, int trackNumber, int *array)
-{
-    // Points that define the trajectory
-    double a[3], b[3];
-
-    // First Column: Stores the distances between trajectory_i and DV
-    // Second Column: Stores the index of the trajectory used, respectively
-    double DvTrajectoryDistance[20][2];
-    // DvTrajectoryDistance array element number
-    int elementNumber = 0;
-
-    for(int i=0; i<trackNumber; i++)
-    {
-        if(!IndexUsed(array, i))
-        {
-            // cout<<i<<endl;
-            a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
-            b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
-
-            DvTrajectoryDistance[elementNumber][0] =  LinePointDistance(a, b, DV);
-            DvTrajectoryDistance[elementNumber][1] = i;
-
-            elementNumber++;
-        }
-    }
-
-    double *Dv_Trajectory = minimumArrayValueTwo(DvTrajectoryDistance, elementNumber);
-    static double DvTrajectory[2] = {Dv_Trajectory[0], Dv_Trajectory[1]};
-
-    return DvTrajectory;
-}
-
-
 // Sorts the array elements in ascending order
 void ArraySorting(double array[][2], int elementCount)
 {
@@ -498,8 +463,6 @@ void new_myAnalyzeStage1()
     // sixth store the i-th and j-th lines' indexes, respactively.
     double leastDistance[6];
     double *least_Distance;
-    // The minimum of all possible pair of trajectories
-    double leastdistance;
 
     // Stores indexes of lines that have been used to calculate a DV
     int usedLineIndex[30];
@@ -603,7 +566,7 @@ void new_myAnalyzeStage1()
                     errorXY[k][0] = -1;
                     errorXY[k][1] = -1;
                 }
-
+                
                 //! Find the DV
                 for(i=0; i<*track_n; i++)
                 {
@@ -647,12 +610,6 @@ void new_myAnalyzeStage1()
                     }
                 }  
 
-                // cout<<event<<"("<<*track_n<<"). ";
-                // for(int k=0; k<count_j-1; k++)
-                // {
-                //     cout<<distance_ij[k][0]<<" ";
-                // }
-
                 // The number of elements in distance_ij columns
                 elementCount = count_j;
 
@@ -663,19 +620,13 @@ void new_myAnalyzeStage1()
                     leastDistance[k] = least_Distance[k]; 
                 }
 
-                // Condition to decide if there is a DV
-                leastdistance = leastDistance[0];
-
-                // cout<<endl<<event<<". Least Distance: "<<leastDistance[0];
-
-                if(leastdistance > Dcut2)
+                //! Condition to decide if there is a DV
+                if(leastDistance[0] > Dcut2)
                 {
                     break;
                 }
 
                 DVnumber++;
-
-                // cout<<endl<<event<<". DVnumber: "<<DVnumber;
                 
                 // Store line indexes that have been used to calculate a DV
                 for(int k=4; k<6; k++)
@@ -691,7 +642,7 @@ void new_myAnalyzeStage1()
 
 
                 cout<<"Event (Dv_truth: "<<*truthvtx_n<<"): "<<event;
-                cout<<"\nIndexes (Tracks: "<<*track_n<<"): ";
+                cout<<"\nIndexes before multiple trajectories (Tracks: "<<*track_n<<"): ";
                 for(int k=0; k<countLine; k++)
                 {
                     cout<<usedLineIndex[k]<<" ";
@@ -700,7 +651,7 @@ void new_myAnalyzeStage1()
                 //! Condition to take into consideration multiple trajectories that might belong to the same DV
                 if(*track_n - countLine >= 1)
                 {
-
+                    cout<<endl<<"Distances: ";
                     for(int i=0; i<*track_n; i++)
                     {
                         if(!IndexUsed(usedLineIndex, i))
@@ -711,7 +662,7 @@ void new_myAnalyzeStage1()
                             DvTrajectoryDistance[elementNumber][0] =  LinePointDistance(A, B, DV);
                             DvTrajectoryDistance[elementNumber][1] = i;
 
-                            cout<<"\t"<<DvTrajectoryDistance[elementNumber][0]<<"("<<i<<")"<<"  ";
+                            cout<<DvTrajectoryDistance[elementNumber][0]<<"("<<i<<")"<<"  ";
 
                             elementNumber++;
                         }
@@ -720,7 +671,6 @@ void new_myAnalyzeStage1()
                     // Sort the DvTrajectoryDistance elements in ascending order with respect to distances 
                     ArraySorting(DvTrajectoryDistance, elementNumber);
 
-                    cout<<endl<<"element number: "<<elementNumber<<endl;
                     for(int k=0; k<elementNumber; k++)
                     {
                         // The distance of third trajectory
@@ -734,7 +684,7 @@ void new_myAnalyzeStage1()
                         }
                     }
                 }
-                cout<<"Indexes Used: ";
+                cout<<endl<<"Indexes Used: ";
                 for(int k=0; k<countLine; k++)
                 {
                     cout<<usedLineIndex[k]<<" ";
@@ -742,40 +692,65 @@ void new_myAnalyzeStage1()
                 cout<<endl;
 
                 //! Compute Errors
-                for(int k=0; k<*truthvtx_n; k++)
+                if(DVnumber <= *truthvtx_n)
                 {
-                    if(!IndexUsed(usedErrorIndex, k))
+                    cout<<"Error Index Used before loop: ";
+                    for(int k=0; k<indexCounter; k++)
                     {
-                        // Error of DV_truth[k] and DV_reco
-                        errorXYZ[errorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[k], truthvtx_y[k], truthvtx_z[k]); 
-                        errorXY[errorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], 0, truthvtx_x[k], truthvtx_y[k], 0); 
-                        // Index of DV_truth used
-                        errorXYZ[errorCounter][1] = k;
-                        errorXY[errorCounter][1] = k;
-
-                        errorCounter++;
+                        cout<<usedErrorIndex[k]<<" ";
                     }
+                    cout<<endl;
+                    cout<<"k = ";
+                    for(int k=0; k<*truthvtx_n; k++)
+                    {
+                        if(!IndexUsed(usedErrorIndex, k))
+                        {
+                            // Error of DV_truth[k] and DV_reco
+                            errorXYZ[errorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[k], truthvtx_y[k], truthvtx_z[k]); 
+                            errorXY[errorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], 0, truthvtx_x[k], truthvtx_y[k], 0); 
+                            // Index of DV_truth used
+                            errorXYZ[errorCounter][1] = k;
+                            errorXY[errorCounter][1] = k;
+                            cout<<k<<" ";
+
+                            errorCounter++;
+                        }
+                    }
+                    cout<<endl;
+                    min_ErrorXYZ = minimumArrayValueTwo(errorXYZ, errorCounter);
+                    min_ErrorXY = minimumArrayValueTwo(errorXY, errorCounter);
+                    // Minimum Error
+                    minErrorXYZ[0] = min_ErrorXYZ[0];  
+                    minErrorXY[0] = min_ErrorXY[0]; 
+                    // Index of DV_truth used
+                    minErrorXYZ[1] = min_ErrorXYZ[1]; 
+                    minErrorXY[1] = min_ErrorXY[1];
+
+                    usedErrorIndex[indexCounter] = minErrorXYZ[1];
+                    indexCounter++;
+
+                    cout<<"Error Index Used: ";
+                    for(int k=0; k<indexCounter; k++)
+                    {
+                        cout<<usedErrorIndex[k]<<" ";
+                    }
+                    cout<<"\tError: "<<minErrorXYZ[0]<<endl;
+
+                    error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
+                    error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
+
+                    cout<<endl;
                 }
-
-                min_ErrorXYZ = minimumArrayValueTwo(errorXYZ, 10);
-                minErrorXYZ[0] = min_ErrorXYZ[0]; // Minimum Error 
-                minErrorXYZ[1] = min_ErrorXYZ[1]; // Index of DV_truth used
-
-                min_ErrorXY = minimumArrayValueTwo(errorXY, 10);
-                minErrorXY[0] = min_ErrorXY[0]; // Minimum Error 
-                minErrorXY[1] = min_ErrorXY[1]; // Index of DV_truth used
-
-                usedErrorIndex[indexCounter] = minErrorXYZ[1];
-                indexCounter++;
-
-                error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
-                error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
-
-            } while(leastdistance <= Dcut2 && countLine >= *track_n-1 && DVnumber < *truthvtx_n);
+            } while(countLine <= *track_n-1);
 
             event++;
 
             cout<<"DVnumber: "<<DVnumber<<endl<<endl;
+            for(int k=0; k<150; k++)
+            {
+                cout<<"~";
+            }
+            cout<<endl<<endl;
         }
     }
 
