@@ -445,9 +445,9 @@ void new_myAnalyzeStage1()
     TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_truth - Two DVs;DV_truth - DV_reco;Counts", 100, -4, 4);
 
     //! Histograms for Canvas 3 - Number of DV_reco in relation to DV_truth !//
-    TH2D *DVNumber_relative = new TH2D("DVNumber_relative", "Comparison between the Number of DV_truth and DV_reco;DVcut;(DV_truth - DV_reco);Counts", 50, 0, 1.01, 100, -4, +4);
-    TH2D *DVNumber_relative_OneDV = new TH2D("DVNumber_relative_OneDV", "Comparison between the Number of DV_truth and DV_reco - One DV;DVcut;(DV_truth - DV_reco);Counts", 50, 0, 1.3, 100, -4, +4);
-    TH2D *DVNumber_relative_TwoDVs = new TH2D("DVNumber_relative_TwoDVs", "Comparison between the Number of DV_truth and DV_reco - Two DVs;DVcut;(DV_truth - DV_reco);Counts", 50, 0, 1.3, 100, -4, +4);
+    TH2D *DVNumber_relative = new TH2D("DVNumber_relative", "Comparison between the Number of DV_truth and DV_reco;TrajectoryCut;(DV_truth - DV_reco);Counts", 50, 0, 10.1, 100, -4, +4);
+    TH2D *DVNumber_relative_OneDV = new TH2D("DVNumber_relative_OneDV", "Comparison between the Number of DV_truth and DV_reco - One DV;TrajectoryCut;(DV_truth - DV_reco);Counts", 50, 0, 10.1, 100, -4, +4);
+    TH2D *DVNumber_relative_TwoDVs = new TH2D("DVNumber_relative_TwoDVs", "Comparison between the Number of DV_truth and DV_reco - Two DVs;TrajectoryCut;(DV_truth - DV_reco);Counts", 50, 0, 10.1, 100, -4, +4);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -457,7 +457,7 @@ void new_myAnalyzeStage1()
     // Condition to decide if a trajectory belongs to a DV without constructing it 
     double TrajectoryCut = 0.6;
     // Condition to decide if two trajectories form a DV
-    double DVcut = 0.08;
+    double DVcut = 0.15;
 
     // Line_i Points
     double a[3], b[3];
@@ -555,11 +555,11 @@ void new_myAnalyzeStage1()
     while (treereader.Next()) 
     {
         // Test DVcut values 
-        DVcut = 0.005;
+        TrajectoryCut = 0.05;
 
-        for(int step = 0; step<200; step++)
+        for(int step = 0; step<=200; step++)
         {
-            DVcut += 0.005;
+            TrajectoryCut += 0.05;
 
             // Loop in events with multiple DVs //TODO: (Not needed)
             if(*truthvtx_n>=1)
@@ -819,18 +819,18 @@ void new_myAnalyzeStage1()
 
                 //! Takes into consideration all the DVs !//
                 clarity->Fill(*truthvtx_n-DVnumber_Total);
-                DVNumber_relative->Fill(DVcut, *truthvtx_n-DVnumber_Total);
+                DVNumber_relative->Fill(TrajectoryCut, *truthvtx_n-DVnumber_Total);
                 // One DV
                 if(*truthvtx_n == 1)
                 {   
                     clarity_OneDV->Fill(*truthvtx_n-DVnumber_Total);
-                    DVNumber_relative_OneDV->Fill(DVcut, *truthvtx_n-DVnumber_Total);
+                    DVNumber_relative_OneDV->Fill(TrajectoryCut, *truthvtx_n-DVnumber_Total);
                 }
                 // Two DV
                 if(*truthvtx_n == 2)
                 {   
                     clarity_TwoDVs->Fill(*truthvtx_n-DVnumber_Total);
-                    DVNumber_relative_TwoDVs->Fill(DVcut, *truthvtx_n-DVnumber_Total);
+                    DVNumber_relative_TwoDVs->Fill(TrajectoryCut, *truthvtx_n-DVnumber_Total);
                 }
 
                 event++;
