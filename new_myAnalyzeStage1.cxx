@@ -445,9 +445,9 @@ void new_myAnalyzeStage1()
     TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_truth - Two DVs;DV_truth - DV_reco;Counts", 100, -4, 4);
 
     //! To Check cos_max Influence in Errors and Performance-Clarity
-    TH2D *error_XYZ_3D = new TH2D("error_XYZ_3D", "Error in 3D Space;theta;Error;Counts", 10, 0, 90, 100, 0, 35);
-    TH2D *performance_3D = new TH2D("performance_3D", "DV_reco that are Close to DV_truth;theta;DV_truth - DV_reco;Counts", 10, 0 ,90, 100, -4, 4);
-    TH2D *clarity_3D = new TH2D("clarity_3D", "DV_reco Independent of Distance from DV_truth;theta;DV_truth - DV_reco;Counts", 10, 0, 90, 100, -4, 4);
+    TH2D *error_XYZ_3D = new TH2D("error_XYZ_3D", "Error in 3D Space;theta;Error;Counts", 45, 0, 90, 100, 0, 35);
+    TH2D *performance_3D = new TH2D("performance_3D", "DV_reco that are Close to DV_truth;theta;DV_truth - DV_reco;Counts", 45, 0 ,90, 100, -4, 4);
+    TH2D *clarity_3D = new TH2D("clarity_3D", "DV_reco Independent of Distance from DV_truth;theta;DV_truth - DV_reco;Counts", 45, 0, 90, 100, -4, 4);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -557,9 +557,10 @@ void new_myAnalyzeStage1()
         // Test for theta variations
         theta = 0;
 
-        for(int k=0; k<50; k++)
+        for(int k=0; k<=45; k++)
         {
             theta += 2;
+            cos_min = cos(M_PI * theta/180);
 
             // Loop in events with multiple DVs //TODO: (Not needed)
             if(*truthvtx_n>=1)
