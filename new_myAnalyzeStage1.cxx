@@ -444,10 +444,10 @@ void new_myAnalyzeStage1()
     TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_truth - Two DVs;DV_truth - DV_reco;Counts", 100, -4, 4);
     TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_truth - Two DVs;DV_truth - DV_reco;Counts", 100, -4, 4);
 
-    //! Histograms for Canvas 3 - Number of DV_reco in relation to DV_truth !//
-    TH2D *DVNumber_relative = new TH2D("DVNumber_relative", "Comparison between the Number of DV_truth and DV_reco;TrajectoryCut;(DV_truth - DV_reco);Counts", 50, 0, 10.1, 100, -4, +4);
-    TH2D *DVNumber_relative_OneDV = new TH2D("DVNumber_relative_OneDV", "Comparison between the Number of DV_truth and DV_reco - One DV;TrajectoryCut;(DV_truth - DV_reco);Counts", 50, 0, 10.1, 100, -4, +4);
-    TH2D *DVNumber_relative_TwoDVs = new TH2D("DVNumber_relative_TwoDVs", "Comparison between the Number of DV_truth and DV_reco - Two DVs;TrajectoryCut;(DV_truth - DV_reco);Counts", 50, 0, 10.1, 100, -4, +4);
+    //! To Check cos_max Influence in Errors and Performance-Clarity
+    TH2D *error_XYZ_3D = new TH2D("error_XYZ_3D", "Error in 3D Space;theta;Error;Counts", 10, 0, 90, 100, 0, 35);
+    TH2D *performance_3D = new TH2D("performance_3D", "DV_reco that are Close to DV_truth;theta;DV_truth - DV_reco;Counts", 10, 0 ,90, 100, -4, 4);
+    TH2D *clarity_3D = new TH2D("clarity_3D", "DV_reco Independent of Distance from DV_truth;theta;DV_truth - DV_reco;Counts", 10, 0, 90, 100, -4, 4);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -455,7 +455,7 @@ void new_myAnalyzeStage1()
 
     //! Search for DVs !//
     // Condition to decide if a trajectory belongs to a DV without constructing it 
-    double TrajectoryCut = 0.6;
+    double TrajectoryCut = 0.5;
     // Condition to decide if two trajectories form a DV
     double DVcut = 0.15;
 
@@ -554,12 +554,12 @@ void new_myAnalyzeStage1()
     // Event Loop
     while (treereader.Next()) 
     {
-        // Test DVcut values 
-        TrajectoryCut = 0.05;
+        // Test for theta variations
+        theta = 0;
 
-        for(int step = 0; step<=200; step++)
+        for(int k=0; k<50; k++)
         {
-            TrajectoryCut += 0.05;
+            theta += 2;
 
             // Loop in events with multiple DVs //TODO: (Not needed)
             if(*truthvtx_n>=1)
@@ -612,7 +612,7 @@ void new_myAnalyzeStage1()
 
                             for(j=i+1; j<*track_n; j++)
                             {  
-                                if(!IndexUsed(usedLineIndex, j))
+                                if(!IndexUsed(usedLineIndex, j)) 
                                 {
                                     // line_j
                                     aa[0] = track_x0[j]; aa[1] = track_y0[j]; aa[2] = track_z0[j];
@@ -677,18 +677,9 @@ void new_myAnalyzeStage1()
                     displacedVertexArray[1] = leastDistance[2]; // DV_y
                     displacedVertexArray[2] = leastDistance[3]; // DV_z
 
-
-                    cout<<"Event (Dv_truth: "<<*truthvtx_n<<"): "<<event;
-                    cout<<"\nIndexes before multiple trajectories (Tracks: "<<*track_n<<"): ";
-                    for(int k=0; k<countLine; k++)
-                    {
-                        cout<<usedLineIndex[k]<<" ";
-                    }
-
                     //! Condition to take into consideration multiple trajectories that might belong to the same DV !//
                     if(*track_n - countLine >= 1)
                     {
-                        cout<<endl<<"Distances: ";
                         for(int i=0; i<*track_n; i++)
                         {
                             if(!IndexUsed(usedLineIndex, i))
@@ -701,8 +692,6 @@ void new_myAnalyzeStage1()
                                 DvTrajectoryDistance[DvTrajectoryCounter][0] =  LinePointDistance(A, B, DV);
                                 // Index of line_i
                                 DvTrajectoryDistance[DvTrajectoryCounter][1] = i;
-
-                                cout<<DvTrajectoryDistance[DvTrajectoryCounter][0]<<"("<<i<<")"<<"  ";
 
                                 DvTrajectoryCounter++;
                             }
@@ -728,23 +717,10 @@ void new_myAnalyzeStage1()
                             }
                         }
                     }
-                    cout<<endl<<"Indexes used after taking trajectories into account: ";
-                    for(int k=0; k<countLine; k++)
-                    {
-                        cout<<usedLineIndex[k]<<" ";
-                    }
-                    cout<<endl;
 
                     //! Compute Errors !//
                     if(DVnumber_Total <= *truthvtx_n)
                     {
-                        cout<<"Error Index Used before loop: ";
-                        for(int k=0; k<errorIndexCounter; k++)
-                        {
-                            cout<<usedErrorIndex[k]<<" ";
-                        }
-                        cout<<endl;
-                        cout<<"k = ";
                         for(int k=0; k<*truthvtx_n; k++)
                         {
                             if(!IndexUsed(usedErrorIndex, k))
@@ -755,12 +731,11 @@ void new_myAnalyzeStage1()
                                 // Index of DV_truth used
                                 errorXYZ[errorCounter][1] = k;
                                 errorXY[errorCounter][1] = k;
-                                cout<<k<<" ";
 
                                 errorCounter++;
                             }
                         }
-                        cout<<endl;
+
                         min_ErrorXYZ = minimumArrayValueTwo(errorXYZ, errorCounter);
                         min_ErrorXY = minimumArrayValueTwo(errorXY, errorCounter);
                         // Minimum Error
@@ -773,13 +748,6 @@ void new_myAnalyzeStage1()
                         usedErrorIndex[errorIndexCounter] = minErrorXYZ[1];
                         errorIndexCounter++;
 
-                        cout<<"Error Index Used: ";
-                        for(int k=0; k<errorIndexCounter; k++)
-                        {
-                            cout<<usedErrorIndex[k]<<" ";
-                        }
-                        cout<<"\tError: "<<minErrorXYZ[0]<<endl;
-
                         //! Condition to calculate the DV_reco that respect limits !//
                         if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY)
                         {
@@ -787,6 +755,7 @@ void new_myAnalyzeStage1()
                         }
 
                         error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
+                        error_XYZ_3D->Fill(theta, minErrorXYZ[0]);
                         error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
 
                         if(*truthvtx_n == 1)
@@ -799,13 +768,12 @@ void new_myAnalyzeStage1()
                             error_XYZ_TwoDVs->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
                             error_XY_TwoDVs->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
                         }
-
-                        cout<<endl;
                     }
                 } while(countLine <= *track_n-2);
 
-                //! Takes into consideration the DVs that respect limits !//
+                // Takes into consideration the DVs that respect limits
                 performance->Fill(*truthvtx_n-DVnumber_Close);
+                performance_3D->Fill(theta, *truthvtx_n-DVnumber_Close);
                 // One DV
                 if(*truthvtx_n == 1)
                 {
@@ -817,34 +785,22 @@ void new_myAnalyzeStage1()
                     performance_TwoDVs->Fill(*truthvtx_n-DVnumber_Close);
                 }
 
-                //! Takes into consideration all the DVs !//
+                // Takes into consideration all the DVs
                 clarity->Fill(*truthvtx_n-DVnumber_Total);
-                DVNumber_relative->Fill(TrajectoryCut, *truthvtx_n-DVnumber_Total);
+                clarity_3D->Fill(theta, *truthvtx_n-DVnumber_Total);
                 // One DV
                 if(*truthvtx_n == 1)
                 {   
                     clarity_OneDV->Fill(*truthvtx_n-DVnumber_Total);
-                    DVNumber_relative_OneDV->Fill(TrajectoryCut, *truthvtx_n-DVnumber_Total);
                 }
                 // Two DV
                 if(*truthvtx_n == 2)
                 {   
                     clarity_TwoDVs->Fill(*truthvtx_n-DVnumber_Total);
-                    DVNumber_relative_TwoDVs->Fill(TrajectoryCut, *truthvtx_n-DVnumber_Total);
                 }
 
                 event++;
-
-                cout<<"DVnumber_Total: "<<DVnumber_Total<<endl;
-                cout<<"DVnumber_Close: "<<DVnumber_Close<<endl<<endl;
-                for(int k=0; k<150; k++)
-                {
-                    cout<<"~";
-                }
-                cout<<endl<<endl;
             }
-
-        cout<<endl<<"DVcut = "<<DVcut<<endl;
         }
     }
 
@@ -924,26 +880,25 @@ void new_myAnalyzeStage1()
 
     c2->Print();
 
-    // Canvas 3
-    TCanvas *c3 = new TCanvas("c3", "DV_truth and DV-reco Relative Number", 500, 900);
-    c3->Divide(1,3);
+    TCanvas *c3 = new TCanvas("c3", "Errors - Performance and Clarity - Variable: Theta", 1200, 400);
+    c3->Divide(3,1);
 
     gStyle->SetOptStat(1111111);
 
     c3->cd(1);
-    DVNumber_relative->SetFillColor(kAzure+1);
-    DVNumber_relative->SetMinimum(0);
-    DVNumber_relative->Draw("LEGO1");
+    error_XYZ_3D->SetFillColor(kOrange+7);
+    error_XYZ_3D->SetMinimum(0);
+    error_XYZ_3D->Draw("LEGO1");
 
     c3->cd(2);
-    DVNumber_relative_OneDV->SetFillColor(kRed);
-    DVNumber_relative_OneDV->SetMinimum(0);
-    DVNumber_relative_OneDV->Draw("LEGO1");
+    performance_3D->SetFillColor(kAzure+1);
+    performance_3D->SetMinimum(0);
+    performance_3D->Draw("LEGO1");
 
     c3->cd(3);
-    DVNumber_relative_TwoDVs->SetFillColor(kGreen);
-    DVNumber_relative_TwoDVs->SetMinimum(0);
-    DVNumber_relative_TwoDVs->Draw("LEGO1");
+    clarity_3D->SetFillColor(kRed);
+    clarity_3D->SetMinimum(0);
+    clarity_3D->Draw("LEGO1");
 
     c3->Print();
 
