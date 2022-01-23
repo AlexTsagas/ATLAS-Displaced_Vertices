@@ -316,8 +316,11 @@ double minimumValuefromArrayElements(double *array, int elementCount)
 
 // Cases to choose if a point is a DV or not with respect to relative angles between the lines which
 // are defined by DV-A, DV-AA and DV-B, DV-BB. Returns the sum of angles in degrees.
-double CaseDV_RelativeAngles(double *DV, double *a, double *b, double *aa, double *bb)
+double *CaseDV_RelativeAngles(double *DV, double *a, double *b, double *aa, double *bb)
 {
+    // Relative Angles
+    static double theta[2];
+
     // Relative unit vector from Dv to a
     double *unitRel_DVa = relativeUnitVector(DV, a);
     double unitRelDVa[3] = {unitRel_DVa[0], unitRel_DVa[1], unitRel_DVa[2]};
@@ -339,11 +342,11 @@ double CaseDV_RelativeAngles(double *DV, double *a, double *b, double *aa, doubl
     // cos(θ_j) where θ_j is the angle between DVaa and DVbb vectors
     double dotProd_j = dotProduct(unitRelDVaa, unitRelDVbb);
 
-    // Θ_i and Θ_j in degress
-    double theta_i = acos(dotProd_i) * 180.0 / M_PI;
-    double theta_j = acos(dotProd_j) * 180.0 / M_PI;
+    // Θ_i and Θ_j in degrees
+    theta[0] = acos(dotProd_i) * 180.0 / M_PI;
+    theta[1] = acos(dotProd_j) * 180.0 / M_PI;
 
-    return theta_i + theta_j;
+    return theta;
 }
 
 
@@ -435,8 +438,11 @@ double DistanceXYPlane(double x1, double y1, double x2, double y2)
 
 // Cases to choose if a point is a DV or not with respect to angles between the lines which
 // are defined by DV-Center, A-B, AA-BB. Returns the sum of angles in degrees.
-double CaseDV_Angles(double *DV, double *a, double *b, double *aa, double *bb)
+double *CaseDV_Angles(double *DV, double *a, double *b, double *aa, double *bb)
 {
+    static double theta[2];
+
+    // Center of Detector
     double center[3] = {0,0,0};
 
     // Relative unit vector from Center to DV
@@ -457,10 +463,10 @@ double CaseDV_Angles(double *DV, double *a, double *b, double *aa, double *bb)
     double dotProd_j = dotProduct(unitCenterDv, unitAaBb);
 
     // Θ_i and Θ_j in degress
-    double theta_i = acos(dotProd_i) * 180.0 / M_PI;
-    double theta_j = acos(dotProd_j) * 180.0 / M_PI;
+    theta[0] = acos(dotProd_i) * 180.0 / M_PI;
+    theta[1] = acos(dotProd_j) * 180.0 / M_PI;
 
-    return theta_i + theta_j;
+    return theta;
 }
 
 
@@ -480,12 +486,17 @@ void new_myAnalyzeStage1()
     TH1 *error_XY_TwoDVs = new TH1D("error_XY_TwoDVs", "Error in xy Plane for Two DVs;Error;Counts", 50, 0, 14);
 
     //! Histograms for Canvas 2 - Number of DV_total and DV_close !//
+    TH1 *clarity = new TH1D("clarity", "DV_reco Independent of Distance from DV_truth;DV_truth - DV_reco;Counts", 100, -5, 5);
     TH1 *performance = new TH1D("performance", "DV_reco that are Close to DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
-    TH1 *clarity = new TH1D("clarity", "DV_reco Independent of Distance from DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
-    TH1 *performance_OneDV = new TH1D("performance_OneDV", "DV_reco that are Close to DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
-    TH1 *clarity_OneDV = new TH1D("clarity_OneDV", "DV_reco Independent of Distance from DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
-    TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
-    TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *OffErrorPerformance = new TH1D("OffErrorPerformance", "DV_reco Out of Limit Territory;DV_truth - DV_reco;Counts", 100, -4, 4);
+    // One DV
+    TH1 *clarity_OneDV = new TH1D("clarity_OneDV", "DV_reco Independent of Distance from DV_truth -One DV;DV_truth - DV_reco;Counts", 100, -5, 5);
+    TH1 *performance_OneDV = new TH1D("performance_OneDV", "DV_reco that are Close to DV_truth - One DV;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *OffErrorPerformance_OneDV = new TH1D("OffErrorPerformance_OneDv", "DV_reco Out of Limit Territory - One DV;DV_truth - DV_reco;Counts", 100, -4, 4);
+    // Two DVs
+    TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_truth - Two DVs;DV_truth - DV_reco;Counts", 100, -5, 5);
+    TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_truth - Two DVs;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *OffErrorPerformance_TwoDVs = new TH1D("OffErrorPerformance_TwoDvs", "DV_reco Out of Limit Territory - Two DVs;DV_truth - DV_reco;Counts", 100, -4, 4);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -529,7 +540,8 @@ void new_myAnalyzeStage1()
     double DVcut = 0.15;
 
     // Relative Angles
-    double AngleSumRel;
+    double *Angles_Rel;
+    double AnglesRel[2];
     // Limits
     double thetaRel_max = 45;
     double thetaRel_min = 0;
@@ -546,7 +558,8 @@ void new_myAnalyzeStage1()
     double Rmin_j;
 
     // Angles
-    double AngleSum;
+    double *Angles_p;
+    double Angles[2];
     // Limits
     double theta_max = 90;
     double theta_min = 0;
@@ -593,6 +606,7 @@ void new_myAnalyzeStage1()
     // Dv Counter
     int DVnumber_Total;
     int DVnumber_Close;
+    int DVnumber_Far;
     // Conditions for DV_reco that are "close"
     int limitXYZ = 35;
     int limitXY = 14;
@@ -614,8 +628,10 @@ void new_myAnalyzeStage1()
             //! Renew for every event !//
             // Total number of DV_reco
             DVnumber_Total = 0; 
-            // Number of DV_reco that respect the conditions to be "close"
+            // Number of DV_reco that respect the limits in errors
             DVnumber_Close = 0; 
+            // Number of DV_reco that are out of error limits
+            DVnumber_Far = 0; 
             // element counter for usedLineIndex array
             countLine = 0; 
             // element counter for usedErrorIndex array
@@ -633,7 +649,7 @@ void new_myAnalyzeStage1()
             {
                 //! Renew for every DV !//
                 // DvTrajectoryDistance element counter
-                DvTrajectoryCounter = 0; //TODO: Check if goes before that loop (Ι doubt it!)
+                DvTrajectoryCounter = 0;
                 // Array distance_ij element counter
                 count_j = 0;
                 // Arrays errorXYZ and errorXY element counter
@@ -673,7 +689,8 @@ void new_myAnalyzeStage1()
 
                                 //! Application of Restrictions !//
                                 // Relative Angle 
-                                AngleSumRel = CaseDV_RelativeAngles(DV, a, b, aa, bb);
+                                Angles_Rel = CaseDV_RelativeAngles(DV, a, b, aa, bb);
+                                AnglesRel[0] = Angles_Rel[0]; AnglesRel[1] = Angles_Rel[1]; 
 
                                 // Distances from Detector's Center
                                 R_DV = DistanceXYPlane(0, 0, DV[0], DV[1]);
@@ -687,10 +704,11 @@ void new_myAnalyzeStage1()
                                 Rmin_j = minimumValuefromArrayElements(R_j, 2);
 
                                 // Angles - Fas Remark
-                                AngleSum = CaseDV_Angles(DV, a, b, aa, bb);
+                                Angles_p = CaseDV_Angles(DV, a, b, aa, bb);
+                                Angles[0] = Angles_p[0]; Angles[1] = Angles_p[1];
                                 
-                                //? The Remark: && AngleSum>=2*theta_min && AngleSum<=2*theta_max && R_DV<=Rmin_i && R_DV<=Rmin_j
-                                if(AngleSumRel>=2*thetaRel_min && AngleSumRel<=2*thetaRel_max)
+                                //? The Remark: &&& Angles[0]>=theta_min && Angles[0]<=theta_max && Angles[1]>=theta_min && Angles[1]<=theta_max && R_DV<=Rmin_i && R_DV<=Rmin_j
+                                if(AnglesRel[0]>=thetaRel_min && AnglesRel[0]<=thetaRel_max && AnglesRel[1]>=thetaRel_min && AnglesRel[1]<=thetaRel_max)
                                 {
                                     // Distance between line_i and line_j
                                     distance_ij[count_j][0] = distance(a, b, aa, bb);
@@ -814,6 +832,10 @@ void new_myAnalyzeStage1()
                     {
                         DVnumber_Close++;
                     }
+                    else
+                    {
+                        DVnumber_Far++;
+                    }
 
                     error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
                     error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
@@ -829,7 +851,21 @@ void new_myAnalyzeStage1()
                         error_XY_TwoDVs->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
                     }
                 }
+
             } while(countLine <= *track_n-2);
+
+            // Takes into consideration all the DVs
+            clarity->Fill(*truthvtx_n-DVnumber_Total);
+            // One DV
+            if(*truthvtx_n == 1)
+            {   
+                clarity_OneDV->Fill(*truthvtx_n-DVnumber_Total);
+            }
+            // Two DV
+            if(*truthvtx_n == 2)
+            {   
+                clarity_TwoDVs->Fill(*truthvtx_n-DVnumber_Total);
+            }
 
             // Takes into consideration the DVs that respect limits
             performance->Fill(*truthvtx_n-DVnumber_Close);
@@ -844,17 +880,17 @@ void new_myAnalyzeStage1()
                 performance_TwoDVs->Fill(*truthvtx_n-DVnumber_Close);
             }
 
-            // Takes into consideration all the DVs
-            clarity->Fill(*truthvtx_n-DVnumber_Total);
+            // Takes into consideration the DVs that do not respect the limits
+            OffErrorPerformance->Fill(*truthvtx_n-DVnumber_Far);
             // One DV
             if(*truthvtx_n == 1)
             {   
-                clarity_OneDV->Fill(*truthvtx_n-DVnumber_Total);
+                OffErrorPerformance_OneDV->Fill(*truthvtx_n-DVnumber_Far);
             }
             // Two DV
             if(*truthvtx_n == 2)
             {   
-                clarity_TwoDVs->Fill(*truthvtx_n-DVnumber_Total);
+                OffErrorPerformance_TwoDVs->Fill(*truthvtx_n-DVnumber_Far);
             }
 
             event++;
@@ -900,42 +936,59 @@ void new_myAnalyzeStage1()
     c1->Print();
 
     // Canvas 2
-    TCanvas *c2 = new TCanvas("c2", "Performance and Clarity", 800, 900);
-    c2->Divide(2,3);
+    TCanvas *c2 = new TCanvas("c2", "Performance and Clarity", 1200, 900);
+    c2->Divide(3,3);
 
     gStyle->SetOptStat(1111111);
 
     c2->cd(1);
-    performance->SetFillColor(kAzure+1);
-    performance->SetMinimum(0);
-    performance->Draw();
-
-    c2->cd(2);
     clarity->SetFillColor(kRed);
     clarity->SetMinimum(0);
     clarity->Draw();
 
+    c2->cd(2);
+    performance->SetFillColor(kAzure+1);
+    performance->SetMinimum(0);
+    performance->Draw();
+
     c2->cd(3);
-    performance_OneDV->SetFillColor(kOrange+7);
-    performance_OneDV->SetMinimum(0);
-    performance_OneDV->Draw();
+    OffErrorPerformance->SetFillColor(kGreen);
+    OffErrorPerformance->SetMinimum(0);
+    OffErrorPerformance->Draw();
 
     c2->cd(4);
-    clarity_OneDV->SetFillColor(kGreen);
+    clarity_OneDV->SetFillColor(kRed);
     clarity_OneDV->SetMinimum(0);
     clarity_OneDV->Draw();
 
     c2->cd(5);
-    performance_TwoDVs->SetFillColor(kMagenta);
-    performance_TwoDVs->SetMinimum(0);
-    performance_TwoDVs->Draw();
+    performance_OneDV->SetFillColor(kAzure+1);
+    performance_OneDV->SetMinimum(0);
+    performance_OneDV->Draw();
 
     c2->cd(6);
-    clarity_TwoDVs->SetFillColor(kYellow);
+    OffErrorPerformance_OneDV->SetFillColor(kGreen);
+    OffErrorPerformance_OneDV->SetMinimum(0);
+    OffErrorPerformance_OneDV->Draw();
+
+    c2->cd(7);
+    clarity_TwoDVs->SetFillColor(kRed);
     clarity_TwoDVs->SetMinimum(0);
     clarity_TwoDVs->Draw();
 
+    c2->cd(8);
+    performance_TwoDVs->SetFillColor(kAzure+1);
+    performance_TwoDVs->SetMinimum(0);
+    performance_TwoDVs->Draw();
+
+    c2->cd(9);
+    OffErrorPerformance_TwoDVs->SetFillColor(kGreen);
+    OffErrorPerformance_TwoDVs->SetMinimum(0);
+    OffErrorPerformance_TwoDVs->Draw();
+
     c2->Print();
+
+    cout<<endl<<"Events: "<<event<<endl;
 
     // Print time needed for the program to complete
     printf("\nTime taken: %.2fs\n\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
