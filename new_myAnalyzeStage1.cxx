@@ -104,7 +104,7 @@ double *relativeUnitVector(double *a, double *b)
 }
 
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 // Readers to access the data from .root file
 TTreeReader treereader;
@@ -125,7 +125,7 @@ TTreeReaderArray<Double_t> truthvtx_x = {treereader, "truthvtx.x"};     // x coo
 TTreeReaderArray<Double_t> truthvtx_y = {treereader, "truthvtx.y"};     // y coordinate
 TTreeReaderArray<Double_t> truthvtx_z = {treereader, "truthvtx.z"};     // z coordinate
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
 // Input two points of the line, a and b. Ouput a pointer to the first element of
@@ -470,7 +470,7 @@ double *CaseDV_Angles(double *DV, double *a, double *b, double *aa, double *bb)
 }
 
 
-// ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ //
+// ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ //
 
 void new_myAnalyzeStage1()
 {
@@ -486,17 +486,20 @@ void new_myAnalyzeStage1()
     TH1 *error_XY_TwoDVs = new TH1D("error_XY_TwoDVs", "Error in xy Plane for Two DVs;Error;Counts", 50, 0, 14);
 
     //! Histograms for Canvas 2 - Number of DV_total and DV_close !//
-    TH1 *clarity = new TH1D("clarity", "DV_reco Independent of Distance from DV_truth;DV_truth - DV_reco;Counts", 100, -5, 5);
-    TH1 *performance = new TH1D("performance", "DV_reco that are Close to DV_truth;DV_truth - DV_reco;Counts", 100, -4, 4);
-    TH1 *OffErrorPerformance = new TH1D("OffErrorPerformance", "DV_reco Out of Limit Territory;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *DvNumber = new TH1D("DvNumber", "Total Number of DV_truth;DV_truth;Counts", 41, 0, 4);
+    TH1 *clarity = new TH1D("clarity", "DV_reco Independent of Distance from DV_truth;DV_reco;Counts", 61, 0, 6);
+    TH1 *performance = new TH1D("performance", "DV_reco that are Close to DV_truth;DV_reco;Counts", 61, 0, 6);
+    TH1 *OffErrorPerformance = new TH1D("OffErrorPerformance", "DV_reco Out of Limit Territory;DV_reco;Counts", 61, 0, 6);
     // One DV
-    TH1 *clarity_OneDV = new TH1D("clarity_OneDV", "DV_reco Independent of Distance from DV_truth -One DV;DV_truth - DV_reco;Counts", 100, -5, 5);
-    TH1 *performance_OneDV = new TH1D("performance_OneDV", "DV_reco that are Close to DV_truth - One DV;DV_truth - DV_reco;Counts", 100, -4, 4);
-    TH1 *OffErrorPerformance_OneDV = new TH1D("OffErrorPerformance_OneDv", "DV_reco Out of Limit Territory - One DV;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *DvNumber_OneDV = new TH1D("DvNumber_OneDV", "Number of DV_truth = 1;DV_truth;Counts", 41, 0, 4);
+    TH1 *clarity_OneDV = new TH1D("clarity_OneDV", "DV_reco Independent of Distance from DV_truth - One DV;DV_reco;Counts", 61, 0, 6);
+    TH1 *performance_OneDV = new TH1D("performance_OneDV", "DV_reco that are Close to DV_truth - One DV;DV_reco;Counts", 61, 0, 6);
+    TH1 *OffErrorPerformance_OneDV = new TH1D("OffErrorPerformance_OneDv", "DV_reco Out of Limit Territory - One DV;DV_reco;Counts", 61, 0, 6);
     // Two DVs
-    TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_truth - Two DVs;DV_truth - DV_reco;Counts", 100, -5, 5);
-    TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_truth - Two DVs;DV_truth - DV_reco;Counts", 100, -4, 4);
-    TH1 *OffErrorPerformance_TwoDVs = new TH1D("OffErrorPerformance_TwoDvs", "DV_reco Out of Limit Territory - Two DVs;DV_truth - DV_reco;Counts", 100, -4, 4);
+    TH1 *DvNumber_TwoDVs = new TH1D("DvNumber_TwoDVs", "Number of DV_truth = 2;DV_truth;Counts", 41, 0, 4);
+    TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_truth - Two DVs;DV_reco;Counts", 61, 0, 6);
+    TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_truth - Two DVs;DV_reco;Counts", 61, 0, 6);
+    TH1 *OffErrorPerformance_TwoDVs = new TH1D("OffErrorPerformance_TwoDvs", "DV_reco Out of Limit Territory - Two DVs;DV_reco;Counts", 61, 0, 6);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -613,21 +616,23 @@ void new_myAnalyzeStage1()
 
     // Event Counter
     int event = 1;
+    // DV Counter
+    int DVcounter = 0;
 
     // Integers for for loops
     int i, j;
 
-    // ------------------------------------------------------------------------------------------------------------------------------------------------------ //
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
     // Event Loop
     while (treereader.Next()) 
     {
-        // Loop in events with multiple DVs //TODO: (Not needed)
+        // Loop in events with multiple DVs
         if(*truthvtx_n>=1)
         {   
             //! Renew for every event !//
             // Total number of DV_reco
-            DVnumber_Total = 0; 
+            DVnumber_Total = 0;  
             // Number of DV_reco that respect the limits in errors
             DVnumber_Close = 0; 
             // Number of DV_reco that are out of error limits
@@ -707,7 +712,7 @@ void new_myAnalyzeStage1()
                                 Angles_p = CaseDV_Angles(DV, a, b, aa, bb);
                                 Angles[0] = Angles_p[0]; Angles[1] = Angles_p[1];
                                 
-                                //? The Remark: &&& Angles[0]>=theta_min && Angles[0]<=theta_max && Angles[1]>=theta_min && Angles[1]<=theta_max && R_DV<=Rmin_i && R_DV<=Rmin_j
+                                //? The Remark: && Angles[0]>=theta_min && Angles[0]<=theta_max && Angles[1]>=theta_min && Angles[1]<=theta_max && R_DV<=Rmin_i && R_DV<=Rmin_j
                                 if(AnglesRel[0]>=thetaRel_min && AnglesRel[0]<=thetaRel_max && AnglesRel[1]>=thetaRel_min && AnglesRel[1]<=thetaRel_max)
                                 {
                                     // Distance between line_i and line_j
@@ -737,7 +742,7 @@ void new_myAnalyzeStage1()
                 }
 
                 //! Condition to decide if there is a DV !//
-                if(leastDistance[0] > DVcut)
+                if(leastDistance[0] >= DVcut)
                 {
                     break;
                 }
@@ -827,16 +832,6 @@ void new_myAnalyzeStage1()
                     usedErrorIndex[errorIndexCounter] = minErrorXYZ[1];
                     errorIndexCounter++;
 
-                    //! Condition to calculate the DV_reco that respect limits !//
-                    if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY)
-                    {
-                        DVnumber_Close++;
-                    }
-                    else
-                    {
-                        DVnumber_Far++;
-                    }
-
                     error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
                     error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
 
@@ -852,48 +847,82 @@ void new_myAnalyzeStage1()
                     }
                 }
 
+                //! Condition to calculate the DV_reco that respects or not the limits !//
+                if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY)
+                {
+                    DVnumber_Close++;
+                }
+                
+                if((minErrorXYZ[0] > limitXYZ || minErrorXY[0] > limitXY))
+                {
+                    DVnumber_Far++;
+                }
+
             } while(countLine <= *track_n-2);
 
-            // Takes into consideration all the DVs
-            clarity->Fill(*truthvtx_n-DVnumber_Total);
+            // Number of DVs 
+            DvNumber->Fill(*truthvtx_n);
             // One DV
             if(*truthvtx_n == 1)
             {   
-                clarity_OneDV->Fill(*truthvtx_n-DVnumber_Total);
+                DvNumber_OneDV->Fill(*truthvtx_n);
             }
             // Two DV
             if(*truthvtx_n == 2)
             {   
-                clarity_TwoDVs->Fill(*truthvtx_n-DVnumber_Total);
+                DvNumber_TwoDVs->Fill(*truthvtx_n);
             }
 
-            // Takes into consideration the DVs that respect limits
-            performance->Fill(*truthvtx_n-DVnumber_Close);
-            // One DV
-            if(*truthvtx_n == 1)
+            if(DVnumber_Total!=0)
             {
-                performance_OneDV->Fill(*truthvtx_n-DVnumber_Close);
-            }
-            // Two DVs
-            if(*truthvtx_n == 2)
-            {
-                performance_TwoDVs->Fill(*truthvtx_n-DVnumber_Close);
+                // Takes into consideration all the DVs
+                clarity->Fill(DVnumber_Total);
+                // One DV
+                if(*truthvtx_n == 1)
+                {   
+                    clarity_OneDV->Fill(DVnumber_Total);
+                }
+                // Two DV
+                if(*truthvtx_n == 2)
+                {   
+                    clarity_TwoDVs->Fill(DVnumber_Total);
+                }
             }
 
-            // Takes into consideration the DVs that do not respect the limits
-            OffErrorPerformance->Fill(*truthvtx_n-DVnumber_Far);
-            // One DV
-            if(*truthvtx_n == 1)
-            {   
-                OffErrorPerformance_OneDV->Fill(*truthvtx_n-DVnumber_Far);
+            if(DVnumber_Close!=0)
+            {
+                // Takes into consideration the DVs that respect limits
+                performance->Fill(DVnumber_Close);
+                // One DV
+                if(*truthvtx_n == 1)
+                {
+                    performance_OneDV->Fill(DVnumber_Close);
+                }
+                // Two DVs
+                if(*truthvtx_n == 2)
+                {
+                    performance_TwoDVs->Fill(DVnumber_Close);
+                }
             }
-            // Two DV
-            if(*truthvtx_n == 2)
-            {   
-                OffErrorPerformance_TwoDVs->Fill(*truthvtx_n-DVnumber_Far);
+
+            if(DVnumber_Far!=0)
+            {
+                // Takes into consideration the DVs that do not respect the limits
+                OffErrorPerformance->Fill(DVnumber_Far);
+                // One DV
+                if(*truthvtx_n == 1)
+                {   
+                    OffErrorPerformance_OneDV->Fill(DVnumber_Far);
+                }
+                // Two DV
+                if(*truthvtx_n == 2)
+                {   
+                    OffErrorPerformance_TwoDVs->Fill(DVnumber_Far);
+                }
             }
 
             event++;
+            DVcounter += *truthvtx_n;
         }
     }
 
@@ -936,59 +965,87 @@ void new_myAnalyzeStage1()
     c1->Print();
 
     // Canvas 2
-    TCanvas *c2 = new TCanvas("c2", "Performance and Clarity", 1200, 900);
-    c2->Divide(3,3);
+    TCanvas *c2 = new TCanvas("c2", "Performance and Clarity", 1400, 900);
+    c2->Divide(4,3);
 
     gStyle->SetOptStat(1111111);
 
     c2->cd(1);
-    clarity->SetFillColor(kRed);
-    clarity->SetMinimum(0);
-    clarity->Draw();
+    DvNumber->SetFillColor(kMagenta);
+    DvNumber->SetMinimum(0);
+    DvNumber->SetMaximum(3500);
+    DvNumber->Draw();
 
     c2->cd(2);
-    performance->SetFillColor(kAzure+1);
-    performance->SetMinimum(0);
-    performance->Draw();
+    clarity->SetFillColor(kRed);
+    clarity->SetMinimum(0);
+    clarity->SetMaximum(3500);
+    clarity->Draw();
 
     c2->cd(3);
-    OffErrorPerformance->SetFillColor(kGreen);
-    OffErrorPerformance->SetMinimum(0);
-    OffErrorPerformance->Draw();
+    performance->SetFillColor(kAzure+1);
+    performance->SetMinimum(0);
+    performance->SetMaximum(3500);
+    performance->Draw();
 
     c2->cd(4);
-    clarity_OneDV->SetFillColor(kRed);
-    clarity_OneDV->SetMinimum(0);
-    clarity_OneDV->Draw();
+    OffErrorPerformance->SetFillColor(kGreen);
+    OffErrorPerformance->SetMinimum(0);
+    OffErrorPerformance->SetMaximum(3500);
+    OffErrorPerformance->Draw();
 
     c2->cd(5);
-    performance_OneDV->SetFillColor(kAzure+1);
-    performance_OneDV->SetMinimum(0);
-    performance_OneDV->Draw();
+    DvNumber_OneDV->SetFillColor(kMagenta);
+    DvNumber_OneDV->SetMinimum(0);
+    DvNumber_OneDV->SetMaximum(3500);
+    DvNumber_OneDV->Draw();
 
     c2->cd(6);
-    OffErrorPerformance_OneDV->SetFillColor(kGreen);
-    OffErrorPerformance_OneDV->SetMinimum(0);
-    OffErrorPerformance_OneDV->Draw();
+    clarity_OneDV->SetFillColor(kRed);
+    clarity_OneDV->SetMinimum(0);
+    clarity_OneDV->SetMaximum(3500);
+    clarity_OneDV->Draw();
 
     c2->cd(7);
-    clarity_TwoDVs->SetFillColor(kRed);
-    clarity_TwoDVs->SetMinimum(0);
-    clarity_TwoDVs->Draw();
+    performance_OneDV->SetFillColor(kAzure+1);
+    performance_OneDV->SetMinimum(0);
+    performance_OneDV->SetMaximum(3500);
+    performance_OneDV->Draw();
 
     c2->cd(8);
-    performance_TwoDVs->SetFillColor(kAzure+1);
-    performance_TwoDVs->SetMinimum(0);
-    performance_TwoDVs->Draw();
+    OffErrorPerformance_OneDV->SetFillColor(kGreen);
+    OffErrorPerformance_OneDV->SetMinimum(0);
+    OffErrorPerformance_OneDV->SetMaximum(3500);
+    OffErrorPerformance_OneDV->Draw();
 
     c2->cd(9);
+    DvNumber_TwoDVs->SetFillColor(kMagenta);
+    DvNumber_TwoDVs->SetMinimum(0);
+    DvNumber_TwoDVs->SetMaximum(3500);
+    DvNumber_TwoDVs->Draw();
+
+    c2->cd(10);
+    clarity_TwoDVs->SetFillColor(kRed);
+    clarity_TwoDVs->SetMinimum(0);
+    clarity_TwoDVs->SetMaximum(3500);
+    clarity_TwoDVs->Draw();
+
+    c2->cd(11);
+    performance_TwoDVs->SetFillColor(kAzure+1);
+    performance_TwoDVs->SetMinimum(0);
+    performance_TwoDVs->SetMaximum(3500);
+    performance_TwoDVs->Draw();
+
+    c2->cd(12);
     OffErrorPerformance_TwoDVs->SetFillColor(kGreen);
     OffErrorPerformance_TwoDVs->SetMinimum(0);
+    OffErrorPerformance_TwoDVs->SetMaximum(3500);
     OffErrorPerformance_TwoDVs->Draw();
 
     c2->Print();
 
     cout<<endl<<"Events: "<<event<<endl;
+    cout<<"Total Number of Dvs: "<<DVcounter<<endl;
 
     // Print time needed for the program to complete
     printf("\nTime taken: %.2fs\n\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
