@@ -501,6 +501,11 @@ void new_myAnalyzeStage1()
     TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_truth - Two DVs;DV_reco;Counts", 61, 0, 6);
     TH1 *OffErrorPerformance_TwoDVs = new TH1D("OffErrorPerformance_TwoDvs", "DV_reco Out of Limit Territory - Two DVs;DV_reco;Counts", 61, 0, 6);
 
+    //! Histograms for Canvas 3 - Relative Number of DV_reco with respect to DV_truth !//
+    TH1 *RelativeNumber = new TH1D("RelativeNumber", "Relative Number of DV_reco and DV_truth;DV_truth-DV_reco;Counts", 101, -5, 5);
+    TH1 *RelativeNumber_OneDV = new TH1D("RelativeNumber_OneDV", "Relative Number of DV_reco and DV_truth - One DV;DV_truth-DV_reco;Counts", 101, -5, 5);
+    TH1 *RelativeNumber_TwoDVs = new TH1D("RelativeNumber_TwoDVs", "Relative Number of DV_reco and DV_truth - Two DVs;DV_truth-DV_reco;Counts", 101, -5, 5);
+
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
     treereader.SetTree(tree);
@@ -538,7 +543,7 @@ void new_myAnalyzeStage1()
 
     //! Application of Restrictions  !//
     // Condition to decide if a trajectory belongs to a DV without constructing it 
-    double TrajectoryCut = 0.5;
+    double TrajectoryCut = 20;
     // Condition to decide if two trajectories form a DV
     double DVcut = 0.15;
 
@@ -546,7 +551,7 @@ void new_myAnalyzeStage1()
     double *Angles_Rel;
     double AnglesRel[2];
     // Limits
-    double thetaRel_max = 45;
+    double thetaRel_max = 90;
     double thetaRel_min = 0;
 
     //? Fassouliotis Remark ?//
@@ -860,6 +865,7 @@ void new_myAnalyzeStage1()
 
             } while(countLine <= *track_n-2);
 
+            //! Histogram 2 !//
             // Number of DVs 
             DvNumber->Fill(*truthvtx_n);
             // One DV
@@ -920,6 +926,11 @@ void new_myAnalyzeStage1()
                     OffErrorPerformance_TwoDVs->Fill(DVnumber_Far);
                 }
             }
+
+            // ! Histogram 3 !//
+            RelativeNumber->Fill(*truthvtx_n - DVnumber_Total);
+            if(*truthvtx_n == 1) RelativeNumber_OneDV->Fill(*truthvtx_n - DVnumber_Total);
+            if(*truthvtx_n == 2) RelativeNumber_TwoDVs->Fill(*truthvtx_n - DVnumber_Total);
 
             event++;
             DVcounter += *truthvtx_n;
@@ -1043,6 +1054,31 @@ void new_myAnalyzeStage1()
     OffErrorPerformance_TwoDVs->Draw();
 
     c2->Print();
+
+    // Canvas 3
+    TCanvas *c3 = new TCanvas("c3", "Relative Number of DV_reco with Respect to DV_truth", 1200, 300);
+    c3->Divide(3,1);
+
+    gStyle->SetOptStat(1111111);
+
+    c3->cd(1);
+    RelativeNumber->SetFillColor(kRed);
+    RelativeNumber->SetMinimum(0);
+    RelativeNumber->SetMaximum(3000);
+    RelativeNumber->Draw();
+
+    c3->cd(2);
+    RelativeNumber_OneDV->SetFillColor(kAzure+1);
+    RelativeNumber_OneDV->SetMinimum(0);
+    RelativeNumber->SetMaximum(3000);
+    RelativeNumber_OneDV->Draw();
+
+    c3->cd(3);
+    RelativeNumber_TwoDVs->SetFillColor(kGreen);
+    RelativeNumber_TwoDVs->SetMinimum(0);
+    RelativeNumber->SetMaximum(3000);
+    RelativeNumber_TwoDVs->Draw();
+
 
     cout<<endl<<"Events: "<<event<<endl;
     cout<<"Total Number of Dvs: "<<DVcounter<<endl;
