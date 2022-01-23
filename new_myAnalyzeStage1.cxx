@@ -597,7 +597,6 @@ void new_myAnalyzeStage1()
     // Counter for usedErrorIndex array elements
     int errorIndexCounter;
 
-
     //! Distance from a DV to a different Trajectory from the two that constructed it !//
     // Points that define the trajectory
     double A[3], B[3];
@@ -608,7 +607,6 @@ void new_myAnalyzeStage1()
     int DvTrajectoryCounter;
     // Distance of "third" trajectory to DV
     double thirdTrajectoryDistance;
-
 
     //! Miscellaneous !//
     // Dv Counter
@@ -869,30 +867,18 @@ void new_myAnalyzeStage1()
             // Number of DVs 
             DvNumber->Fill(*truthvtx_n);
             // One DV
-            if(*truthvtx_n == 1)
-            {   
-                DvNumber_OneDV->Fill(*truthvtx_n);
-            }
+            if(*truthvtx_n == 1) DvNumber_OneDV->Fill(*truthvtx_n);
             // Two DV
-            if(*truthvtx_n == 2)
-            {   
-                DvNumber_TwoDVs->Fill(*truthvtx_n);
-            }
+            if(*truthvtx_n == 2) DvNumber_TwoDVs->Fill(*truthvtx_n);
 
             if(DVnumber_Total!=0)
             {
                 // Takes into consideration all the DVs
                 clarity->Fill(DVnumber_Total);
                 // One DV
-                if(*truthvtx_n == 1)
-                {   
-                    clarity_OneDV->Fill(DVnumber_Total);
-                }
+                if(*truthvtx_n == 1) clarity_OneDV->Fill(DVnumber_Total);
                 // Two DV
-                if(*truthvtx_n == 2)
-                {   
-                    clarity_TwoDVs->Fill(DVnumber_Total);
-                }
+                if(*truthvtx_n == 2) clarity_TwoDVs->Fill(DVnumber_Total);
             }
 
             if(DVnumber_Close!=0)
@@ -900,15 +886,9 @@ void new_myAnalyzeStage1()
                 // Takes into consideration the DVs that respect limits
                 performance->Fill(DVnumber_Close);
                 // One DV
-                if(*truthvtx_n == 1)
-                {
-                    performance_OneDV->Fill(DVnumber_Close);
-                }
+                if(*truthvtx_n == 1) performance_OneDV->Fill(DVnumber_Close);
                 // Two DVs
-                if(*truthvtx_n == 2)
-                {
-                    performance_TwoDVs->Fill(DVnumber_Close);
-                }
+                if(*truthvtx_n == 2) performance_TwoDVs->Fill(DVnumber_Close);
             }
 
             if(DVnumber_Far!=0)
@@ -916,15 +896,9 @@ void new_myAnalyzeStage1()
                 // Takes into consideration the DVs that do not respect the limits
                 OffErrorPerformance->Fill(DVnumber_Far);
                 // One DV
-                if(*truthvtx_n == 1)
-                {   
-                    OffErrorPerformance_OneDV->Fill(DVnumber_Far);
-                }
+                if(*truthvtx_n == 1) OffErrorPerformance_OneDV->Fill(DVnumber_Far);
                 // Two DV
-                if(*truthvtx_n == 2)
-                {   
-                    OffErrorPerformance_TwoDVs->Fill(DVnumber_Far);
-                }
+                if(*truthvtx_n == 2) OffErrorPerformance_TwoDVs->Fill(DVnumber_Far);
             }
 
             // ! Histogram 3 !//
