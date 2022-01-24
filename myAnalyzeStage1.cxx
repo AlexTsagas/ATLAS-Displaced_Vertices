@@ -429,7 +429,7 @@ void ArraySorting(double array[][2], int elementCount)
 
 // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ //
 
-void new_myAnalyzeStage1()
+void myAnalyzeStage1()
 {
     // For time capture
     clock_t tStart = clock();
