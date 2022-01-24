@@ -427,49 +427,6 @@ void ArraySorting(double array[][2], int elementCount)
 }
 
 
-// Distance between P1(x1, y1, z1) and P2(x2, y2, z2) in xy plane
-double DistanceXYPlane(double x1, double y1, double x2, double y2)
-{
-    double Distance_XY = sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
-
-    return Distance_XY;
-}
-
-
-// Cases to choose if a point is a DV or not with respect to angles between the lines which
-// are defined by DV-Center, A-B, AA-BB. Returns the sum of angles in degrees.
-double *CaseDV_Angles(double *DV, double *a, double *b, double *aa, double *bb)
-{
-    static double theta[2];
-
-    // Center of Detector
-    double center[3] = {0,0,0};
-
-    // Relative unit vector from Center to DV
-    double *unit_CenterDv = relativeUnitVector(center, DV);
-    double unitCenterDv[3] = {unit_CenterDv[0], unit_CenterDv[1], unit_CenterDv[2]};
-
-    // Relative unit vector from A to B
-    double *unit_AB = relativeUnitVector(a, b);
-    double unitAB[3] = {unit_AB[0], unit_AB[1], unit_AB[2]};
-
-    // Relative unit vector from AA to BB
-    double *unit_AaBb = relativeUnitVector(aa, bb);
-    double unitAaBb[3] = {unit_AaBb[0], unit_AaBb[1], unit_AaBb[2]};
-
-    // cos(θ_i) where θ_i is the angle between DV-Center and A-B vectors
-    double dotProd_i = dotProduct(unitCenterDv, unitAB);
-    // cos(θ_j) where θ_j is the angle between DV-Center and AA-BB vectors
-    double dotProd_j = dotProduct(unitCenterDv, unitAaBb);
-
-    // Θ_i and Θ_j in degress
-    theta[0] = acos(dotProd_i) * 180.0 / M_PI;
-    theta[1] = acos(dotProd_j) * 180.0 / M_PI;
-
-    return theta;
-}
-
-
 // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ //
 
 void new_myAnalyzeStage1()
@@ -543,9 +500,9 @@ void new_myAnalyzeStage1()
 
     //! Application of Restrictions  !//
     // Condition to decide if a trajectory belongs to a DV without constructing it 
-    double TrajectoryCut = 20;
+    double TrajectoryCut;
     // Condition to decide if two trajectories form a DV
-    double DVcut = 0.15;
+    double DVcut = 0.1;
 
     // Relative Angles
     double *Angles_Rel;
@@ -553,24 +510,6 @@ void new_myAnalyzeStage1()
     // Limits
     double thetaRel_max = 90;
     double thetaRel_min = 0;
-
-    //? Fassouliotis Remark ?//
-    // Distances from Detector's Center
-    // Distance of DV_reco
-    double R_DV;
-    // Distance of line_i
-    double R_i[2];
-    double Rmin_i;
-    // Distance of line_j
-    double R_j[2];
-    double Rmin_j;
-
-    // Angles
-    double *Angles_p;
-    double Angles[2];
-    // Limits
-    double theta_max = 90;
-    double theta_min = 0;
 
     //! Errors in xy Plane !//
     // First Column: Errors of DV_truth[i] with DV_reco (in i^th row),
@@ -580,6 +519,65 @@ void new_myAnalyzeStage1()
     // Second Column: Index of DV_truth used.
     double minErrorXY[2];
     double *min_ErrorXY;
+
+    //! DV Counters !//
+    // Counter for DV_truth // 
+
+    // The total number of DV_truth in all events
+    int DV_Total = 0;
+    // The total number of DV_truth in event with one DV
+    int DVnumber_OneDV_Total = 0;
+    // The total number of DV_truth in event with two DVs
+    int DVnumber_TwoDVs_Total = 0;
+
+    // Counter for DV_reco //
+
+    // The total number of DV_reco in all events
+    int DV_reco_total = 0;
+    // The total number of DV_reco in events with one DV
+    int DV_reco_OneDV_Total = 0;
+    // The total number of DV_reco in events with two DVs
+    int DV_reco_TwoDVs_Total = 0;
+    // Number of DV_reco that respect xy limit
+    int DV_reco_xy = 0;
+    // Number of DV_reco that respect xy limit- Events with one DV
+    int DV_reco_xy_OneDV = 0;
+    // Number of DV_reco that respect xy limit - Events with one DV
+    int DV_reco_xy_TwoDVs = 0;
+    // Number of DV_reco that respect sz limit
+    int DV_reco_sz = 0;
+    // Number of DV_reco that respect sz limit - Events with one DV
+    int DV_reco_sz_OneDV = 0;
+    // Number of DV_reco that respect sz limit - Events with two DVs
+    int DV_reco_sz_TwoDVs = 0;
+
+    // Counter for DVs in single events //
+
+    // The total number of DV_reco in an event
+    int DVnumber_Total;
+    // The number of DV_reco that respect both limits (xy and sz) in an event
+    int DVnumber_Close;
+    // The total numbers of DV_reco that do not respect any limit (neither xy nor sz)
+    int DVnumber_Far;
+
+
+    //! Efficiency: DV_reco_matched/DV_truth_total and Purity: DV_reco_matched/DV_reco_total !//
+    // DV_reco that respect limits in xy plane
+    double Eff_xy;
+    double Eff_xy_OneDV;
+    double Eff_xy_TwoDVs;
+    // DV_reco that respect limits in sz space
+    double Eff_sz;
+    double Eff_sz_OneDV;
+    double Eff_sz_TwoDVs;
+    // DV_reco that respect limits in xy plane
+    double Pu_xy;
+    double Pu_xy_OneDV;
+    double Pu_xy_TwoDVs;
+    // DV_reco that respect limits in sz space
+    double Pu_sz;
+    double Pu_sz_OneDV;
+    double Pu_sz_TwoDVs;
 
     //! Errors in 3D Space !//
     // First Column: Errors of DV_truth[i] with DV_reco (in i^th row),
@@ -609,18 +607,12 @@ void new_myAnalyzeStage1()
     double thirdTrajectoryDistance;
 
     //! Miscellaneous !//
-    // Dv Counter
-    int DVnumber_Total;
-    int DVnumber_Close;
-    int DVnumber_Far;
     // Conditions for DV_reco that are "close"
     int limitXYZ = 35;
     int limitXY = 14;
 
     // Event Counter
     int event = 1;
-    // DV Counter
-    int DVcounter = 0;
 
     // Integers for for loops
     int i, j;
@@ -633,6 +625,38 @@ void new_myAnalyzeStage1()
         // Loop in events with multiple DVs
         if(*truthvtx_n>=1)
         {   
+            //! Cases fot TrajectoryCut Values !//
+            switch (*track_n)
+            {
+            case 2:
+                TrajectoryCut = 0;
+                break;
+            case 3:
+                TrajectoryCut = 100;
+                break;
+            case 4:
+                TrajectoryCut = 5.5;
+                break;
+            case 5:
+                TrajectoryCut = 5.5;
+                break;
+            case 6:
+                TrajectoryCut = 5.5;
+                break;
+            case 7:
+                TrajectoryCut = 10;
+                break;
+            case 8:
+                TrajectoryCut = 12;
+                break;
+            case 9:
+                TrajectoryCut = 14;
+                break;
+            case 10:
+                TrajectoryCut = 16;
+                break;
+            }
+
             //! Renew for every event !//
             // Total number of DV_reco
             DVnumber_Total = 0;  
@@ -699,23 +723,7 @@ void new_myAnalyzeStage1()
                                 // Relative Angle 
                                 Angles_Rel = CaseDV_RelativeAngles(DV, a, b, aa, bb);
                                 AnglesRel[0] = Angles_Rel[0]; AnglesRel[1] = Angles_Rel[1]; 
-
-                                // Distances from Detector's Center
-                                R_DV = DistanceXYPlane(0, 0, DV[0], DV[1]);
-
-                                R_i[0] = DistanceXYPlane(0, 0, track_x0[i], track_y0[i]);
-                                R_i[1] = DistanceXYPlane(0, 0, track_x1[i], track_y1[i]);
-                                Rmin_i = minimumValuefromArrayElements(R_i, 2);
-
-                                R_j[0] = DistanceXYPlane(0, 0, track_x0[j], track_y0[j]);
-                                R_j[1] = DistanceXYPlane(0, 0, track_x1[j], track_y1[j]);
-                                Rmin_j = minimumValuefromArrayElements(R_j, 2);
-
-                                // Angles - Fas Remark
-                                Angles_p = CaseDV_Angles(DV, a, b, aa, bb);
-                                Angles[0] = Angles_p[0]; Angles[1] = Angles_p[1];
-                                
-                                //? The Remark: && Angles[0]>=theta_min && Angles[0]<=theta_max && Angles[1]>=theta_min && Angles[1]<=theta_max && R_DV<=Rmin_i && R_DV<=Rmin_j
+                            
                                 if(AnglesRel[0]>=thetaRel_min && AnglesRel[0]<=thetaRel_max && AnglesRel[1]>=thetaRel_min && AnglesRel[1]<=thetaRel_max)
                                 {
                                     // Distance between line_i and line_j
@@ -851,14 +859,22 @@ void new_myAnalyzeStage1()
                 }
 
                 //! Condition to calculate the DV_reco that respects or not the limits !//
-                if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY)
-                {
-                    DVnumber_Close++;
-                }
+                if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY) DVnumber_Close++;
                 
-                if((minErrorXYZ[0] > limitXYZ || minErrorXY[0] > limitXY))
+                if((minErrorXYZ[0] > limitXYZ || minErrorXY[0] > limitXY)) DVnumber_Far++;
+
+                if(minErrorXY[0] <= limitXY)
                 {
-                    DVnumber_Far++;
+                    DV_reco_xy++;
+                    if(*truthvtx_n==1) DV_reco_xy_OneDV++;
+                    if(*truthvtx_n==2) DV_reco_xy_TwoDVs++;
+                }
+
+                if(minErrorXYZ[0] <= limitXYZ)
+                {
+                    DV_reco_sz++;
+                    if(*truthvtx_n==1) DV_reco_sz_OneDV++;
+                    if(*truthvtx_n==2) DV_reco_sz_TwoDVs++;
                 }
 
             } while(countLine <= *track_n-2);
@@ -906,8 +922,21 @@ void new_myAnalyzeStage1()
             if(*truthvtx_n == 1) RelativeNumber_OneDV->Fill(*truthvtx_n - DVnumber_Total);
             if(*truthvtx_n == 2) RelativeNumber_TwoDVs->Fill(*truthvtx_n - DVnumber_Total);
 
+            // Event Counter
             event++;
-            DVcounter += *truthvtx_n;
+
+            //! DV_truth counters !//
+            // Total number of Dvs in all events
+            DV_Total += *truthvtx_n;
+            // Total number of DVs in events with one DV
+            if(*truthvtx_n == 1) DVnumber_OneDV_Total += *truthvtx_n;
+            // Total number of DVs in events with two DVs
+            if(*truthvtx_n == 2) DVnumber_TwoDVs_Total += *truthvtx_n;
+
+            //! DV_reco counters !//
+            DV_reco_total += DVnumber_Total;
+            if(*truthvtx_n == 1) DV_reco_OneDV_Total += DVnumber_Total;
+            if(*truthvtx_n == 2) DV_reco_TwoDVs_Total += DVnumber_Total;
         }
     }
 
@@ -1053,9 +1082,50 @@ void new_myAnalyzeStage1()
     RelativeNumber->SetMaximum(3000);
     RelativeNumber_TwoDVs->Draw();
 
+    //! Efficiency !//
+    Eff_xy = 1.*DV_reco_xy/DV_Total;
+    Eff_xy_OneDV = 1.*DV_reco_xy_OneDV/DVnumber_OneDV_Total;
+    Eff_xy_TwoDVs = 1.*DV_reco_xy_TwoDVs/DVnumber_TwoDVs_Total;
+    Eff_sz = 1.*DV_reco_sz/DV_Total;
+    Eff_sz_OneDV = 1.*DV_reco_sz_OneDV/DVnumber_OneDV_Total;
+    Eff_sz_TwoDVs = 1.*DV_reco_sz_TwoDVs/DVnumber_TwoDVs_Total;
+
+    //! Purity !//
+    Pu_xy = 1.*DV_reco_xy/DV_reco_total;
+    Pu_xy_OneDV = 1.*DV_reco_xy_OneDV/DV_reco_OneDV_Total;
+    Pu_xy_TwoDVs = 1.*DV_reco_xy_TwoDVs/DV_reco_TwoDVs_Total;
+    Pu_sz = 1.*DV_reco_sz/DV_reco_total;
+    Pu_sz_OneDV = 1.*DV_reco_sz_OneDV/DV_reco_OneDV_Total;
+    Pu_sz_TwoDVs = 1.*DV_reco_sz_TwoDVs/DV_reco_TwoDVs_Total;
 
     cout<<endl<<"Events: "<<event<<endl;
-    cout<<"Total Number of Dvs: "<<DVcounter<<endl;
+    cout<<"Total Number of Dvs: "<<DV_Total<<endl;
+    cout<<"Total Number of Dvs in events with one DV: "<<DVnumber_OneDV_Total<<endl;
+    cout<<"Total Number of Dvs in events with two DVs: "<<DVnumber_TwoDVs_Total<<endl;
+
+    cout<<endl;
+    for(int k = 0; k<50; k++) cout<<"~";
+    cout<<endl;
+
+    cout<<endl<<"Efficiency:"<<endl<<endl;
+    cout<<"A_xy: "<<Eff_xy<<endl;
+    cout<<"One DV - A_xy: "<<Eff_xy_OneDV<<endl;
+    cout<<"Two DVs - A_xy: "<<Eff_xy_TwoDVs<<endl;
+    cout<<endl<<"A_ρz: "<<Eff_sz<<endl;
+    cout<<"One DV - A_ρz: "<<Eff_sz_OneDV<<endl;
+    cout<<"Two DVs - A_ρz: "<<Eff_sz_TwoDVs<<endl;
+
+    cout<<endl;
+    for(int k = 0; k<50; k++) cout<<"~";
+    cout<<endl;
+
+    cout<<endl<<"Purity:"<<endl<<endl;
+    cout<<"Pu_xy: "<<Pu_xy<<endl;
+    cout<<"One DV - Pu_xy: "<<Pu_xy_OneDV<<endl;
+    cout<<"Two DVs - Pu_xy: "<<Pu_xy_TwoDVs<<endl;
+    cout<<endl<<"Pu_ρz: "<<Pu_sz<<endl;
+    cout<<"One DV - Pu_ρz: "<<Pu_sz_OneDV<<endl;
+    cout<<"Two DVs - Pu_ρz: "<<Pu_sz_TwoDVs<<endl;
 
     // Print time needed for the program to complete
     printf("\nTime taken: %.2fs\n\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
