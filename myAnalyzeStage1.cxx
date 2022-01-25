@@ -529,6 +529,14 @@ void myAnalyzeStage1()
     int DVnumber_OneDV_Total = 0;
     // The total number of DV_truth in event with two DVs
     int DVnumber_TwoDVs_Total = 0;
+    // Total number of DV_true matched by DV_reco that respect limit in xy plane //
+    int DV_true_with_match_XY = 0;
+    int DV_true_with_match_XY_OneDV = 0;
+    int DV_true_with_match_XY_TwoDVs = 0;
+    // Total number of DV_true matched by DV_reco that respect limit in sz space //
+    int DV_true_with_match_SZ = 0;
+    int DV_true_with_match_SZ_OneDV = 0;
+    int DV_true_with_match_SZ_TwoDVs = 0; 
 
     // Counter for DV_reco //
 
@@ -635,25 +643,25 @@ void myAnalyzeStage1()
                 TrajectoryCut = 100;
                 break;
             case 4:
-                TrajectoryCut = 5.5;
+                TrajectoryCut = 4;
                 break;
             case 5:
-                TrajectoryCut = 5.5;
+                TrajectoryCut = 7.5;
                 break;
             case 6:
-                TrajectoryCut = 5.5;
+                TrajectoryCut = 8.5;
                 break;
             case 7:
-                TrajectoryCut = 10;
-                break;
-            case 8:
                 TrajectoryCut = 12;
                 break;
-            case 9:
+            case 8:
                 TrajectoryCut = 14;
                 break;
-            case 10:
+            case 9:
                 TrajectoryCut = 16;
+                break;
+            case 10:
+                TrajectoryCut = 18;
                 break;
             }
 
@@ -747,16 +755,10 @@ void myAnalyzeStage1()
 
                 // leastDistance[6] = (Distacne, DV_x, DV_y, DV_z, indexes_i, index_j)
                 least_Distance = minimumArrayValueSix(distance_ij, count_j);
-                for(int k=0; k<6; k++)
-                {
-                    leastDistance[k] = least_Distance[k]; 
-                }
+                for(int k=0; k<6; k++)  leastDistance[k] = least_Distance[k]; 
 
                 //! Condition to decide if there is a DV !//
-                if(leastDistance[0] >= DVcut)
-                {
-                    break;
-                }
+                if(leastDistance[0] >= DVcut)   break;
 
                 // If it passes the previous condition it means that we have a DV
                 DVnumber_Total++;
@@ -856,26 +858,48 @@ void myAnalyzeStage1()
                         error_XYZ_TwoDVs->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
                         error_XY_TwoDVs->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
                     }
+
+                    //! Calculate the number of DV_truth with match that respect the limits !//
+
+                    // DV_true_mathced that respect limit on sz space
+                    if(minErrorXYZ[0] <= limitXYZ)
+                    {
+                        DV_true_with_match_SZ++;
+                        if(*truthvtx_n==1) DV_true_with_match_SZ_OneDV++;
+                        if(*truthvtx_n==2) DV_true_with_match_SZ_TwoDVs++;
+                    } 
+
+                    // DV_true_mathced that respect limit on xy plane
+                    if(minErrorXY[0] <= limitXY)
+                    {
+                        DV_true_with_match_XY++;
+                        if(*truthvtx_n==1) DV_true_with_match_XY_OneDV++;
+                        if(*truthvtx_n==2) DV_true_with_match_XY_TwoDVs++;
+                    } 
+
+                    //! Condition to calculate the DV_reco that respects or not the limits !//
+                    // DV_reco that respect limit in sz space
+                    if(minErrorXYZ[0] <= limitXYZ)
+                    {
+                        DV_reco_sz++;
+                        if(*truthvtx_n==1) DV_reco_sz_OneDV++;
+                        if(*truthvtx_n==2) DV_reco_sz_TwoDVs++;
+                    }
+
+                    // DV_reco that respect limit in xy plane
+                    if(minErrorXY[0] <= limitXY)
+                    {
+                        DV_reco_xy++;
+                        if(*truthvtx_n==1) DV_reco_xy_OneDV++;
+                        if(*truthvtx_n==2) DV_reco_xy_TwoDVs++;
+                    }
                 }
 
-                //! Condition to calculate the DV_reco that respects or not the limits !//
+                // DV_reco that respect both limits
                 if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY) DVnumber_Close++;
-                
+                    
+                // DV_reco that do not respect at least one limit
                 if((minErrorXYZ[0] > limitXYZ || minErrorXY[0] > limitXY)) DVnumber_Far++;
-
-                if(minErrorXY[0] <= limitXY)
-                {
-                    DV_reco_xy++;
-                    if(*truthvtx_n==1) DV_reco_xy_OneDV++;
-                    if(*truthvtx_n==2) DV_reco_xy_TwoDVs++;
-                }
-
-                if(minErrorXYZ[0] <= limitXYZ)
-                {
-                    DV_reco_sz++;
-                    if(*truthvtx_n==1) DV_reco_sz_OneDV++;
-                    if(*truthvtx_n==2) DV_reco_sz_TwoDVs++;
-                }
 
             } while(countLine <= *track_n-2);
 
@@ -1083,12 +1107,12 @@ void myAnalyzeStage1()
     RelativeNumber_TwoDVs->Draw();
 
     //! Efficiency !//
-    Eff_xy = 1.*DV_reco_xy/DV_Total;
-    Eff_xy_OneDV = 1.*DV_reco_xy_OneDV/DVnumber_OneDV_Total;
-    Eff_xy_TwoDVs = 1.*DV_reco_xy_TwoDVs/DVnumber_TwoDVs_Total;
-    Eff_sz = 1.*DV_reco_sz/DV_Total;
-    Eff_sz_OneDV = 1.*DV_reco_sz_OneDV/DVnumber_OneDV_Total;
-    Eff_sz_TwoDVs = 1.*DV_reco_sz_TwoDVs/DVnumber_TwoDVs_Total;
+    Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
+    Eff_xy_OneDV = 1.*DV_true_with_match_XY_OneDV/DVnumber_OneDV_Total;
+    Eff_xy_TwoDVs = 1.*DV_true_with_match_XY_TwoDVs/DVnumber_TwoDVs_Total;
+    Eff_sz = 1.*DV_true_with_match_SZ/DV_Total;
+    Eff_sz_OneDV = 1.*DV_true_with_match_SZ_OneDV/DVnumber_OneDV_Total;
+    Eff_sz_TwoDVs = 1.*DV_true_with_match_SZ_TwoDVs/DVnumber_TwoDVs_Total;
 
     //! Purity !//
     Pu_xy = 1.*DV_reco_xy/DV_reco_total;
