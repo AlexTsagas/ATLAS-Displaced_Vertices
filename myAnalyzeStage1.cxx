@@ -502,7 +502,7 @@ void myAnalyzeStage1()
     // Condition to decide if a trajectory belongs to a DV without constructing it 
     double TrajectoryCut;
     // Condition to decide if two trajectories form a DV
-    double DVcut = 0.1;
+    double DVcut = 0.11;
 
     // Relative Angles
     double *Angles_Rel;
@@ -643,25 +643,25 @@ void myAnalyzeStage1()
                 TrajectoryCut = 100;
                 break;
             case 4:
-                TrajectoryCut = 4;
+                TrajectoryCut = 3.5;
                 break;
             case 5:
-                TrajectoryCut = 7.5;
+                TrajectoryCut = 5.5;
                 break;
             case 6:
-                TrajectoryCut = 8.5;
+                TrajectoryCut = 6.5;
                 break;
             case 7:
-                TrajectoryCut = 12;
+                TrajectoryCut = 7;
                 break;
             case 8:
-                TrajectoryCut = 14;
+                TrajectoryCut = 8.5;
                 break;
             case 9:
-                TrajectoryCut = 16;
+                TrajectoryCut = 13.4;
                 break;
             case 10:
-                TrajectoryCut = 18;
+                TrajectoryCut = 20;
                 break;
             }
 
@@ -1105,6 +1105,8 @@ void myAnalyzeStage1()
     RelativeNumber_TwoDVs->SetMinimum(0);
     RelativeNumber->SetMaximum(3000);
     RelativeNumber_TwoDVs->Draw();
+    
+    c3->Print();
 
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
