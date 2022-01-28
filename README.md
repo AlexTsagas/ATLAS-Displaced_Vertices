@@ -22,7 +22,7 @@ are calculated as follows:
     in order to procces events with more than one DV. That if statement would count trajectories that belong to the same DV
     but are not used to construct it.
   
-### Events with Two DVs
+### Events with Multiple DVs
 
   • The first step is to specify the number of DVs that exists in every event. So the goal is to find the DV_reco(mmended) with the 
     most accurate approximation possible. When the total number of DV_reco is calculated the code produces histograms that compare it
