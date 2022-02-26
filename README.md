@@ -37,6 +37,6 @@ The DVs are calculated as follows:
       * if there is a sufficient number of trajectories left to construct a DV (more than 2), and
       * the minimum distance of the closest trajectories remaining unused (check for minimum distances lower than an upper bound).
 
-  * The error between the DV_truth and DV_reco is defined as the distance between them. For the first calculated DV_reco of an event 
-    every possible error with DV_truths is computed and, then, the minimum is picked to represent the value. Then, the DV_truth used to 
+  * The error between the DV_true and DV_reco is defined as the distance between them. For the first calculated DV_reco of an event 
+    every possible error with DV_trues is computed and, then, the minimum is picked to represent the value. Then, the DV_true used to 
     calculate the error of the first DV_reco is excluded. The same proccess is repeated to compute the other DV_reco's errors (if they exist).
