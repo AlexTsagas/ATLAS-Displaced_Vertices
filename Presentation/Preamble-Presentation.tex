@@ -1,0 +1,100 @@
+\documentclass[12pt, serif]{beamer}
+
+% Theme
+\usetheme{Ilmenau}
+%\usefonttheme{professionalfonts}
+\makeatother
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+	  \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+	    \usebeamerfont{author in head/foot}\insertshortauthor
+	  \end{beamercolorbox}%
+	  \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+	    \usebeamerfont{author in head/foot}\insertframenumber{} / \inserttotalframenumber
+	  \end{beamercolorbox}%
+	  \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+	    \usebeamerfont{title in head/foot}\insertshorttitle
+	  \end{beamercolorbox}%
+  }%
+  \vskip0pt%
+}
+\makeatletter
+\setbeamertemplate{navigation symbols}{}
+\setbeamercovered{transparent}
+
+% Fonts
+\usepackage{fontspec}
+%\usepackage{xltxtra,xunicode}
+\setmainfont[Mapping=tex-text]{Times New Roman}
+\newfontfamily\greekfont[Script=Greek]{Times New Roman}
+\setsansfont[Scale=MatchLowercase,Mapping=tex-text]{Futura}
+\setmonofont[Scale=MatchLowercase]{Source Code Pro}
+
+% English - Greek
+\usepackage{polyglossia}
+\setdefaultlanguage[variant=mono]{greek}
+\setotherlanguage[variant=uk]{english}
+\PolyglossiaSetup{greek}{indentfirst=true}
+
+% Figures
+\usepackage{graphicx}
+\graphicspath{{./Figures/}}
+\usepackage{float}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{multicol}
+
+% Ruler
+\newcommand{\HRule}{\rule{\linewidth}{1pt}}
+\newcommand{\hRule}{\rule{\linewidth}{0.5pt}}
+
+% Code
+\usepackage{xcolor}
+\usepackage{listings}
+\renewcommand{\lstlistingname}{Κώδικας}
+\renewcommand{\lstlistlistingname}{Λίστα με Κώδικες}
+
+\lstdefinestyle{AlexStyle}{%
+backgroundcolor=\color{gray!12},
+basicstyle=\ttfamily\small,
+commentstyle=\color{green!60!black},
+keywordstyle=\color{magenta},
+stringstyle=\color{blue!50!red},
+showstringspaces=false,
+captionpos=b,
+breaklines=true,
+}
+
+% Math
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{siunitx}
+\usepackage{physics}
+
+% My Commands
+\newcommand{\dvreco}{$\text{DV}_\text{reco}$}
+\newcommand{\dvrecobf}{$\text{\textbf{DV}}_\text{\textbf{reco}}$}
+%
+\newcommand{\dvtrue}{$\text{DV}_\text{true}$} 
+\newcommand{\dvtruebf}{$\text{\textbf{DV}}_\text{\textbf{true}}$}
+
+% Enumerate - Itemize
+\newcounter{saveenumi}
+\newcommand{\seti}{\setcounter{saveenumi}{\value{enumi}}}
+\newcommand{\conti}{\setcounter{enumi}{\value{saveenumi}}}
+\resetcounteronoverlays{saveenumi}
+\setbeamertemplate{enumerate items}[circle]
+%
+\setbeamertemplate{itemize items}[circle]
+%
+\beamerdefaultoverlayspecification{<+->}
+
+% Information
+\title{New Particle Search at CERN}
+\subtitle{Stage 1 - Displaced Vertex Identification}
+\author{Αλέξανδρος Τσαγκαρόπουλος}
+\institute{}
+\date{}
