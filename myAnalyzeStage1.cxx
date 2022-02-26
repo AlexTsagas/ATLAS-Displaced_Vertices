@@ -443,25 +443,25 @@ void myAnalyzeStage1()
     TH1 *error_XY_TwoDVs = new TH1D("error_XY_TwoDVs", "Error in xy Plane for Two DVs;Error;Counts", 50, 0, 14);
 
     //! Histograms for Canvas 2 - Number of DV_total and DV_close !//
-    TH1 *DvNumber = new TH1D("DvNumber", "Total Number of DV_truth;DV_truth;Counts", 41, 0, 4);
-    TH1 *clarity = new TH1D("clarity", "DV_reco Independent of Distance from DV_truth;DV_reco;Counts", 61, 0, 6);
-    TH1 *performance = new TH1D("performance", "DV_reco that are Close to DV_truth;DV_reco;Counts", 61, 0, 6);
+    TH1 *DvNumber = new TH1D("DvNumber", "Total Number of DV_true;DV_true;Counts", 41, 0, 4);
+    TH1 *clarity = new TH1D("clarity", "DV_reco Independent of Distance from DV_true;DV_reco;Counts", 61, 0, 6);
+    TH1 *performance = new TH1D("performance", "DV_reco that are Close to DV_true;DV_reco;Counts", 61, 0, 6);
     TH1 *OffErrorPerformance = new TH1D("OffErrorPerformance", "DV_reco Out of Limit Territory;DV_reco;Counts", 61, 0, 6);
     // One DV
-    TH1 *DvNumber_OneDV = new TH1D("DvNumber_OneDV", "Number of DV_truth = 1;DV_truth;Counts", 41, 0, 4);
-    TH1 *clarity_OneDV = new TH1D("clarity_OneDV", "DV_reco Independent of Distance from DV_truth - One DV;DV_reco;Counts", 61, 0, 6);
-    TH1 *performance_OneDV = new TH1D("performance_OneDV", "DV_reco that are Close to DV_truth - One DV;DV_reco;Counts", 61, 0, 6);
+    TH1 *DvNumber_OneDV = new TH1D("DvNumber_OneDV", "Number of DV_true = 1;DV_true;Counts", 41, 0, 4);
+    TH1 *clarity_OneDV = new TH1D("clarity_OneDV", "DV_reco Independent of Distance from DV_true - One DV;DV_reco;Counts", 61, 0, 6);
+    TH1 *performance_OneDV = new TH1D("performance_OneDV", "DV_reco that are Close to DV_true - One DV;DV_reco;Counts", 61, 0, 6);
     TH1 *OffErrorPerformance_OneDV = new TH1D("OffErrorPerformance_OneDv", "DV_reco Out of Limit Territory - One DV;DV_reco;Counts", 61, 0, 6);
     // Two DVs
-    TH1 *DvNumber_TwoDVs = new TH1D("DvNumber_TwoDVs", "Number of DV_truth = 2;DV_truth;Counts", 41, 0, 4);
-    TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_truth - Two DVs;DV_reco;Counts", 61, 0, 6);
-    TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_truth - Two DVs;DV_reco;Counts", 61, 0, 6);
+    TH1 *DvNumber_TwoDVs = new TH1D("DvNumber_TwoDVs", "Number of DV_true = 2;DV_true;Counts", 41, 0, 4);
+    TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_true - Two DVs;DV_reco;Counts", 61, 0, 6);
+    TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_true - Two DVs;DV_reco;Counts", 61, 0, 6);
     TH1 *OffErrorPerformance_TwoDVs = new TH1D("OffErrorPerformance_TwoDvs", "DV_reco Out of Limit Territory - Two DVs;DV_reco;Counts", 61, 0, 6);
 
-    //! Histograms for Canvas 3 - Relative Number of DV_reco with respect to DV_truth !//
-    TH1 *RelativeNumber = new TH1D("RelativeNumber", "Relative Number of DV_reco and DV_truth;DV_truth-DV_reco;Counts", 101, -5, 5);
-    TH1 *RelativeNumber_OneDV = new TH1D("RelativeNumber_OneDV", "Relative Number of DV_reco and DV_truth - One DV;DV_truth-DV_reco;Counts", 101, -5, 5);
-    TH1 *RelativeNumber_TwoDVs = new TH1D("RelativeNumber_TwoDVs", "Relative Number of DV_reco and DV_truth - Two DVs;DV_truth-DV_reco;Counts", 101, -5, 5);
+    //! Histograms for Canvas 3 - Relative Number of DV_reco with respect to DV_true !//
+    TH1 *RelativeNumber = new TH1D("RelativeNumber", "Relative Number of DV_reco and DV_true;DV_true-DV_reco;Counts", 101, -5, 5);
+    TH1 *RelativeNumber_OneDV = new TH1D("RelativeNumber_OneDV", "Relative Number of DV_reco and DV_true - One DV;DV_true-DV_reco;Counts", 101, -5, 5);
+    TH1 *RelativeNumber_TwoDVs = new TH1D("RelativeNumber_TwoDVs", "Relative Number of DV_reco and DV_true - Two DVs;DV_true-DV_reco;Counts", 101, -5, 5);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -529,6 +529,10 @@ void myAnalyzeStage1()
     int DVnumber_OneDV_Total = 0;
     // The total number of DV_truth in event with two DVs
     int DVnumber_TwoDVs_Total = 0;
+    // The total number of DV_truth in event with three DVs
+    int DVnumber_ThreeDVs_Total = 0;
+    // The total number of DV_truth in event with four DVs
+    int DVnumber_FourDVs_Total = 0;
     // Total number of DV_true matched by DV_reco that respect limit in xy plane //
     int DV_true_with_match_XY = 0;
     int DV_true_with_match_XY_OneDV = 0;
@@ -633,7 +637,7 @@ void myAnalyzeStage1()
         // Loop in events with multiple DVs
         if(*truthvtx_n>=1)
         {   
-            //! Cases fot TrajectoryCut Values !//
+            //! Cases for TrajectoryCut Values !//
             switch (*track_n)
             {
             case 2:
@@ -956,6 +960,10 @@ void myAnalyzeStage1()
             if(*truthvtx_n == 1) DVnumber_OneDV_Total += *truthvtx_n;
             // Total number of DVs in events with two DVs
             if(*truthvtx_n == 2) DVnumber_TwoDVs_Total += *truthvtx_n;
+            // Total number of DVs in events with three DVs
+            if(*truthvtx_n == 3) DVnumber_ThreeDVs_Total += *truthvtx_n;
+            // Total number of DVs in events with four DVs
+            if(*truthvtx_n == 4) DVnumber_FourDVs_Total += *truthvtx_n;
 
             //! DV_reco counters !//
             DV_reco_total += DVnumber_Total;
@@ -1128,6 +1136,9 @@ void myAnalyzeStage1()
     cout<<"Total Number of Dvs: "<<DV_Total<<endl;
     cout<<"Total Number of Dvs in events with one DV: "<<DVnumber_OneDV_Total<<endl;
     cout<<"Total Number of Dvs in events with two DVs: "<<DVnumber_TwoDVs_Total<<endl;
+    cout<<"Total Number of Dvs in events with three DVs: "<<DVnumber_ThreeDVs_Total<<endl;
+    cout<<"Total Number of Dvs in events with four DVs: "<<DVnumber_FourDVs_Total<<endl;
+
 
     cout<<endl;
     for(int k = 0; k<50; k++) cout<<"~";
