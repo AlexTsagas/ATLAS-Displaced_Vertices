@@ -499,10 +499,10 @@ void myAnalyzeStage1()
     double DV[3];
 
     //! Application of Restrictions  !//
-    // Condition to decide if a trajectory belongs to a DV without constructing it 
-    double TrajectoryCut;
     // Condition to decide if two trajectories form a DV
-    double DVcut = 0.11;
+    double DVcut = 1;
+    // Condition to decide if a trajectory belongs to a DV without constructing it 
+    double TrajectoryCut = DVcut/2;
 
     // Relative Angles
     double *Angles_Rel;
@@ -637,38 +637,6 @@ void myAnalyzeStage1()
         // Loop in events with multiple DVs
         if(*truthvtx_n>=1)
         {   
-            //! Cases for TrajectoryCut Values !//
-            switch (*track_n)
-            {
-            case 2:
-                TrajectoryCut = 0;
-                break;
-            case 3:
-                TrajectoryCut = 100;
-                break;
-            case 4:
-                TrajectoryCut = 3.5;
-                break;
-            case 5:
-                TrajectoryCut = 5.5;
-                break;
-            case 6:
-                TrajectoryCut = 6.5;
-                break;
-            case 7:
-                TrajectoryCut = 7;
-                break;
-            case 8:
-                TrajectoryCut = 8.5;
-                break;
-            case 9:
-                TrajectoryCut = 13.4;
-                break;
-            case 10:
-                TrajectoryCut = 20;
-                break;
-            }
-
             //! Renew for every event !//
             // Total number of DV_reco
             DVnumber_Total = 0;  
@@ -706,6 +674,17 @@ void myAnalyzeStage1()
                     errorXYZ[k][1] = -1;
                     errorXY[k][0] = -1;
                     errorXY[k][1] = -1;
+                }
+
+                DVcut = 1;
+                //! As the number of DVreco increases should be exponentially more difficult to find other DVs !//
+                for(int k=1; k<5; k++)
+                {
+                    if(DVnumber_Total == k)
+                    {
+                        DVcut = DVcut/(exp(2*k));
+                        TrajectoryCut = DVcut/2;
+                    }
                 }
                 
                 //! Find the DV !//
