@@ -463,6 +463,9 @@ void myAnalyzeStage1()
     TH1 *RelativeNumber_OneDV = new TH1D("RelativeNumber_OneDV", "Relative Number of DV_reco and DV_true - One DV;DV_true-DV_reco;Counts", 101, -5, 5);
     TH1 *RelativeNumber_TwoDVs = new TH1D("RelativeNumber_TwoDVs", "Relative Number of DV_reco and DV_true - Two DVs;DV_true-DV_reco;Counts", 101, -5, 5);
 
+    //! Histograms for Canvas 4 - Distances Between DVtrue in Events with Two DVs !//
+    TH1 *DistanceBetweenTwoDVs = new TH1D("DistanceBetweenTwoDVs", "Distance Between DVs in Events with Two DVtrue;Distance;Counts", 200, 0, 50);
+
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
     treereader.SetTree(tree);
@@ -622,6 +625,7 @@ void myAnalyzeStage1()
     // Conditions for DV_reco that are "close"
     int limitXYZ = 35;
     int limitXY = 14;
+    double distanceBetweenTwoDVs;
 
     // Event Counter
     int event = 1;
@@ -884,6 +888,12 @@ void myAnalyzeStage1()
                 // DV_reco that do not respect at least one limit
                 if((minErrorXYZ[0] > limitXYZ || minErrorXY[0] > limitXY)) DVnumber_Far++;
 
+                // Distances Between DVs in Events with Two DVs //
+                if(*truthvtx_n == 2)
+                {
+                    DistanceBetweenTwoDVs->Fill(Error(truthvtx_x[0], truthvtx_y[0], truthvtx_z[0], truthvtx_x[1], truthvtx_y[1], truthvtx_z[1]));
+                }
+
             } while(countLine <= *track_n-2);
 
             //! Histogram 2 !//
@@ -1094,6 +1104,20 @@ void myAnalyzeStage1()
     RelativeNumber_TwoDVs->Draw();
     
     c3->Print();
+
+
+    // Canvas 4
+    TCanvas *c4 = new TCanvas("c4", "Distances Between DVs in Events with Two DVs", 400, 300);
+    // c4->Divide(3,1);
+
+    c4->cd(1);
+    DistanceBetweenTwoDVs->SetFillColor(kAzure+1);
+    DistanceBetweenTwoDVs->SetMinimum(0);
+    DistanceBetweenTwoDVs->Draw();
+
+    c4->Print();
+
+    gStyle->SetOptStat(1111111);
 
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
