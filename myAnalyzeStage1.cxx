@@ -594,7 +594,7 @@ void myAnalyzeStage1()
     double Pu_sz_OneDV;
     double Pu_sz_TwoDVs;
 
-    //! Accuracy !//
+    //! Accuracy = Errors_Respect_Limits/Errors_Computed !//
     double accuracy_total;
     double accuracy_OneDV;
     double accuracy_TwoDVs;
