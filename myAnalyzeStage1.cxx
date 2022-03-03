@@ -594,6 +594,11 @@ void myAnalyzeStage1()
     double Pu_sz_OneDV;
     double Pu_sz_TwoDVs;
 
+    //! Accuracy !//
+    double accuracy_total;
+    double accuracy_OneDV;
+    double accuracy_TwoDVs;
+
     //! Errors in 3D Space !//
     // First Column: Errors of DV_truth[i] with DV_reco (in i^th row),
     // Second Column: Index of DV_truth used in rows, respectively.
@@ -626,6 +631,9 @@ void myAnalyzeStage1()
     int limitXYZ = 35;
     int limitXY = 14;
     double distanceBetweenTwoDVs;
+    int ErrorsComputed = 0;
+    int ErrorsComputed_OneDV = 0;
+    int ErrorsComputed_TwoDVs = 0;
 
     // Event Counter
     int event = 1;
@@ -806,6 +814,10 @@ void myAnalyzeStage1()
                 //! Compute Errors !//
                 if(DVnumber_Total <= *truthvtx_n)
                 {
+                    ErrorsComputed++;
+                    if(*truthvtx_n == 1) ErrorsComputed_OneDV++;
+                    if(*truthvtx_n == 2) ErrorsComputed_TwoDVs++;
+
                     for(int k=0; k<*truthvtx_n; k++)
                     {
                         if(!IndexUsed(usedErrorIndex, k))
@@ -847,7 +859,6 @@ void myAnalyzeStage1()
                     }
 
                     //! Calculate the number of DV_truth with match that respect the limits !//
-
                     // DV_true_mathced that respect limit on sz space
                     if(minErrorXYZ[0] <= limitXYZ)
                     {
@@ -1135,6 +1146,11 @@ void myAnalyzeStage1()
     Pu_sz_OneDV = 1.*DV_reco_sz_OneDV/DV_reco_OneDV_Total;
     Pu_sz_TwoDVs = 1.*DV_reco_sz_TwoDVs/DV_reco_TwoDVs_Total;
 
+    //! Accuracy !//
+    accuracy_total = 1.*DV_reco_sz/ErrorsComputed;
+    accuracy_OneDV = 1.*DV_reco_sz_OneDV/ErrorsComputed_OneDV;
+    accuracy_TwoDVs = 1.*DV_reco_sz_TwoDVs/ErrorsComputed_TwoDVs;
+
     cout<<endl<<"Events: "<<event<<endl;
     cout<<"Total Number of Dvs: "<<DV_Total<<endl;
     cout<<"Total Number of Dvs in events with one DV: "<<DVnumber_OneDV_Total<<endl;
@@ -1166,6 +1182,19 @@ void myAnalyzeStage1()
     cout<<endl<<"Pu_ρz: "<<Pu_sz<<endl;
     cout<<"One DV - Pu_ρz: "<<Pu_sz_OneDV<<endl;
     cout<<"Two DVs - Pu_ρz: "<<Pu_sz_TwoDVs<<endl;
+
+    cout<<endl;
+    for(int k = 0; k<50; k++) cout<<"~";
+    cout<<endl;
+
+    cout<<endl<<"Accuraty:"<<endl<<endl;
+    cout<<"Total: "<<accuracy_total<<endl;
+    cout<<"Event with One DV: "<<accuracy_OneDV<<endl;
+    cout<<"Event with Two DVs: "<<accuracy_TwoDVs<<endl;
+
+    cout<<endl;
+    for(int k = 0; k<50; k++) cout<<"~";
+    cout<<endl;
 
     // Print time needed for the program to complete
     printf("\nTime taken: %.2fs\n\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
