@@ -18,13 +18,13 @@ The DVs are calculated as follows:
     and line_j is the vectors: PA_i, PB_i, and PA_j, PB_j to create an angle less or equal than π/2, where A and B are the begin and
     end points of each line. The distance between the real DV and the recommended is presented as error in histogram.
 
-  * Furthemore, to procces events with more than one DV the closest distance of DV to the third trajectory of every event is calculated.
+  * Furthemore, to procces events with more than one DVs the closest distance of DV to the third trajectory of every event is calculated.
     The histogram produced by the results offers information about the cases that must be considered. To take them into account an 
     "if statement" should be used that would count trajectories which belong to the same DV but are not used to construct it.
   
 ### Events with Multiple DVs
 
-  * The first step is to specify the number of DVs that exists in every event. Thus, the goal is to find the DV_reco(mmended) with the 
+  * The first step is to specify the number of DVs that exists in every event. Thus, the goal is to find the DV_reco(nstructed) with the 
     most accurate approximation possible. When the total number of DV_reco is calculated, the code produces histograms that compare it
     with the total number of real DVs (DV_true).
 
