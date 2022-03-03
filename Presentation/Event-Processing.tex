@@ -67,7 +67,8 @@
 				\item είναι το μέσο του διανύσματος απόστασής τους.
 			\end{itemize}
 		\item Οι γωνίες: $0\leq\theta_\mathrm{i},\, \theta_\mathrm{j} \leq \pi/2$.
-		\item Η απόσταση τροχιών μικρό- τερη ή ίση του \texttt{DVCut = 11}.
+		\item Η απόσταση τροχιών μικρό- τερη ή ίση του \texttt{DVCut}.
+		\item Tο \texttt{DVCut} μικραίνει εκθετικά για κάθε \dvreco\ που υπολογίζεται.
 	\end{itemize}
 	%
 	\column{0.4\textwidth}
@@ -91,7 +92,7 @@
 			\begin{equation*}
 				d_\mathrm{i} = \frac{\norm{(\vb{p}-\vb{r}_\mathrm{i})\cross\vb{n}_\mathrm{i})}}{\norm{\vb{n}_\mathrm{i}}},\ \vb{n}_\mathrm{i} \equiv \vb{r}'_\mathrm{i}-\vb{r}_\mathrm{i}
 			\end{equation*}
-		 από το \dvreco\ μικρότερη από \texttt{TrajectoryCut}.
+		 από το \dvreco\ μικρότερη από \texttt{TrajectoryCut = DVCut/2}.
 	\end{itemize}
 	%
 	\column{0.3\textwidth}	
