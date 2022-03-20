@@ -243,7 +243,7 @@ double *minimumArrayValueSix(double distance[][6], int elementCount)
     {
         element = distance[i][0];
 
-        if(minimum[0] >= element)
+        if(minimum[0] >= element && element != -1)
         {
             minimum[0] = element;
 
@@ -304,7 +304,7 @@ double minimumValuefromArrayElements(double *array, int elementCount)
     {
         element = array[i];
 
-        if(minimum >= element)
+        if(minimum >= element && element != -1)
         {
             minimum = element;
         }
@@ -639,7 +639,7 @@ void myAnalyzeStage1()
     int event = 1;
 
     // Integers for for loops
-    int i, j;
+    int line_i, line_j, line_k, er;
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
@@ -647,7 +647,7 @@ void myAnalyzeStage1()
     while (treereader.Next()) 
     {
         // Loop in events with multiple DVs
-        if(*truthvtx_n>=1)
+        if(*truthvtx_n >= 1)
         {   
             //! Renew for every event !//
             // Total number of DV_reco
@@ -679,6 +679,12 @@ void myAnalyzeStage1()
                 // Arrays errorXYZ and errorXY element counter
                 errorCounter = 0;
 
+                // Initialize fot Multiple Trajectories
+                for(int k=0; k<20; k++)
+                {
+                    DvTrajectoryDistance[k][0] = -1;
+                    DvTrajectoryDistance[k][1] = -1;
+                }
                 // Initialize all to -1 so as not to coincide with other DVs
                 for(int k=0; k<10; k++)
                 {
@@ -687,34 +693,42 @@ void myAnalyzeStage1()
                     errorXY[k][0] = -1;
                     errorXY[k][1] = -1;
                 }
-
-                DVcut = 1;
-                //! As the number of DVreco increases should be exponentially more difficult to find other DVs !//
-                for(int k=1; k<5; k++)
+                // Initianlize trajectories distances
+                for(int k=0; k<100; k++)
                 {
-                    if(DVnumber_Total == k)
+                    for(int l=0; l<6; l++)
                     {
-                        DVcut = DVcut/(exp(2*k));
-                        TrajectoryCut = DVcut/2;
+                        distance_ij[k][l] = -1;
                     }
                 }
-                
+
+                //! As the number of DVreco increases should be exponentially more difficult to find other DVs !//
+                // DVcut = 1;
+                // for(int k=1; k<7; k++)
+                // {
+                //     if(DVnumber_Total == k)
+                //     {
+                //         DVcut = DVcut * exp(-2*k);
+                //         TrajectoryCut = DVcut/2;
+                //     }
+                // }
+
                 //! Find the DV !//
-                for(i=0; i<*track_n; i++)
+                for(line_i=0; line_i<*track_n; line_i++)
                 {
-                    if(!IndexUsed(usedLineIndex, i))
+                    if(!IndexUsed(usedLineIndex, line_i))
                     {
                         // line_i
-                        a[0] = track_x0[i]; a[1] = track_y0[i]; a[2] = track_z0[i];
-                        b[0] = track_x1[i]; b[1] = track_y1[i]; b[2] = track_z1[i];
+                        a[0] = track_x0[line_i]; a[1] = track_y0[line_i]; a[2] = track_z0[line_i];
+                        b[0] = track_x1[line_i]; b[1] = track_y1[line_i]; b[2] = track_z1[line_i];
 
-                        for(j=i+1; j<*track_n; j++)
+                        for(line_j=line_i+1; line_j<*track_n; line_j++)
                         {  
-                            if(!IndexUsed(usedLineIndex, j))
+                            if(!IndexUsed(usedLineIndex, line_j))
                             {
                                 // line_j
-                                aa[0] = track_x0[j]; aa[1] = track_y0[j]; aa[2] = track_z0[j];
-                                bb[0] = track_x1[j]; bb[1] = track_y1[j]; bb[2] = track_z1[j];
+                                aa[0] = track_x0[line_j]; aa[1] = track_y0[line_j]; aa[2] = track_z0[line_j];
+                                bb[0] = track_x1[line_j]; bb[1] = track_y1[line_j]; bb[2] = track_z1[line_j];
 
                                 // DV Coordinates formed by line_i and line_j
                                 displaced_Vertex = displacedVertex(a, b, aa, bb);
@@ -738,8 +752,8 @@ void myAnalyzeStage1()
                                     distance_ij[count_j][3] = DV[2];
 
                                     // Used lines indexes
-                                    distance_ij[count_j][4] = i;
-                                    distance_ij[count_j][5] = j;
+                                    distance_ij[count_j][4] = line_i;
+                                    distance_ij[count_j][5] = line_j;
                                     
                                     count_j++;      
                                 }
@@ -753,157 +767,158 @@ void myAnalyzeStage1()
                 for(int k=0; k<6; k++)  leastDistance[k] = least_Distance[k]; 
 
                 //! Condition to decide if there is a DV !//
-                if(leastDistance[0] >= DVcut)   break;
-
-                // If it passes the previous condition it means that we have a DV
-                DVnumber_Total++;
-                
-                // Store line indexes that have been used to calculate the DV
-                for(int k=4; k<6; k++)
+                if(leastDistance[0] < DVcut)
                 {
-                    usedLineIndex[countLine] = least_Distance[k];
-                    countLine++;
-                }
-                
-                // Assigning coordinates to DV Array
-                displacedVertexArray[0] = leastDistance[1]; // DV_x
-                displacedVertexArray[1] = leastDistance[2]; // DV_y
-                displacedVertexArray[2] = leastDistance[3]; // DV_z
-
-                //! Condition to take into consideration multiple trajectories that might belong to the same DV !//
-                if(*track_n - countLine >= 1)
-                {
-                    for(int i=0; i<*track_n; i++)
-                    {
-                        if(!IndexUsed(usedLineIndex, i))
-                        {
-                            // line_i
-                            A[0] = track_x0[i]; A[1] = track_y0[i]; A[2] = track_z0[i];
-                            B[0] = track_x1[i]; B[1] = track_y1[i]; B[2] = track_z1[i];
-
-                            // Distance from the Dv to line_i
-                            DvTrajectoryDistance[DvTrajectoryCounter][0] =  LinePointDistance(A, B, DV);
-                            // Index of line_i
-                            DvTrajectoryDistance[DvTrajectoryCounter][1] = i;
-
-                            DvTrajectoryCounter++;
-                        }
-                    }
-
-                    // Sort the DvTrajectoryDistance elements in ascending order with respect to distances 
-                    ArraySorting(DvTrajectoryDistance, DvTrajectoryCounter);
-
-                    for(int k=0; k<DvTrajectoryCounter; k++)
-                    {
-                        // The distance of third trajectory
-                        thirdTrajectoryDistance = DvTrajectoryDistance[k][0];
-
-                        if(thirdTrajectoryDistance <= TrajectoryCut)
-                        {
-                            // The index of trajectory used
-                            usedLineIndex[countLine] = DvTrajectoryDistance[k][1];
-                            countLine++;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                //! Compute Errors !//
-                if(DVnumber_Total <= *truthvtx_n)
-                {
-                    ErrorsComputed++;
-                    if(*truthvtx_n == 1) ErrorsComputed_OneDV++;
-                    if(*truthvtx_n == 2) ErrorsComputed_TwoDVs++;
-
-                    for(int k=0; k<*truthvtx_n; k++)
-                    {
-                        if(!IndexUsed(usedErrorIndex, k))
-                        {
-                            // Error of DV_truth[k] and DV_reco
-                            errorXYZ[errorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[k], truthvtx_y[k], truthvtx_z[k]); 
-                            errorXY[errorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], 0, truthvtx_x[k], truthvtx_y[k], 0); 
-                            // Index of DV_truth used
-                            errorXYZ[errorCounter][1] = k;
-                            errorXY[errorCounter][1] = k;
-
-                            errorCounter++;
-                        }
-                    }
-                    min_ErrorXYZ = minimumArrayValueTwo(errorXYZ, errorCounter);
-                    min_ErrorXY = minimumArrayValueTwo(errorXY, errorCounter);
-                    // Minimum Error
-                    minErrorXYZ[0] = min_ErrorXYZ[0];  
-                    minErrorXY[0] = min_ErrorXY[0]; 
-                    // Index of DV_truth used
-                    minErrorXYZ[1] = min_ErrorXYZ[1]; 
-                    minErrorXY[1] = min_ErrorXY[1];
-
-                    usedErrorIndex[errorIndexCounter] = minErrorXYZ[1];
-                    errorIndexCounter++;
-
-                    error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
-                    error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
-
-                    if(*truthvtx_n == 1)
-                    {
-                        error_XYZ_OneDV->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
-                        error_XY_OneDV->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
-                    }
-                    else if(*truthvtx_n == 2)
-                    {
-                        error_XYZ_TwoDVs->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
-                        error_XY_TwoDVs->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
-                    }
-
-                    //! Calculate the number of DV_truth with match that respect the limits !//
-                    // DV_true_mathced that respect limit on sz space
-                    if(minErrorXYZ[0] <= limitXYZ)
-                    {
-                        DV_true_with_match_SZ++;
-                        if(*truthvtx_n==1) DV_true_with_match_SZ_OneDV++;
-                        if(*truthvtx_n==2) DV_true_with_match_SZ_TwoDVs++;
-                    } 
-
-                    // DV_true_mathced that respect limit on xy plane
-                    if(minErrorXY[0] <= limitXY)
-                    {
-                        DV_true_with_match_XY++;
-                        if(*truthvtx_n==1) DV_true_with_match_XY_OneDV++;
-                        if(*truthvtx_n==2) DV_true_with_match_XY_TwoDVs++;
-                    } 
-
-                    //! Condition to calculate the DV_reco that respects or not the limits !//
-                    // DV_reco that respect limit in sz space
-                    if(minErrorXYZ[0] <= limitXYZ)
-                    {
-                        DV_reco_sz++;
-                        if(*truthvtx_n==1) DV_reco_sz_OneDV++;
-                        if(*truthvtx_n==2) DV_reco_sz_TwoDVs++;
-                    }
-
-                    // DV_reco that respect limit in xy plane
-                    if(minErrorXY[0] <= limitXY)
-                    {
-                        DV_reco_xy++;
-                        if(*truthvtx_n==1) DV_reco_xy_OneDV++;
-                        if(*truthvtx_n==2) DV_reco_xy_TwoDVs++;
-                    }
-                }
-
-                // DV_reco that respect both limits
-                if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY) DVnumber_Close++;
+                    // If it passes the previous condition it means that we have a DV
+                    DVnumber_Total++;
                     
-                // DV_reco that do not respect at least one limit
-                if((minErrorXYZ[0] > limitXYZ || minErrorXY[0] > limitXY)) DVnumber_Far++;
+                    // Store line indexes that have been used to calculate the DV
+                    for(int k=4; k<6; k++)
+                    {
+                        usedLineIndex[countLine] = least_Distance[k];
+                        countLine++;
+                    }
+                    
+                    // Assigning coordinates to DV Array
+                    displacedVertexArray[0] = leastDistance[1]; // DV_x
+                    displacedVertexArray[1] = leastDistance[2]; // DV_y
+                    displacedVertexArray[2] = leastDistance[3]; // DV_z
 
-                // Distances Between DVs in Events with Two DVs //
-                if(*truthvtx_n == 2)
-                {
-                    DistanceBetweenTwoDVs->Fill(Error(truthvtx_x[0], truthvtx_y[0], truthvtx_z[0], truthvtx_x[1], truthvtx_y[1], truthvtx_z[1]));
-                }
+                    //! Condition to take into consideration multiple trajectories that might belong to the same DV !//
+                    if(*track_n - countLine >= 1)
+                    {
+                        for(line_k=0; line_k<*track_n; line_k++)
+                        {
+                            if(!IndexUsed(usedLineIndex, line_k))
+                            {
+                                // line_i
+                                A[0] = track_x0[line_k]; A[1] = track_y0[line_k]; A[2] = track_z0[line_k];
+                                B[0] = track_x1[line_k]; B[1] = track_y1[line_k]; B[2] = track_z1[line_k];
+
+                                // Distance from the DV to line_i
+                                DvTrajectoryDistance[DvTrajectoryCounter][0] =  LinePointDistance(A, B, DV);
+                                // Index of line_i
+                                DvTrajectoryDistance[DvTrajectoryCounter][1] = line_k;
+
+                                DvTrajectoryCounter++;
+                            }
+                        }
+
+                        // Sort the DvTrajectoryDistance elements in ascending order with respect to distances 
+                        ArraySorting(DvTrajectoryDistance, DvTrajectoryCounter);
+
+                        for(int k=0; k<DvTrajectoryCounter; k++)
+                        {
+                            // The distance of third trajectory
+                            thirdTrajectoryDistance = DvTrajectoryDistance[k][0];
+
+                            if(thirdTrajectoryDistance <= TrajectoryCut)
+                            {
+                                // The index of trajectory used
+                                usedLineIndex[countLine] = DvTrajectoryDistance[k][1];
+                                countLine++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    //! Compute Errors !//
+                    if(DVnumber_Total <= *truthvtx_n)
+                    {
+                        ErrorsComputed++;
+                        if(*truthvtx_n == 1) ErrorsComputed_OneDV++;
+                        if(*truthvtx_n == 2) ErrorsComputed_TwoDVs++;
+
+                        for(er=0; er<*truthvtx_n; er++)
+                        {
+                            if(!IndexUsed(usedErrorIndex, er))
+                            {
+                                // Error of DV_truth[k] and DV_reco
+                                errorXYZ[errorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], displacedVertexArray[2], truthvtx_x[er], truthvtx_y[er], truthvtx_z[er]); 
+                                errorXY[errorCounter][0] = Error(displacedVertexArray[0], displacedVertexArray[1], 0, truthvtx_x[er], truthvtx_y[er], 0); 
+                                // Index of DV_truth used
+                                errorXYZ[errorCounter][1] = er;
+                                errorXY[errorCounter][1] = er;
+
+                                errorCounter++;
+                            }
+                        }
+                        min_ErrorXYZ = minimumArrayValueTwo(errorXYZ, errorCounter);
+                        min_ErrorXY = minimumArrayValueTwo(errorXY, errorCounter);
+                        // Minimum Error
+                        minErrorXYZ[0] = min_ErrorXYZ[0];  
+                        minErrorXY[0] = min_ErrorXY[0]; 
+                        // Index of DV_truth used
+                        minErrorXYZ[1] = min_ErrorXYZ[1]; 
+                        minErrorXY[1] = min_ErrorXY[1];
+
+                        usedErrorIndex[errorIndexCounter] = minErrorXYZ[1];
+                        errorIndexCounter++;
+
+                        error_XYZ->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
+                        error_XY->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
+
+                        if(*truthvtx_n == 1)
+                        {
+                            error_XYZ_OneDV->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
+                            error_XY_OneDV->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
+                        }
+                        else if(*truthvtx_n == 2)
+                        {
+                            error_XYZ_TwoDVs->Fill(minErrorXYZ[0]); // Distance of calculated DV from truth DV (Error)
+                            error_XY_TwoDVs->Fill(minErrorXY[0]); // Distance of calculated DV from truth DV (Error)
+                        }
+
+                        //! Calculate the number of DV_truth with match that respect the limits !//
+                        // DV_true_matched that respect limit on sz space
+                        if(minErrorXYZ[0] <= limitXYZ)
+                        {
+                            DV_true_with_match_SZ++;
+                            if(*truthvtx_n==1) DV_true_with_match_SZ_OneDV++;
+                            if(*truthvtx_n==2) DV_true_with_match_SZ_TwoDVs++;
+                        } 
+
+                        // DV_true_matched that respect limit on xy plane
+                        if(minErrorXY[0] <= limitXY)
+                        {
+                            DV_true_with_match_XY++;
+                            if(*truthvtx_n==1) DV_true_with_match_XY_OneDV++;
+                            if(*truthvtx_n==2) DV_true_with_match_XY_TwoDVs++;
+                        } 
+
+                        //! Condition to calculate the DV_reco that respects or not the limits !//
+                        // DV_reco that respect limit in sz space
+                        if(minErrorXYZ[0] <= limitXYZ)
+                        {
+                            DV_reco_sz++;
+                            if(*truthvtx_n==1) DV_reco_sz_OneDV++;
+                            if(*truthvtx_n==2) DV_reco_sz_TwoDVs++;
+                        }
+
+                        // DV_reco that respect limit in xy plane
+                        if(minErrorXY[0] <= limitXY)
+                        {
+                            DV_reco_xy++;
+                            if(*truthvtx_n==1) DV_reco_xy_OneDV++;
+                            if(*truthvtx_n==2) DV_reco_xy_TwoDVs++;
+                        }
+                    }
+
+                    // DV_reco that respect both limits
+                    if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY) DVnumber_Close++;
+                        
+                    // DV_reco that do not respect at least one limit
+                    if((minErrorXYZ[0] > limitXYZ || minErrorXY[0] > limitXY)) DVnumber_Far++;
+
+                    // Distances Between DVs in Events with Two DVs //
+                    if(*truthvtx_n == 2)
+                    {
+                        DistanceBetweenTwoDVs->Fill(Error(truthvtx_x[0], truthvtx_y[0], truthvtx_z[0], truthvtx_x[1], truthvtx_y[1], truthvtx_z[1]));
+                    }
+                }else break;
 
             } while(countLine <= *track_n-2);
 
@@ -1128,8 +1143,6 @@ void myAnalyzeStage1()
 
     c4->Print();
 
-    gStyle->SetOptStat(1111111);
-
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
     Eff_xy_OneDV = 1.*DV_true_with_match_XY_OneDV/DVnumber_OneDV_Total;
@@ -1151,13 +1164,14 @@ void myAnalyzeStage1()
     accuracy_OneDV = 1.*DV_reco_sz_OneDV/ErrorsComputed_OneDV;
     accuracy_TwoDVs = 1.*DV_reco_sz_TwoDVs/ErrorsComputed_TwoDVs;
 
+    cout<<endl<<"Errors Computated: "<<ErrorsComputed<<endl;
+
     cout<<endl<<"Events: "<<event<<endl;
     cout<<"Total Number of Dvs: "<<DV_Total<<endl;
     cout<<"Total Number of Dvs in events with one DV: "<<DVnumber_OneDV_Total<<endl;
     cout<<"Total Number of Dvs in events with two DVs: "<<DVnumber_TwoDVs_Total<<endl;
     cout<<"Total Number of Dvs in events with three DVs: "<<DVnumber_ThreeDVs_Total<<endl;
     cout<<"Total Number of Dvs in events with four DVs: "<<DVnumber_FourDVs_Total<<endl;
-
 
     cout<<endl;
     for(int k = 0; k<50; k++) cout<<"~";
