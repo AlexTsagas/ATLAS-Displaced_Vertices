@@ -466,6 +466,9 @@ void myAnalyzeStage1()
     //! Histograms for Canvas 4 - Distances Between DVtrue in Events with Two DVs !//
     TH1 *DistanceBetweenTwoDVs = new TH1D("DistanceBetweenTwoDVs", "Distance Between DVs in Events with Two DVtrue;Distance;Counts", 200, 0, 50);
 
+    //! Histograms for Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It !//
+    TH1 *DVreco_RecoLinesMinDistance = new TH1D("DVreco_RecoLinesMinDistance", "Minimum Distance Between DVreco and Reconstructing Lines;Distance;Counts", 200, 0, 50);
+
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
     treereader.SetTree(tree);
@@ -626,6 +629,10 @@ void myAnalyzeStage1()
     // Distance of "third" trajectory to DV
     double thirdTrajectoryDistance;
 
+    //! DVreco Distance from Lines that Reconstructed It !//
+    double DVrecoLine[4];
+    double DVrecoLine_min;
+
     //! Miscellaneous !//
     // Conditions for DV_reco that are "close"
     int limitXYZ = 35;
@@ -767,10 +774,22 @@ void myAnalyzeStage1()
                 for(int k=0; k<6; k++)  leastDistance[k] = least_Distance[k]; 
 
                 //! Condition to decide if there is a DV !//
-                if(leastDistance[0] < DVcut)
+                if(leastDistance[0] < DVcut && leastDistance[0] >= 0)
                 {
                     // If it passes the previous condition it means that we have a DV
                     DVnumber_Total++;
+
+                    // Compute distance between DVreco and lines that reconstructed it
+                    // Line_i
+                    DVrecoLine[0] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x0[leastDistance[4]], track_y0[leastDistance[4]], track_z0[leastDistance[4]]);
+                    DVrecoLine[1] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[4]], track_y0[leastDistance[4]], track_z0[leastDistance[4]]);
+                    // Line_j
+                    DVrecoLine[2] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x0[leastDistance[5]], track_y0[leastDistance[5]], track_z0[leastDistance[5]]);
+                    DVrecoLine[3] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[5]], track_y0[leastDistance[5]], track_z0[leastDistance[5]]);
+                    // Minimum Distance
+                    DVrecoLine_min = minimumValuefromArrayElements(DVrecoLine, 4);
+                    // Make Histogram
+                    DVreco_RecoLinesMinDistance->Fill(DVrecoLine_min); 
                     
                     // Store line indexes that have been used to calculate the DV
                     for(int k=4; k<6; k++)
@@ -1142,6 +1161,16 @@ void myAnalyzeStage1()
     DistanceBetweenTwoDVs->Draw();
 
     c4->Print();
+
+    // Canvas 5
+    TCanvas *c5 = new TCanvas("c5", "Minimum Distance Between DVreco and Reconstructing Lines", 400, 300);
+
+    c5->cd(1);
+    DVreco_RecoLinesMinDistance->SetFillColor(kAzure+1);
+    DVreco_RecoLinesMinDistance->SetMinimum(0);
+    DVreco_RecoLinesMinDistance->Draw();
+
+    c5->Print();
 
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
