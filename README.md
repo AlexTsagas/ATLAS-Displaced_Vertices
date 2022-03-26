@@ -1,6 +1,6 @@
 # Project - In Search for Displaced Vertices
 
-## Goal of Project - Lalala
+## Goal of Project
 
 The purpose of the project is to find long lived particles/Displaved Vertices (DVs) which are depicted as points where
 trajectories of its products (stable particles) converge. To specify, two points that belong the trajectories are given.
