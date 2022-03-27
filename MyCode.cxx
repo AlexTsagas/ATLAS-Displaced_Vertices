@@ -208,15 +208,15 @@ double LinePointDistance(double *a, double *b, double *p)
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
-void new_MyCode()
+void MyCode()
 {
     // line1
-    double a[3] = {0, 0, 0};
-    double b[3] = {1, 0, 0};
+    double a[3] = {7.5095, -4.50377, 3.23471};
+    double b[3] = {92.9605, -37.9277, 112.429};
 
     // line2
-    double aa[3] = {0, 0, 1};
-    double bb[3] = {0, 1, 0.55};
+    double aa[3] = {4.05673, -3.42822, -1.65386};
+    double bb[3] = {19.9497, -98.398, -138.669};
 
     // Point
     double p[3] = {0,1.5,0};
@@ -306,7 +306,7 @@ void new_MyCode()
     gr->SetTitle("Displaced Vertex and Particles' Trajectories;x;y;z");
 
     gr->SetMarkerStyle(20);
-    gr->SetMarkerSize(0.5);
+    gr->SetMarkerSize(0.2);
     gr->SetMarkerColor(kBlack);
 
     gr->Draw("P");
