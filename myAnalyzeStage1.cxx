@@ -427,6 +427,51 @@ void ArraySorting(double array[][2], int elementCount)
 }
 
 
+// Maximum Angle Between vector ODV and A_iAA_i, B_iBB_i, where A_i, AA_i are points of line_i and
+// B_i, BB_i are points of line_j
+double AngleDVTracks(double *DV, double *a, double *aa, double *b, double *bb)
+{
+    // Angles Between ODV and A_iAA_i, B_iBB_i
+    double theta[2];
+    // The maximun of angles
+    double theta_max;
+
+    // Center of Axis - Interaction Point
+    double O[3] = {0,0,0};
+
+    // Unit vector from O to DV
+    double *unit_ODV = relativeUnitVector(O, DV);
+    double unitODV[3] = {unit_ODV[0], unit_ODV[1], unit_ODV[2]};
+
+    // Relative unit vector from a to aa
+    double *unitRel_aaa = relativeUnitVector(a, aa);
+    double unitRelaaa[3] = {unitRel_aaa[0], unitRel_aaa[1], unitRel_aaa[2]};
+
+    // Relative unit vector from b to bb
+    double *unitRel_bbb = relativeUnitVector(b, bb);
+    double unitRelbbb[3] = {unitRel_bbb[0], unitRel_bbb[1], unitRel_bbb[2]};
+
+    // cos(θ_a) where θ_a is the angle between ODV and aaa vectors
+    double dotProd_a = dotProduct(unitODV, unitRelaaa);
+    // cos(θ_b) where θ_b is the angle between ODV and bbb vectors
+    double dotProd_b = dotProduct(unitODV, unitRel_bbb);
+
+    // Θ_a and Θ_b in degrees
+    theta[0] = acos(dotProd_a) * 180.0 / M_PI;
+    theta[1] = acos(dotProd_b) * 180.0 / M_PI;
+
+    if(theta[0]>=theta[1]) 
+    {
+        theta_max = theta[0];
+    }
+    else
+    {
+        theta_max = theta[1];
+    }
+
+    return theta_max;
+}
+
 // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ // ~~~~ //
 
 void myAnalyzeStage1()
@@ -464,10 +509,13 @@ void myAnalyzeStage1()
     TH1 *RelativeNumber_TwoDVs = new TH1D("RelativeNumber_TwoDVs", "Relative Number of DV_reco and DV_true - Two DVs;DV_true-DV_reco;Counts", 101, -5, 5);
 
     //! Histograms for Canvas 4 - Distances Between DVtrue in Events with Two DVs !//
-    TH1 *DistanceBetweenTwoDVs = new TH1D("DistanceBetweenTwoDVs", "Distance Between DVs in Events with Two DVtrue;Distance;Counts", 200, 0, 50);
+    TH1 *DistanceBetweenTwoDVs = new TH1D("DistanceBetweenTwoDVs", "Distance Between DVs in Events with Two DVtrue;Distance;Counts", 51, 0, 50);
 
     //! Histograms for Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It !//
-    TH1 *DVreco_RecoLinesMinDistance = new TH1D("DVreco_RecoLinesMinDistance", "Minimum Distance Between DVreco and Reconstructing Lines;Distance;Counts", 200, 0, 50);
+    TH1 *DVreco_RecoLinesMinDistance = new TH1D("DVreco_RecoLinesMinDistance", "Minimum Distance Between DVreco and Reconstructing Lines;Distance;Counts", 150, 0, 50);
+
+    //! Histograms for Canvas 6 -  Maximum Angle Between ODV and A_iAA_i, B_iBB_i vectors !//
+    TH1 *Angle_ODV_AB_max = new TH1D("Angle_ODV_AB_max", "Maximum Angle Between ODV and A_iAA_i, B_iBB_i vectors;Angle;Counts", 91, 0, 180);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -633,6 +681,11 @@ void myAnalyzeStage1()
     double DVrecoLine[4];
     double DVrecoLine_min;
 
+    //! Angle Between ODV and A_iAA_i, B_iBB_i vectors !//
+    double A_i[3], AA_i[3];
+    double B_i[3], BB_i[3];
+    double theta_ODVAB_max;
+
     //! Miscellaneous !//
     // Conditions for DV_reco that are "close"
     int limitXYZ = 35;
@@ -779,13 +832,14 @@ void myAnalyzeStage1()
                     // If it passes the previous condition it means that we have a DV
                     DVnumber_Total++;
 
+                    //! Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It !//
                     // Compute distance between DVreco and lines that reconstructed it
                     // Line_i
                     DVrecoLine[0] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x0[leastDistance[4]], track_y0[leastDistance[4]], track_z0[leastDistance[4]]);
-                    DVrecoLine[1] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[4]], track_y0[leastDistance[4]], track_z0[leastDistance[4]]);
+                    DVrecoLine[1] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[4]], track_y1[leastDistance[4]], track_z1[leastDistance[4]]);
                     // Line_j
                     DVrecoLine[2] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x0[leastDistance[5]], track_y0[leastDistance[5]], track_z0[leastDistance[5]]);
-                    DVrecoLine[3] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[5]], track_y0[leastDistance[5]], track_z0[leastDistance[5]]);
+                    DVrecoLine[3] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[5]], track_y1[leastDistance[5]], track_z1[leastDistance[5]]);
                     // Minimum Distance
                     DVrecoLine_min = minimumValuefromArrayElements(DVrecoLine, 4);
                     // Make Histogram
@@ -802,6 +856,18 @@ void myAnalyzeStage1()
                     displacedVertexArray[0] = leastDistance[1]; // DV_x
                     displacedVertexArray[1] = leastDistance[2]; // DV_y
                     displacedVertexArray[2] = leastDistance[3]; // DV_z
+
+                    //! Maximum Angle Between ODV and A_iAA_i, B_iBB_i vectors !//   
+                    // Line_i
+                    A_i[0] = track_x0[leastDistance[4]]; A_i[1] = track_y0[leastDistance[4]]; A_i[2] = track_z0[leastDistance[4]];
+                    AA_i[0] = track_x1[leastDistance[4]]; AA_i[1] = track_y1[leastDistance[4]]; AA_i[2] = track_z1[leastDistance[4]];
+                    // Line_j
+                    B_i[0] = track_x0[leastDistance[5]]; B_i[1] = track_y0[leastDistance[5]]; B_i[2] = track_z0[leastDistance[5]];
+                    BB_i[0] = track_x1[leastDistance[5]]; BB_i[1] = track_y1[leastDistance[5]]; BB_i[2] = track_z1[leastDistance[5]];
+                    // Maximum Angle
+                    theta_ODVAB_max = AngleDVTracks(displacedVertexArray, A_i, AA_i, B_i, BB_i);
+                    // Histogram
+                    Angle_ODV_AB_max->Fill(theta_ODVAB_max);
 
                     //! Condition to take into consideration multiple trajectories that might belong to the same DV !//
                     if(*track_n - countLine >= 1)
@@ -1171,6 +1237,16 @@ void myAnalyzeStage1()
     DVreco_RecoLinesMinDistance->Draw();
 
     c5->Print();
+
+    // Canvas 6
+    TCanvas *c6 = new TCanvas("c6", "Maximum Angle Between ODV and A_iAA_i, B_iBB_i vectors", 400, 300);
+
+    c6->cd(1);
+    Angle_ODV_AB_max->SetFillColor(kAzure+1);
+    Angle_ODV_AB_max->SetMinimum(0);
+    Angle_ODV_AB_max->Draw();
+
+    c6->Print();
 
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
