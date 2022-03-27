@@ -427,8 +427,8 @@ void ArraySorting(double array[][2], int elementCount)
 }
 
 
-// Maximum Angle Between vector ODV and A_iAA_i, B_iBB_i, where A_i, AA_i are points of line_i and
-// B_i, BB_i are points of line_j
+// Maximum Angle Between vector ODV and A_iAA_i, B_jBB_j, where A_i, AA_i are points of line_i and
+// B_j, BB_j are points of line_j
 double AngleDVTracks(double *DV, double *a, double *aa, double *b, double *bb)
 {
     // Angles Between ODV and A_iAA_i, B_iBB_i
@@ -512,10 +512,10 @@ void myAnalyzeStage1()
     TH1 *DistanceBetweenTwoDVs = new TH1D("DistanceBetweenTwoDVs", "Distance Between DVs in Events with Two DVtrue;Distance;Counts", 51, 0, 50);
 
     //! Histograms for Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It !//
-    TH1 *DVreco_RecoLinesMinDistance = new TH1D("DVreco_RecoLinesMinDistance", "Minimum Distance Between DVreco and Reconstructing Lines;Distance;Counts", 150, 0, 50);
+    TH1 *DVreco_RecoLinesMinDistance = new TH1D("DVreco_RecoLinesMinDistance", "Minimum Distance Between DVreco and Reconstructing Lines;Distance;Counts", 151, 0, 50);
 
-    //! Histograms for Canvas 6 -  Maximum Angle Between ODV and A_iAA_i, B_iBB_i vectors !//
-    TH1 *Angle_ODV_AB_max = new TH1D("Angle_ODV_AB_max", "Maximum Angle Between ODV and A_iAA_i, B_iBB_i vectors;Angle;Counts", 91, 0, 180);
+    //! Histograms for Canvas 6 -  Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors !//
+    TH1 *Angle_ODV_AB_max = new TH1D("Angle_ODV_AB_max", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors;Angle;Counts", 91, 0, 180);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -683,7 +683,7 @@ void myAnalyzeStage1()
 
     //! Angle Between ODV and A_iAA_i, B_iBB_i vectors !//
     double A_i[3], AA_i[3];
-    double B_i[3], BB_i[3];
+    double B_j[3], BB_j[3];
     double theta_ODVAB_max;
 
     //! Miscellaneous !//
@@ -862,10 +862,10 @@ void myAnalyzeStage1()
                     A_i[0] = track_x0[leastDistance[4]]; A_i[1] = track_y0[leastDistance[4]]; A_i[2] = track_z0[leastDistance[4]];
                     AA_i[0] = track_x1[leastDistance[4]]; AA_i[1] = track_y1[leastDistance[4]]; AA_i[2] = track_z1[leastDistance[4]];
                     // Line_j
-                    B_i[0] = track_x0[leastDistance[5]]; B_i[1] = track_y0[leastDistance[5]]; B_i[2] = track_z0[leastDistance[5]];
-                    BB_i[0] = track_x1[leastDistance[5]]; BB_i[1] = track_y1[leastDistance[5]]; BB_i[2] = track_z1[leastDistance[5]];
+                    B_j[0] = track_x0[leastDistance[5]]; B_j[1] = track_y0[leastDistance[5]]; B_j[2] = track_z0[leastDistance[5]];
+                    BB_j[0] = track_x1[leastDistance[5]]; BB_j[1] = track_y1[leastDistance[5]]; BB_j[2] = track_z1[leastDistance[5]];
                     // Maximum Angle
-                    theta_ODVAB_max = AngleDVTracks(displacedVertexArray, A_i, AA_i, B_i, BB_i);
+                    theta_ODVAB_max = AngleDVTracks(displacedVertexArray, A_i, AA_i, B_j, BB_j);
                     // Histogram
                     Angle_ODV_AB_max->Fill(theta_ODVAB_max);
 
@@ -1222,7 +1222,7 @@ void myAnalyzeStage1()
     // c4->Divide(3,1);
 
     c4->cd(1);
-    DistanceBetweenTwoDVs->SetFillColor(kAzure+1);
+    DistanceBetweenTwoDVs->SetFillColor(kGreen);
     DistanceBetweenTwoDVs->SetMinimum(0);
     DistanceBetweenTwoDVs->Draw();
 
@@ -1232,14 +1232,14 @@ void myAnalyzeStage1()
     TCanvas *c5 = new TCanvas("c5", "Minimum Distance Between DVreco and Reconstructing Lines", 400, 300);
 
     c5->cd(1);
-    DVreco_RecoLinesMinDistance->SetFillColor(kAzure+1);
+    DVreco_RecoLinesMinDistance->SetFillColor(kRed);
     DVreco_RecoLinesMinDistance->SetMinimum(0);
     DVreco_RecoLinesMinDistance->Draw();
 
     c5->Print();
 
     // Canvas 6
-    TCanvas *c6 = new TCanvas("c6", "Maximum Angle Between ODV and A_iAA_i, B_iBB_i vectors", 400, 300);
+    TCanvas *c6 = new TCanvas("c6", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors", 400, 300);
 
     c6->cd(1);
     Angle_ODV_AB_max->SetFillColor(kAzure+1);
