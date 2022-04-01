@@ -515,7 +515,8 @@ void myAnalyzeStage1()
     TH1 *DVreco_RecoLinesMinDistance = new TH1D("DVreco_RecoLinesMinDistance", "Minimum Distance Between DVreco and Reconstructing Lines;Distance;Counts", 151, 0, 50);
 
     //! Histograms for Canvas 6 -  Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors !//
-    TH1 *Angle_ODV_AB_max = new TH1D("Angle_ODV_AB_max", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors;Angle;Counts", 89, 0, 180);
+    TH1 *Angle_ODV_AB_max_Matched = new TH1D("Angle_ODV_AB_max_Matched", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors (Matched);Angle;Counts", 89, 0, 180);
+    TH1 *Angle_ODV_AB_max_NotMatched = new TH1D("Angle_ODV_AB_max_NotMatched", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors (Not Matched);Angle;Counts", 89, 0, 180);
 
     //! Histogram for Canvas 7 - Distance Between Tracks Used to Reconstruct the DVreco !//
     TH1 *Track_Distance_Matched = new TH1D("Track_Distance_Matched", "Distance Between Tracks Used to Reconstruct the DVreco (Mathced);Track Distance;Counts", 200, 0, 1);
@@ -885,9 +886,6 @@ void myAnalyzeStage1()
                     // Maximum Angle
                     theta_ODVAB_max = AngleDVTracks(displacedVertexArray, A_i, AA_i, B_j, BB_j);
 
-                    // Histogram
-                    Angle_ODV_AB_max->Fill(theta_ODVAB_max);
-
                     //! Condition to take into consideration multiple trajectories that might belong to the same DV !//
                     if(*track_n - countLine >= 1)
                     {
@@ -1020,8 +1018,11 @@ void myAnalyzeStage1()
                             Track_Distance_DVrecoMatch = leastDistance[0];
                             Track_Distance_Matched->Fill(Track_Distance_DVrecoMatch);
 
-                            //Distance of Closest to DVreco Additional Track (If It Exists)
+                            // Distance of Closest to DVreco Additional Track (If It Exists)
                             if(ClosestTrack_DV>0) ClosestTrackDV_Matched->Fill(ClosestTrack_DV);
+
+                            // Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors
+                            Angle_ODV_AB_max_Matched->Fill(theta_ODVAB_max);
                         }
 
                         //! No Match Dvreco  - Does not Repsect Both Limits!//
@@ -1031,8 +1032,11 @@ void myAnalyzeStage1()
                             Track_Distance_DVrecoNoMatch = leastDistance[0];
                             if(Track_Distance_DVrecoNoMatch>0) Track_Distance_NotMatched->Fill(Track_Distance_DVrecoNoMatch);
 
-                            //Distance of Closest to DVreco Additional Track (If It Exists)
+                            // Distance of Closest to DVreco Additional Track (If It Exists)
                             if(ClosestTrack_DV>0) ClosestTrackDV_NotMatched->Fill(ClosestTrack_DV);
+
+                            // Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors
+                            Angle_ODV_AB_max_NotMatched->Fill(theta_ODVAB_max);
                         }
                     }
 
@@ -1299,12 +1303,18 @@ void myAnalyzeStage1()
     c5->Print();
 
     //! Canvas 6 !//
-    TCanvas *c6 = new TCanvas("c6", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors", 400, 300);
+    TCanvas *c6 = new TCanvas("c6", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors", 800, 300);
+    c6->Divide(2,1);
 
     c6->cd(1);
-    Angle_ODV_AB_max->SetFillColor(kAzure+1);
-    Angle_ODV_AB_max->SetMinimum(0);
-    Angle_ODV_AB_max->Draw();
+    Angle_ODV_AB_max_Matched->SetFillColor(kAzure+1);
+    Angle_ODV_AB_max_Matched->SetMinimum(0);
+    Angle_ODV_AB_max_Matched->Draw();
+
+    c6->cd(2);
+    Angle_ODV_AB_max_NotMatched->SetFillColor(kRed);
+    Angle_ODV_AB_max_NotMatched->SetMinimum(0);
+    Angle_ODV_AB_max_NotMatched->Draw();
 
     c6->Print();
 
