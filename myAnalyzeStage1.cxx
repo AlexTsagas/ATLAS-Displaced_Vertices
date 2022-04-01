@@ -526,6 +526,10 @@ void myAnalyzeStage1()
     TH1 *ClosestTrackDV_Matched = new TH1D("ClosestTrackDV_Matched", "Distance of Closest to DVreco Additional Track (Matched);Track to DV Distance;Counts", 200, 0, 100);
     TH1 *ClosestTrackDV_NotMatched = new TH1D("ClosestTrackDV_NotMatched", "Distance of Closest to DVreco Additional Track (Not Mathced);Track to DV Distance;Counts", 200, 0, 100);
 
+    //! Histogram for Canvas 9 - Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
+    TH1 *RDVreco_Rmin_Matched = new TH1D("RDVreco_Rmin_Matched", "Difference of Distances of DVreco and Point of Reconstructing Tracks from IT (Matched);R_DVreco - Rmin;Counts", 200, -20, 20);
+    TH1 *RDVreco_Rmin_NotMatched = new TH1D("RDVreco_Rmin_NotMatched", "Difference of Distances of DVreco and Point of Reconstructing Tracks from IT (Not Matched);R_DVreco - Rmin;Counts", 200, -40, 40);
+
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
     treereader.SetTree(tree);
@@ -701,6 +705,11 @@ void myAnalyzeStage1()
 
     //! Distance of Closest to DVreco Additional Track (If It Exists) !//
     double ClosestTrack_DV;
+
+    //! Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
+    double R_DVreco;
+    double R_track[4];
+    double Rmin;
 
     //! Miscellaneous !//
     // Conditions for DV_reco that are "close"
@@ -886,6 +895,18 @@ void myAnalyzeStage1()
                     // Maximum Angle
                     theta_ODVAB_max = AngleDVTracks(displacedVertexArray, A_i, AA_i, B_j, BB_j);
 
+                    //! Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
+                    // Distance of DVreco to IT
+                    R_DVreco = Error(leastDistance[1],leastDistance[2],leastDistance[3],0,0,0);
+                    // Distance of Line_i Points to IT
+                    R_track[0] = Error(track_x0[leastDistance[4]],track_y0[leastDistance[4]],track_z0[leastDistance[4]],0,0,0);
+                    R_track[1] = Error(track_x1[leastDistance[4]],track_y1[leastDistance[4]],track_z1[leastDistance[4]],0,0,0);
+                    // Distance of Line_j Points to IT
+                    R_track[2] = Error(track_x0[leastDistance[5]],track_y0[leastDistance[5]],track_z0[leastDistance[5]],0,0,0);
+                    R_track[3] = Error(track_x1[leastDistance[5]],track_y1[leastDistance[5]],track_z1[leastDistance[5]],0,0,0);
+                    // Minimun of Lines Points Distance from IT
+                    Rmin = minimumValuefromArrayElements(R_track, 4);
+
                     //! Condition to take into consideration multiple trajectories that might belong to the same DV !//
                     if(*track_n - countLine >= 1)
                     {
@@ -1023,6 +1044,9 @@ void myAnalyzeStage1()
 
                             // Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors
                             Angle_ODV_AB_max_Matched->Fill(theta_ODVAB_max);
+
+                            // Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT
+                            RDVreco_Rmin_Matched->Fill(R_DVreco-Rmin);
                         }
 
                         //! No Match Dvreco  - Does not Repsect Both Limits!//
@@ -1037,6 +1061,9 @@ void myAnalyzeStage1()
 
                             // Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors
                             Angle_ODV_AB_max_NotMatched->Fill(theta_ODVAB_max);
+
+                            // Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT
+                            RDVreco_Rmin_NotMatched->Fill(R_DVreco-Rmin);
                         }
                     }
 
@@ -1359,6 +1386,24 @@ void myAnalyzeStage1()
     ClosestTrackDV_NotMatched->Draw();
     gPad->SetLogx();
     gPad->Update();
+
+    c8->Print();
+
+    //! Canvas 9 !//
+    TCanvas *c9 = new TCanvas("c9", "Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT", 800, 300);
+    c9->Divide(2,1);
+
+    gStyle->SetOptStat(1111111);
+
+    c9->cd(1);
+    RDVreco_Rmin_Matched->SetFillColor(kAzure+1);
+    RDVreco_Rmin_Matched->SetMinimum(0);
+    RDVreco_Rmin_Matched->Draw();
+
+    c9->cd(2);
+    RDVreco_Rmin_NotMatched->SetFillColor(kRed);
+    RDVreco_Rmin_NotMatched->SetMinimum(0);
+    RDVreco_Rmin_NotMatched->Draw();
 
     c8->Print();
 
