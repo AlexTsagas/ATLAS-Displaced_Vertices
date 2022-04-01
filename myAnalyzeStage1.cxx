@@ -521,6 +521,10 @@ void myAnalyzeStage1()
     TH1 *Track_Distance_Matched = new TH1D("Track_Distance_Matched", "Distance Between Tracks Used to Reconstruct the DVreco (Mathced);Track Distance;Counts", 200, 0, 1);
     TH1 *Track_Distance_NotMatched = new TH1D("Track_Distance_NotMatched", "Distance Between Tracks Used to Reconstruct the DVreco (Not Mathced);Track Distance;Counts", 200, 0, 1);
 
+    //! Histogram for Canvas 8 - Distance of Closest to DVreco Additional Track (If It Exists) !//
+    TH1 *ClosestTrackDV_Matched = new TH1D("ClosestTrackDV_Matched", "Distance of Closest to DVreco Additional Track (Matched);Track to DV Distance;Counts", 200, 0, 100);
+    TH1 *ClosestTrackDV_NotMatched = new TH1D("ClosestTrackDV_NotMatched", "Distance of Closest to DVreco Additional Track (Not Mathced);Track to DV Distance;Counts", 200, 0, 100);
+
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
     treereader.SetTree(tree);
@@ -694,6 +698,9 @@ void myAnalyzeStage1()
     double Track_Distance_DVrecoMatch;
     double Track_Distance_DVrecoNoMatch;
 
+    //! Distance of Closest to DVreco Additional Track (If It Exists) !//
+    double ClosestTrack_DV;
+
     //! Miscellaneous !//
     // Conditions for DV_reco that are "close"
     int limitXYZ = 35;
@@ -746,6 +753,8 @@ void myAnalyzeStage1()
                 count_j = 0;
                 // Arrays errorXYZ and errorXY element counter
                 errorCounter = 0;
+                // Initialize to -1 to avoid coincidence with other DV
+                ClosestTrack_DV = -1;
 
                 // Initialize fot Multiple Trajectories
                 for(int k=0; k<20; k++)
@@ -902,6 +911,9 @@ void myAnalyzeStage1()
                         // Sort the DvTrajectoryDistance elements in ascending order with respect to distances 
                         ArraySorting(DvTrajectoryDistance, DvTrajectoryCounter);
 
+                        // The closest distance of an additional track to DVreco
+                        ClosestTrack_DV = DvTrajectoryDistance[0][0];
+
                         for(int k=0; k<DvTrajectoryCounter; k++)
                         {
                             // The distance of third trajectory
@@ -1004,16 +1016,24 @@ void myAnalyzeStage1()
                         //! Matched Dvreco  - Repsect Both Limits!//
                         if(minErrorXY[0] <= limitXY && minErrorXYZ[0] <= limitXYZ)
                         {
+                            // Distance Between Tracks Used to Reconstruct the DVreco
                             Track_Distance_DVrecoMatch = leastDistance[0];
                             Track_Distance_Matched->Fill(Track_Distance_DVrecoMatch);
+
+                            //Distance of Closest to DVreco Additional Track (If It Exists)
+                            if(ClosestTrack_DV>0) ClosestTrackDV_Matched->Fill(ClosestTrack_DV);
                         }
 
                         //! No Matche Dvreco  - Does not Repsect Both Limits!//
                         if(minErrorXY[0] > limitXY || minErrorXYZ[0] > limitXYZ)
                         {
+                            // Distance Between Tracks Used to Reconstruct the DVreco
                             Track_Distance_DVrecoNoMatch = leastDistance[0];
                             if(Track_Distance_DVrecoNoMatch>0) Track_Distance_NotMatched->Fill(Track_Distance_DVrecoNoMatch);
-                            else Track_Distance_NotMatched->Fill(-0);
+                            // else Track_Distance_NotMatched->Fill(-0);
+
+                            //Distance of Closest to DVreco Additional Track (If It Exists)
+                            if(ClosestTrack_DV>0) ClosestTrackDV_NotMatched->Fill(ClosestTrack_DV);
                         }
                     }
 
@@ -1310,6 +1330,28 @@ void myAnalyzeStage1()
     gPad->Update();
 
     c7->Print();
+
+    //! Canvas 8 !//
+    TCanvas *c8 = new TCanvas("c8", "Distance of Closest to DVreco Additional Track (If It Exists)", 800, 300);
+    c8->Divide(2,1);
+
+    gStyle->SetOptStat(1111111);
+
+    c8->cd(1);
+    ClosestTrackDV_Matched->SetFillColor(kAzure+1);
+    ClosestTrackDV_Matched->SetMinimum(0);
+    ClosestTrackDV_Matched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+
+    c8->cd(2);
+    ClosestTrackDV_NotMatched->SetFillColor(kRed);
+    ClosestTrackDV_NotMatched->SetMinimum(0);
+    ClosestTrackDV_NotMatched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+
+    c8->Print();
 
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
