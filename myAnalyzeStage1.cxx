@@ -530,6 +530,10 @@ void myAnalyzeStage1()
     TH1 *RDVreco_Rmin_Matched = new TH1D("RDVreco_Rmin_Matched", "Difference of Distances of DVreco and Point of Reconstructing Tracks from IT (Matched);R_DVreco - Rmin;Counts", 200, -20, 20);
     TH1 *RDVreco_Rmin_NotMatched = new TH1D("RDVreco_Rmin_NotMatched", "Difference of Distances of DVreco and Point of Reconstructing Tracks from IT (Not Matched);R_DVreco - Rmin;Counts", 200, -40, 40);
 
+    //! Histogram for Canvas 10 - Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks !//
+    TH1 *Relative_Angle_Matched = new TH1D("Relative_Angle_Matched", "Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks (Matched);Relative Angle;Counts", 100, 0, 180);
+    TH1 *Relative_Angle_NotMatched = new TH1D("Relative_Angle_NotMatched", "Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks (Not Matched);Relative Angle;Counts", 100, 0, 180);
+
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
     treereader.SetTree(tree);
@@ -711,6 +715,10 @@ void myAnalyzeStage1()
     double R_track[4];
     double Rmin;
 
+    //! Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks !//
+    double *Relative_Angle;
+    double RelativeAngle[2];
+
     //! Miscellaneous !//
     // Conditions for DV_reco that are "close"
     int limitXYZ = 35;
@@ -763,8 +771,10 @@ void myAnalyzeStage1()
                 count_j = 0;
                 // Arrays errorXYZ and errorXY element counter
                 errorCounter = 0;
-                // Initialize to -1 to avoid coincidence with other DV
+                // Initialize to -1 to avoid coincidence with other DVs
                 ClosestTrack_DV = -1;
+                // Initialize to -1 to avoid coincidence with other DVs
+                RelativeAngle[0] = -1000; RelativeAngle[1] = -1000;
 
                 // Initialize fot Multiple Trajectories
                 for(int k=0; k<20; k++)
@@ -907,6 +917,10 @@ void myAnalyzeStage1()
                     // Minimun of Lines Points Distance from IT
                     Rmin = minimumValuefromArrayElements(R_track, 4);
 
+                    //! Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks !//
+                    Relative_Angle = CaseDV_RelativeAngles(displacedVertexArray, A_i, AA_i, B_j, BB_j);
+                    RelativeAngle[0] = Relative_Angle[0]; RelativeAngle[1] = Relative_Angle[1];
+
                     //! Condition to take into consideration multiple trajectories that might belong to the same DV !//
                     if(*track_n - countLine >= 1)
                     {
@@ -1047,6 +1061,13 @@ void myAnalyzeStage1()
 
                             // Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT
                             RDVreco_Rmin_Matched->Fill(R_DVreco-Rmin);
+
+                            // Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks
+                            if(RelativeAngle[0]>-1000 && RelativeAngle[1]>-1000)
+                            {
+                                Relative_Angle_Matched->Fill(RelativeAngle[0]);
+                                Relative_Angle_Matched->Fill(RelativeAngle[1]);   
+                            }
                         }
 
                         //! No Match Dvreco  - Does not Repsect Both Limits!//
@@ -1064,6 +1085,13 @@ void myAnalyzeStage1()
 
                             // Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT
                             RDVreco_Rmin_NotMatched->Fill(R_DVreco-Rmin);
+
+                            // Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks
+                            if(Relative_Angle[0]>-1000 && Relative_Angle[1]>-1000)
+                            {
+                                Relative_Angle_NotMatched->Fill(Relative_Angle[0]);
+                                Relative_Angle_NotMatched->Fill(Relative_Angle[1]);   
+                            }
                         }
                     }
 
@@ -1405,7 +1433,29 @@ void myAnalyzeStage1()
     RDVreco_Rmin_NotMatched->SetMinimum(0);
     RDVreco_Rmin_NotMatched->Draw();
 
-    c8->Print();
+    c9->Print();
+
+    //! Canvas 10 !//
+    TCanvas *c10 = new TCanvas("c10", "Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks", 800, 300);
+    c10->Divide(2,1);
+
+    gStyle->SetOptStat(1111111);
+
+    c10->cd(1);
+    Relative_Angle_Matched->SetFillColor(kAzure+1);
+    Relative_Angle_Matched->SetMinimum(0);
+    Relative_Angle_Matched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+
+    c10->cd(2);
+    Relative_Angle_NotMatched->SetFillColor(kRed);
+    Relative_Angle_NotMatched->SetMinimum(0);
+    Relative_Angle_NotMatched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+
+    c10->Print();
 
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
