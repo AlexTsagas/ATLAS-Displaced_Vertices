@@ -509,13 +509,17 @@ void myAnalyzeStage1()
     TH1 *RelativeNumber_TwoDVs = new TH1D("RelativeNumber_TwoDVs", "Relative Number of DV_reco and DV_true - Two DVs;DV_true-DV_reco;Counts", 101, -5, 5);
 
     //! Histograms for Canvas 4 - Distances Between DVtrue in Events with Two DVs !//
-    TH1 *DistanceBetweenTwoDVs = new TH1D("DistanceBetweenTwoDVs", "Distance Between DVs in Events with Two DVtrue;Distance;Counts", 51, 0, 50);
+    TH1 *DistanceBetweenTwoDVs = new TH1D("DistanceBetweenTwoDVs", "Distance Between DVs in Events with Two DVtrue;Distance;Counts", 100, 0, 100);
 
     //! Histograms for Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It !//
     TH1 *DVreco_RecoLinesMinDistance = new TH1D("DVreco_RecoLinesMinDistance", "Minimum Distance Between DVreco and Reconstructing Lines;Distance;Counts", 151, 0, 50);
 
     //! Histograms for Canvas 6 -  Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors !//
-    TH1 *Angle_ODV_AB_max = new TH1D("Angle_ODV_AB_max", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors;Angle;Counts", 91, 0, 180);
+    TH1 *Angle_ODV_AB_max = new TH1D("Angle_ODV_AB_max", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors;Angle;Counts", 89, 0, 180);
+
+    //! Histogram for Canvas 7 - Distance Between Tracks Used to Reconstruct the DVreco !//
+    TH1 *Track_Distance_Matched = new TH1D("Track_Distance_Matched", "Distance Between Tracks Used to Reconstruct the DVreco (Mathced);Track Distance;Counts", 200, 0, 1);
+    TH1 *Track_Distance_NotMatched = new TH1D("Track_Distance_NotMatched", "Distance Between Tracks Used to Reconstruct the DVreco (Not Mathced);Track Distance;Counts", 200, 0, 1);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -553,7 +557,7 @@ void myAnalyzeStage1()
     double DV[3];
 
     //! Application of Restrictions  !//
-    // Condition to decide if two trajectories form a DV
+    // Condition to decide if two trajectories form a DV //? DVcut = 0.08
     double DVcut = 1;
     // Condition to decide if a trajectory belongs to a DV without constructing it 
     double TrajectoryCut = DVcut/2;
@@ -685,6 +689,10 @@ void myAnalyzeStage1()
     double A_i[3], AA_i[3];
     double B_j[3], BB_j[3];
     double theta_ODVAB_max;
+
+    //! Distance Between Tracks Used to Reconstruct the DVreco !//
+    double Track_Distance_DVrecoMatch;
+    double Track_Distance_DVrecoNoMatch;
 
     //! Miscellaneous !//
     // Conditions for DV_reco that are "close"
@@ -826,7 +834,7 @@ void myAnalyzeStage1()
                 least_Distance = minimumArrayValueSix(distance_ij, count_j);
                 for(int k=0; k<6; k++)  leastDistance[k] = least_Distance[k]; 
 
-                //! Condition to decide if there is a DV !//
+                //! Condition to decide if there is a DVreco !//
                 if(leastDistance[0] < DVcut && leastDistance[0] >= 0)
                 {
                     // If it passes the previous condition it means that we have a DV
@@ -842,6 +850,7 @@ void myAnalyzeStage1()
                     DVrecoLine[3] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[5]], track_y1[leastDistance[5]], track_z1[leastDistance[5]]);
                     // Minimum Distance
                     DVrecoLine_min = minimumValuefromArrayElements(DVrecoLine, 4);
+                    //? Make if-statement to get negative distances when DVreco is futher to IT that point A_i of line ?//
                     // Make Histogram
                     DVreco_RecoLinesMinDistance->Fill(DVrecoLine_min); 
                     
@@ -866,6 +875,7 @@ void myAnalyzeStage1()
                     BB_j[0] = track_x1[leastDistance[5]]; BB_j[1] = track_y1[leastDistance[5]]; BB_j[2] = track_z1[leastDistance[5]];
                     // Maximum Angle
                     theta_ODVAB_max = AngleDVTracks(displacedVertexArray, A_i, AA_i, B_j, BB_j);
+
                     // Histogram
                     Angle_ODV_AB_max->Fill(theta_ODVAB_max);
 
@@ -990,6 +1000,21 @@ void myAnalyzeStage1()
                             if(*truthvtx_n==1) DV_reco_xy_OneDV++;
                             if(*truthvtx_n==2) DV_reco_xy_TwoDVs++;
                         }
+
+                        //! Matched Dvreco  - Repsect Both Limits!//
+                        if(minErrorXY[0] <= limitXY && minErrorXYZ[0] <= limitXYZ)
+                        {
+                            Track_Distance_DVrecoMatch = leastDistance[0];
+                            Track_Distance_Matched->Fill(Track_Distance_DVrecoMatch);
+                        }
+
+                        //! No Matche Dvreco  - Does not Repsect Both Limits!//
+                        if(minErrorXY[0] > limitXY || minErrorXYZ[0] > limitXYZ)
+                        {
+                            Track_Distance_DVrecoNoMatch = leastDistance[0];
+                            if(Track_Distance_DVrecoNoMatch>0) Track_Distance_NotMatched->Fill(Track_Distance_DVrecoNoMatch);
+                            else Track_Distance_NotMatched->Fill(-0);
+                        }
                     }
 
                     // DV_reco that respect both limits
@@ -1072,7 +1097,7 @@ void myAnalyzeStage1()
         }
     }
 
-    // Canvas 1
+    //! Canvas 1 !//
     TCanvas *c1 = new TCanvas("c1", "DV Errors in XYZ Space and xy Plane", 800, 900);
     c1->Divide(2,3);
 
@@ -1082,35 +1107,47 @@ void myAnalyzeStage1()
     error_XYZ->SetFillColor(kAzure+1);
     error_XYZ->SetMinimum(0);
     error_XYZ->Draw();
+    gPad->SetLogx();
+    gPad->Update();
 
     c1->cd(2);
     error_XY->SetFillColor(kRed);
     error_XY->SetMinimum(0);
     error_XY->Draw();
+    gPad->SetLogx();
+    gPad->Update();
 
     c1->cd(3);
     error_XYZ_OneDV->SetFillColor(kOrange+7);
     error_XYZ_OneDV->SetMinimum(0);
     error_XYZ_OneDV->Draw();
+    gPad->SetLogx();
+    gPad->Update();
 
     c1->cd(4);
     error_XY_OneDV->SetFillColor(kGreen);
     error_XY_OneDV->SetMinimum(0);
     error_XY_OneDV->Draw();
+    gPad->SetLogx();
+    gPad->Update();
 
     c1->cd(5);
     error_XYZ_TwoDVs->SetFillColor(kMagenta);
     error_XYZ_TwoDVs->SetMinimum(0);
     error_XYZ_TwoDVs->Draw();
+    gPad->SetLogx();
+    gPad->Update();
 
     c1->cd(6);
     error_XY_TwoDVs->SetFillColor(kYellow);
     error_XY_TwoDVs->SetMinimum(0);
     error_XY_TwoDVs->Draw();
+    gPad->SetLogx();
+    gPad->Update();
 
     c1->Print();
 
-    // Canvas 2
+    //! Canvas 2 !//
     TCanvas *c2 = new TCanvas("c2", "Performance and Clarity", 1400, 900);
     c2->Divide(4,3);
 
@@ -1190,7 +1227,7 @@ void myAnalyzeStage1()
 
     c2->Print();
 
-    // Canvas 3
+    //! Canvas 3 !//
     TCanvas *c3 = new TCanvas("c3", "Relative Number of DV_reco with Respect to DV_truth", 1200, 300);
     c3->Divide(3,1);
 
@@ -1217,7 +1254,7 @@ void myAnalyzeStage1()
     c3->Print();
 
 
-    // Canvas 4
+    //! Canvas 4 !//
     TCanvas *c4 = new TCanvas("c4", "Distances Between DVs in Events with Two DVs", 400, 300);
     // c4->Divide(3,1);
 
@@ -1225,20 +1262,24 @@ void myAnalyzeStage1()
     DistanceBetweenTwoDVs->SetFillColor(kGreen);
     DistanceBetweenTwoDVs->SetMinimum(0);
     DistanceBetweenTwoDVs->Draw();
+    gPad->SetLogx();
+    gPad->Update();
 
     c4->Print();
 
-    // Canvas 5
+    //! Canvas 5 !//
     TCanvas *c5 = new TCanvas("c5", "Minimum Distance Between DVreco and Reconstructing Lines", 400, 300);
 
     c5->cd(1);
     DVreco_RecoLinesMinDistance->SetFillColor(kRed);
     DVreco_RecoLinesMinDistance->SetMinimum(0);
     DVreco_RecoLinesMinDistance->Draw();
+    gPad->SetLogx();
+    gPad->Update();
 
     c5->Print();
 
-    // Canvas 6
+    //! Canvas 6 !//
     TCanvas *c6 = new TCanvas("c6", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors", 400, 300);
 
     c6->cd(1);
@@ -1247,6 +1288,28 @@ void myAnalyzeStage1()
     Angle_ODV_AB_max->Draw();
 
     c6->Print();
+
+    //! Canvas 7 !//
+    TCanvas *c7 = new TCanvas("c7", "Track Distance Between Tracks Used to Reconstruct the DVreco", 800, 300);
+    c7->Divide(2,1);
+
+    gStyle->SetOptStat(1111111);
+
+    c7->cd(1);
+    Track_Distance_Matched->SetFillColor(kAzure+1);
+    Track_Distance_Matched->SetMinimum(0);
+    Track_Distance_Matched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+
+    c7->cd(2);
+    Track_Distance_NotMatched->SetFillColor(kRed);
+    Track_Distance_NotMatched->SetMinimum(0);
+    Track_Distance_NotMatched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+
+    c7->Print();
 
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
