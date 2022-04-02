@@ -1188,6 +1188,7 @@ void myAnalyzeStage1()
     c1->cd(1);
     error_XYZ->SetFillColor(kAzure+1);
     error_XYZ->SetMinimum(0);
+    error_XYZ->SetLineColor(kBlack);
     error_XYZ->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1195,6 +1196,7 @@ void myAnalyzeStage1()
     c1->cd(2);
     error_XY->SetFillColor(kRed);
     error_XY->SetMinimum(0);
+    error_XY->SetLineColor(kBlack);
     error_XY->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1202,6 +1204,7 @@ void myAnalyzeStage1()
     c1->cd(3);
     error_XYZ_OneDV->SetFillColor(kOrange+7);
     error_XYZ_OneDV->SetMinimum(0);
+    error_XYZ_OneDV->SetLineColor(kBlack);
     error_XYZ_OneDV->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1209,6 +1212,7 @@ void myAnalyzeStage1()
     c1->cd(4);
     error_XY_OneDV->SetFillColor(kGreen);
     error_XY_OneDV->SetMinimum(0);
+    error_XY_OneDV->SetLineColor(kBlack);
     error_XY_OneDV->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1216,6 +1220,7 @@ void myAnalyzeStage1()
     c1->cd(5);
     error_XYZ_TwoDVs->SetFillColor(kMagenta);
     error_XYZ_TwoDVs->SetMinimum(0);
+    error_XYZ_TwoDVs->SetLineColor(kBlack);
     error_XYZ_TwoDVs->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1223,6 +1228,7 @@ void myAnalyzeStage1()
     c1->cd(6);
     error_XY_TwoDVs->SetFillColor(kYellow);
     error_XY_TwoDVs->SetMinimum(0);
+    error_XY_TwoDVs->SetLineColor(kBlack);
     error_XY_TwoDVs->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1239,72 +1245,84 @@ void myAnalyzeStage1()
     DvNumber->SetFillColor(kMagenta);
     DvNumber->SetMinimum(0);
     DvNumber->SetMaximum(3500);
+    DvNumber->SetLineColor(kBlack);
     DvNumber->Draw();
 
     c2->cd(2);
     clarity->SetFillColor(kRed);
     clarity->SetMinimum(0);
     clarity->SetMaximum(3500);
+    clarity->SetLineColor(kBlack);
     clarity->Draw();
 
     c2->cd(3);
     performance->SetFillColor(kAzure+1);
     performance->SetMinimum(0);
     performance->SetMaximum(3500);
+    performance->SetLineColor(kBlack);
     performance->Draw();
 
     c2->cd(4);
     OffErrorPerformance->SetFillColor(kGreen);
     OffErrorPerformance->SetMinimum(0);
     OffErrorPerformance->SetMaximum(3500);
+    OffErrorPerformance->SetLineColor(kBlack);
     OffErrorPerformance->Draw();
 
     c2->cd(5);
     DvNumber_OneDV->SetFillColor(kMagenta);
     DvNumber_OneDV->SetMinimum(0);
     DvNumber_OneDV->SetMaximum(3500);
+    DvNumber_OneDV->SetLineColor(kBlack);
     DvNumber_OneDV->Draw();
 
     c2->cd(6);
     clarity_OneDV->SetFillColor(kRed);
     clarity_OneDV->SetMinimum(0);
     clarity_OneDV->SetMaximum(3500);
+    clarity_OneDV->SetLineColor(kBlack);
     clarity_OneDV->Draw();
 
     c2->cd(7);
     performance_OneDV->SetFillColor(kAzure+1);
     performance_OneDV->SetMinimum(0);
     performance_OneDV->SetMaximum(3500);
+    performance_OneDV->SetLineColor(kBlack);
     performance_OneDV->Draw();
 
     c2->cd(8);
     OffErrorPerformance_OneDV->SetFillColor(kGreen);
     OffErrorPerformance_OneDV->SetMinimum(0);
     OffErrorPerformance_OneDV->SetMaximum(3500);
+    OffErrorPerformance_OneDV->SetLineColor(kBlack);
     OffErrorPerformance_OneDV->Draw();
 
     c2->cd(9);
     DvNumber_TwoDVs->SetFillColor(kMagenta);
     DvNumber_TwoDVs->SetMinimum(0);
     DvNumber_TwoDVs->SetMaximum(3500);
+    DvNumber_TwoDVs->SetLineColor(kBlack);
     DvNumber_TwoDVs->Draw();
 
     c2->cd(10);
     clarity_TwoDVs->SetFillColor(kRed);
     clarity_TwoDVs->SetMinimum(0);
     clarity_TwoDVs->SetMaximum(3500);
+    clarity_TwoDVs->SetLineColor(kBlack);
     clarity_TwoDVs->Draw();
 
     c2->cd(11);
     performance_TwoDVs->SetFillColor(kAzure+1);
     performance_TwoDVs->SetMinimum(0);
     performance_TwoDVs->SetMaximum(3500);
+    performance_TwoDVs->SetLineColor(kBlack);
     performance_TwoDVs->Draw();
 
     c2->cd(12);
     OffErrorPerformance_TwoDVs->SetFillColor(kGreen);
     OffErrorPerformance_TwoDVs->SetMinimum(0);
     OffErrorPerformance_TwoDVs->SetMaximum(3500);
+    OffErrorPerformance_TwoDVs->SetLineColor(kBlack);
     OffErrorPerformance_TwoDVs->Draw();
 
     c2->SaveAs("Histograms/Number_of_DVs.pdf");
@@ -1319,18 +1337,21 @@ void myAnalyzeStage1()
     RelativeNumber->SetFillColor(kRed);
     RelativeNumber->SetMinimum(0);
     RelativeNumber->SetMaximum(3000);
+    RelativeNumber->SetLineColor(kBlack);
     RelativeNumber->Draw();
 
     c3->cd(2);
     RelativeNumber_OneDV->SetFillColor(kAzure+1);
     RelativeNumber_OneDV->SetMinimum(0);
-    RelativeNumber->SetMaximum(3000);
+    RelativeNumber_OneDV->SetMaximum(3000);
+    RelativeNumber_OneDV->SetLineColor(kBlack);
     RelativeNumber_OneDV->Draw();
 
     c3->cd(3);
     RelativeNumber_TwoDVs->SetFillColor(kGreen);
     RelativeNumber_TwoDVs->SetMinimum(0);
-    RelativeNumber->SetMaximum(3000);
+    RelativeNumber_TwoDVs->SetMaximum(3000);
+    RelativeNumber_TwoDVs->SetLineColor(kBlack);
     RelativeNumber_TwoDVs->Draw();
     
     c3->SaveAs("Histograms/Relative_Number_of_DVs.pdf");
@@ -1342,6 +1363,7 @@ void myAnalyzeStage1()
     c4->cd(1);
     DistanceBetweenTwoDVs->SetFillColor(kGreen);
     DistanceBetweenTwoDVs->SetMinimum(0);
+    DistanceBetweenTwoDVs->SetLineColor(kBlack);
     DistanceBetweenTwoDVs->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1355,6 +1377,7 @@ void myAnalyzeStage1()
     c5->cd(1);
     DVreco_RecoLinesMinDistance_Matched->SetFillColor(kAzure+1);
     DVreco_RecoLinesMinDistance_Matched->SetMinimum(0);
+    DVreco_RecoLinesMinDistance_Matched->SetLineColor(kBlack);
     DVreco_RecoLinesMinDistance_Matched->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1362,6 +1385,7 @@ void myAnalyzeStage1()
     c5->cd(2);
     DVreco_RecoLinesMinDistance_NotMatched->SetFillColor(kRed);
     DVreco_RecoLinesMinDistance_NotMatched->SetMinimum(0);
+    DVreco_RecoLinesMinDistance_NotMatched->SetLineColor(kBlack);
     DVreco_RecoLinesMinDistance_NotMatched->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1375,11 +1399,13 @@ void myAnalyzeStage1()
     c6->cd(1);
     Angle_ODV_AB_max_Matched->SetFillColor(kAzure+1);
     Angle_ODV_AB_max_Matched->SetMinimum(0);
+    Angle_ODV_AB_max_Matched->SetLineColor(kBlack);
     Angle_ODV_AB_max_Matched->Draw();
 
     c6->cd(2);
     Angle_ODV_AB_max_NotMatched->SetFillColor(kRed);
     Angle_ODV_AB_max_NotMatched->SetMinimum(0);
+    Angle_ODV_AB_max_NotMatched->SetLineColor(kBlack);
     Angle_ODV_AB_max_NotMatched->Draw();
 
     c6->SaveAs("Histograms/MaxAngle.pdf");
@@ -1393,6 +1419,7 @@ void myAnalyzeStage1()
     c7->cd(1);
     Track_Distance_Matched->SetFillColor(kAzure+1);
     Track_Distance_Matched->SetMinimum(0);
+    Relative_Angle_Matched->SetLineColor(kBlack);
     Track_Distance_Matched->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1400,6 +1427,7 @@ void myAnalyzeStage1()
     c7->cd(2);
     Track_Distance_NotMatched->SetFillColor(kRed);
     Track_Distance_NotMatched->SetMinimum(0);
+    Track_Distance_NotMatched->SetLineColor(kBlack);
     Track_Distance_NotMatched->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1415,6 +1443,7 @@ void myAnalyzeStage1()
     c8->cd(1);
     ClosestTrackDV_Matched->SetFillColor(kAzure+1);
     ClosestTrackDV_Matched->SetMinimum(0);
+    ClosestTrackDV_Matched->SetLineColor(kBlack);
     ClosestTrackDV_Matched->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1422,6 +1451,7 @@ void myAnalyzeStage1()
     c8->cd(2);
     ClosestTrackDV_NotMatched->SetFillColor(kRed);
     ClosestTrackDV_NotMatched->SetMinimum(0);
+    ClosestTrackDV_NotMatched->SetLineColor(kBlack);
     ClosestTrackDV_NotMatched->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1437,11 +1467,13 @@ void myAnalyzeStage1()
     c9->cd(1);
     RDVreco_Rmin_Matched->SetFillColor(kAzure+1);
     RDVreco_Rmin_Matched->SetMinimum(0);
+    RDVreco_Rmin_Matched->SetLineColor(kBlack);
     RDVreco_Rmin_Matched->Draw();
 
     c9->cd(2);
     RDVreco_Rmin_NotMatched->SetFillColor(kRed);
     RDVreco_Rmin_NotMatched->SetMinimum(0);
+    RDVreco_Rmin_NotMatched->SetLineColor(kBlack);
     RDVreco_Rmin_NotMatched->Draw();
 
     c9->SaveAs("Histograms/R_DVreco-Rmin.pdf");
@@ -1455,6 +1487,7 @@ void myAnalyzeStage1()
     c10->cd(1);
     Relative_Angle_Matched->SetFillColor(kAzure+1);
     Relative_Angle_Matched->SetMinimum(0);
+    Relative_Angle_Matched->SetLineColor(kBlack);
     Relative_Angle_Matched->Draw();
     gPad->SetLogx();
     gPad->Update();
@@ -1462,6 +1495,7 @@ void myAnalyzeStage1()
     c10->cd(2);
     Relative_Angle_NotMatched->SetFillColor(kRed);
     Relative_Angle_NotMatched->SetMinimum(0);
+    Relative_Angle_NotMatched->SetLineColor(kBlack);
     Relative_Angle_NotMatched->Draw();
     gPad->SetLogx();
     gPad->Update();
