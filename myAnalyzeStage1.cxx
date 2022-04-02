@@ -1227,7 +1227,7 @@ void myAnalyzeStage1()
     gPad->SetLogx();
     gPad->Update();
 
-    c1->Print();
+    c1->SaveAs("Errors.pdf");
 
     //! Canvas 2 !//
     TCanvas *c2 = new TCanvas("c2", "Performance and Clarity", 1400, 900);
@@ -1307,7 +1307,7 @@ void myAnalyzeStage1()
     OffErrorPerformance_TwoDVs->SetMaximum(3500);
     OffErrorPerformance_TwoDVs->Draw();
 
-    c2->Print();
+    c2->SaveAs("Number_of_DVs.pdf");
 
     //! Canvas 3 !//
     TCanvas *c3 = new TCanvas("c3", "Relative Number of DV_reco with Respect to DV_truth", 1200, 300);
@@ -1333,8 +1333,7 @@ void myAnalyzeStage1()
     RelativeNumber->SetMaximum(3000);
     RelativeNumber_TwoDVs->Draw();
     
-    c3->Print();
-
+    c3->SaveAs("Relative_Number_of_DVs.pdf");
 
     //! Canvas 4 !//
     TCanvas *c4 = new TCanvas("c4", "Distances Between DVs in Events with Two DVs", 400, 300);
@@ -1347,7 +1346,7 @@ void myAnalyzeStage1()
     gPad->SetLogx();
     gPad->Update();
 
-    c4->Print();
+    c4->SaveAs("DVtrue_Distance-Events_With_Two_DVtrue.pdf");
 
     //! Canvas 5 !//
     TCanvas *c5 = new TCanvas("c5", "Minimum Distance Between DVreco and Reconstructing Lines", 800, 300);
@@ -1367,7 +1366,7 @@ void myAnalyzeStage1()
     gPad->SetLogx();
     gPad->Update();
 
-    c5->Print();
+    c5->SaveAs("DVreco-RecoTracksGivenPoints-MinDistance.pdf");
 
     //! Canvas 6 !//
     TCanvas *c6 = new TCanvas("c6", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors", 800, 300);
@@ -1383,7 +1382,7 @@ void myAnalyzeStage1()
     Angle_ODV_AB_max_NotMatched->SetMinimum(0);
     Angle_ODV_AB_max_NotMatched->Draw();
 
-    c6->Print();
+    c6->SaveAs("MaxAngle.pdf");
 
     //! Canvas 7 !//
     TCanvas *c7 = new TCanvas("c7", "Track Distance Between Tracks Used to Reconstruct the DVreco", 800, 300);
@@ -1405,7 +1404,7 @@ void myAnalyzeStage1()
     gPad->SetLogx();
     gPad->Update();
 
-    c7->Print();
+    c7->SaveAs("RecoTracksDistance.pdf");
 
     //! Canvas 8 !//
     TCanvas *c8 = new TCanvas("c8", "Distance of Closest to DVreco Additional Track (If It Exists)", 800, 300);
@@ -1427,7 +1426,7 @@ void myAnalyzeStage1()
     gPad->SetLogx();
     gPad->Update();
 
-    c8->Print();
+    c8->SaveAs("Distance_of_ClosestAdditinalTrack_DVreco.pdf");
 
     //! Canvas 9 !//
     TCanvas *c9 = new TCanvas("c9", "Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT", 800, 300);
@@ -1445,7 +1444,7 @@ void myAnalyzeStage1()
     RDVreco_Rmin_NotMatched->SetMinimum(0);
     RDVreco_Rmin_NotMatched->Draw();
 
-    c9->Print();
+    c9->SaveAs("R_DVreco-Rmin.pdf");
 
     //! Canvas 10 !//
     TCanvas *c10 = new TCanvas("c10", "Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks", 800, 300);
@@ -1467,7 +1466,7 @@ void myAnalyzeStage1()
     gPad->SetLogx();
     gPad->Update();
 
-    c10->Print();
+    c10->SaveAs("MaxRelativeAngle.pdf");
 
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
