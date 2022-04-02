@@ -1513,7 +1513,7 @@ void myAnalyzeStage1()
     error_XYZ->Draw();
     gPad->SetLogx();
     gPad->Update();
-    cc1->SaveAs("Paper/Errors/Errors-sz.pdf");
+    cc1->SaveAs("Hists_Separated/Errors/Errors-sz.pdf");
 
     TCanvas *cc2 = new TCanvas("cc2", "cc2", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1524,7 +1524,7 @@ void myAnalyzeStage1()
     error_XY->Draw();
     gPad->SetLogx();
     gPad->Update();
-    cc2->SaveAs("Paper/Errors/Errors-xy.pdf");
+    cc2->SaveAs("Hists_Separated/Errors/Errors-xy.pdf");
 
     TCanvas *cc3 = new TCanvas("cc3", "cc3", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1535,7 +1535,7 @@ void myAnalyzeStage1()
     error_XYZ_OneDV->Draw();
     gPad->SetLogx();
     gPad->Update();
-    cc3->SaveAs("Paper/Errors/Errors-sz-OneDV.pdf");
+    cc3->SaveAs("Hists_Separated/Errors/Errors-sz-OneDV.pdf");
 
     TCanvas *cc4 = new TCanvas("cc4", "cc4", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1546,7 +1546,7 @@ void myAnalyzeStage1()
     error_XY_OneDV->Draw();
     gPad->SetLogx();
     gPad->Update();
-    cc4->SaveAs("Paper/Errors/Errors-xy-OneDV.pdf");
+    cc4->SaveAs("Hists_Separated/Errors/Errors-xy-OneDV.pdf");
 
     TCanvas *cc5 = new TCanvas("cc5", "cc5", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1557,7 +1557,7 @@ void myAnalyzeStage1()
     error_XYZ_TwoDVs->Draw();
     gPad->SetLogx();
     gPad->Update();
-    cc5->SaveAs("Paper/Errors/Errors-sz-TwoDVs.pdf");
+    cc5->SaveAs("Hists_Separated/Errors/Errors-sz-TwoDVs.pdf");
 
     TCanvas *cc6 = new TCanvas("cc6", "cc6", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1568,7 +1568,7 @@ void myAnalyzeStage1()
     error_XY_TwoDVs->Draw();
     gPad->SetLogx();
     gPad->Update();
-    cc6->SaveAs("Paper/Errors/Errors-xy-TwoDVs.pdf");
+    cc6->SaveAs("Hists_Separated/Errors/Errors-xy-TwoDVs.pdf");
 
     //! Number of DVreco and DVtrue !//
     TCanvas *ccc1 = new TCanvas("ccc1", "ccc1", 200, 150);
@@ -1578,7 +1578,7 @@ void myAnalyzeStage1()
     DvNumber->SetMinimum(0);
     DvNumber->SetLineColor(kBlack);
     DvNumber->Draw();
-    ccc1->SaveAs("Paper/Number of DVreco-DVtrue/Total/DVtrue-Number-Total.pdf");
+    ccc1->SaveAs("Hists_Separated/Number of DVreco-DVtrue/Total/DVtrue-Number-Total.pdf");
 
     TCanvas *ccc2 = new TCanvas("ccc2", "ccc2", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1587,7 +1587,7 @@ void myAnalyzeStage1()
     clarity->SetMinimum(0);
     clarity->SetLineColor(kBlack);
     clarity->Draw();
-    ccc2->SaveAs("Paper/Number of DVreco-DVtrue/Total/DVreco-Number-Total.pdf");
+    ccc2->SaveAs("Hists_Separated/Number of DVreco-DVtrue/Total/DVreco-Number-Total.pdf");
 
     TCanvas *ccc3 = new TCanvas("ccc3", "ccc3", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1596,7 +1596,7 @@ void myAnalyzeStage1()
     performance->SetMinimum(0);
     performance->SetLineColor(kBlack);
     performance->Draw();
-    ccc3->SaveAs("Paper/Number of DVreco-DVtrue/Total/DVreco-Number-Close.pdf");
+    ccc3->SaveAs("Hists_Separated/Number of DVreco-DVtrue/Total/DVreco-Number-Close.pdf");
 
     TCanvas *ccc4 = new TCanvas("ccc4", "ccc4", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1605,7 +1605,7 @@ void myAnalyzeStage1()
     OffErrorPerformance->SetMinimum(0);
     OffErrorPerformance->SetLineColor(kBlack);
     OffErrorPerformance->Draw();
-    ccc4->SaveAs("Paper/Number of DVreco-DVtrue/Total/DVreco-Number-Far.pdf");
+    ccc4->SaveAs("Hists_Separated/Number of DVreco-DVtrue/Total/DVreco-Number-Far.pdf");
 
     TCanvas *ccc5 = new TCanvas("ccc5", "ccc5", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1614,7 +1614,7 @@ void myAnalyzeStage1()
     DvNumber_OneDV->SetMinimum(0);
     DvNumber_OneDV->SetLineColor(kBlack);
     DvNumber_OneDV->Draw();
-    ccc5->SaveAs("Paper/Number of DVreco-DVtrue/1 DVtrue/Dvtrue-Total-OneDVtrue.pdf");
+    ccc5->SaveAs("Hists_Separated/Number of DVreco-DVtrue/1 DVtrue/Dvtrue-Total-OneDVtrue.pdf");
 
     TCanvas *ccc6 = new TCanvas("ccc6", "ccc6", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1623,7 +1623,7 @@ void myAnalyzeStage1()
     clarity_OneDV->SetMinimum(0);
     clarity_OneDV->SetLineColor(kBlack);
     clarity_OneDV->Draw();
-    ccc6->SaveAs("Paper/Number of DVreco-DVtrue/1 DVtrue/DVreco-Total-OneDVtrue.pdf");
+    ccc6->SaveAs("Hists_Separated/Number of DVreco-DVtrue/1 DVtrue/DVreco-Total-OneDVtrue.pdf");
 
     TCanvas *ccc7 = new TCanvas("ccc7", "ccc7", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1632,7 +1632,7 @@ void myAnalyzeStage1()
     performance_OneDV->SetMinimum(0);
     performance_OneDV->SetLineColor(kBlack);
     performance_OneDV->Draw();
-    ccc7->SaveAs("Paper/Number of DVreco-DVtrue/1 DVtrue/DVreco-Close-OneDVtrue.pdf");
+    ccc7->SaveAs("Hists_Separated/Number of DVreco-DVtrue/1 DVtrue/DVreco-Close-OneDVtrue.pdf");
 
     TCanvas *ccc8 = new TCanvas("ccc8", "ccc8", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1641,7 +1641,7 @@ void myAnalyzeStage1()
     OffErrorPerformance_OneDV->SetMinimum(0);
     OffErrorPerformance_OneDV->SetLineColor(kBlack);
     OffErrorPerformance_OneDV->Draw();
-    ccc8->SaveAs("Paper/Number of DVreco-DVtrue/1 DVtrue/DVreco-far-OneDVtrue.pdf");
+    ccc8->SaveAs("Hists_Separated/Number of DVreco-DVtrue/1 DVtrue/DVreco-far-OneDVtrue.pdf");
 
     TCanvas *ccc9 = new TCanvas("ccc9", "ccc9", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1650,7 +1650,7 @@ void myAnalyzeStage1()
     DvNumber_TwoDVs->SetMinimum(0);
     DvNumber_TwoDVs->SetLineColor(kBlack);
     DvNumber_TwoDVs->Draw();
-    ccc9->SaveAs("Paper/Number of DVreco-DVtrue/2 DVtrue/DVtrue-Total-TwoDVtrue.pdf");
+    ccc9->SaveAs("Hists_Separated/Number of DVreco-DVtrue/2 DVtrue/DVtrue-Total-TwoDVtrue.pdf");
 
     TCanvas *ccc10 = new TCanvas("ccc10", "ccc10", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1659,7 +1659,7 @@ void myAnalyzeStage1()
     clarity_TwoDVs->SetMinimum(0);
     clarity_TwoDVs->SetLineColor(kBlack);
     clarity_TwoDVs->Draw();
-    ccc10->SaveAs("Paper/Number of DVreco-DVtrue/2 DVtrue/DVreco-Total-TwoDVtrue.pdf");
+    ccc10->SaveAs("Hists_Separated/Number of DVreco-DVtrue/2 DVtrue/DVreco-Total-TwoDVtrue.pdf");
 
     TCanvas *ccc11 = new TCanvas("ccc11", "ccc11", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1668,7 +1668,7 @@ void myAnalyzeStage1()
     performance_TwoDVs->SetMinimum(0);
     performance_TwoDVs->SetLineColor(kBlack);
     performance_TwoDVs->Draw();
-    ccc11->SaveAs("Paper/Number of DVreco-DVtrue/2 DVtrue/DVreco-Close-TwoDVtrue.pdf");
+    ccc11->SaveAs("Hists_Separated/Number of DVreco-DVtrue/2 DVtrue/DVreco-Close-TwoDVtrue.pdf");
 
     TCanvas *ccc12 = new TCanvas("ccc12", "ccc12", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1677,7 +1677,7 @@ void myAnalyzeStage1()
     OffErrorPerformance_TwoDVs->SetMinimum(0);
     OffErrorPerformance_TwoDVs->SetLineColor(kBlack);
     OffErrorPerformance_TwoDVs->Draw();
-    ccc12->SaveAs("Paper/Number of DVreco-DVtrue/2 DVtrue/DVreco-Far-TwoDVtrue.pdf");
+    ccc12->SaveAs("Hists_Separated/Number of DVreco-DVtrue/2 DVtrue/DVreco-Far-TwoDVtrue.pdf");
 
     //! Relative Number of DVreco with Respect to DVtrue !//
     TCanvas *cccc1 = new TCanvas("cccc1", "cccc1", 200, 150);
@@ -1687,7 +1687,7 @@ void myAnalyzeStage1()
     RelativeNumber->SetMinimum(0);
     RelativeNumber->SetLineColor(kBlack);
     RelativeNumber->Draw();
-    cccc1->SaveAs("Paper/Relative DVreco Number/DVreco-Relative-Number.pdf");
+    cccc1->SaveAs("Hists_Separated/Relative DVreco Number/DVreco-Relative-Number.pdf");
 
     TCanvas *cccc2 = new TCanvas("cccc2", "cccc2", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1696,7 +1696,7 @@ void myAnalyzeStage1()
     RelativeNumber_OneDV->SetMinimum(0);
     RelativeNumber_OneDV->SetLineColor(kBlack);
     RelativeNumber_OneDV->Draw();
-    cccc2->SaveAs("Paper/Relative DVreco Number/DVreco-Relative-Number-OneDV.pdf");
+    cccc2->SaveAs("Hists_Separated/Relative DVreco Number/DVreco-Relative-Number-OneDV.pdf");
 
     TCanvas *cccc3 = new TCanvas("cccc3", "cccc3", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1705,7 +1705,7 @@ void myAnalyzeStage1()
     RelativeNumber_TwoDVs->SetMinimum(0);
     RelativeNumber_TwoDVs->SetLineColor(kBlack);
     RelativeNumber_TwoDVs->Draw();
-    cccc3->SaveAs("Paper/Relative DVreco Number/DVreco-Relative-Number-TwoDVs.pdf");
+    cccc3->SaveAs("Hists_Separated/Relative DVreco Number/DVreco-Relative-Number-TwoDVs.pdf");
 
     //! Distance Between Two DVtrue - Events with Two DVtrue !//
     TCanvas *C1 = new TCanvas("C1", "C1", 200, 150);
@@ -1717,7 +1717,7 @@ void myAnalyzeStage1()
     DistanceBetweenTwoDVs->Draw();
     gPad->SetLogx();
     gPad->Update();
-    C1->SaveAs("Paper/DVtrue-Distance.pdf");    
+    C1->SaveAs("Hists_Separated/DVtrue-Distance.pdf");    
 
     //! Minimum Distance Between DVreco and Reconstructing Lines Points Given !//
     TCanvas *CC1 = new TCanvas("CC1", "CC1", 200, 150);
@@ -1729,7 +1729,7 @@ void myAnalyzeStage1()
     DVreco_RecoLinesMinDistance_Matched->Draw();
     gPad->SetLogx();
     gPad->Update();
-    CC1->SaveAs("Paper/DVreco-RecoTracks/DVreco-RecoTracks-Matched.pdf");
+    CC1->SaveAs("Hists_Separated/DVreco-RecoTracks/DVreco-RecoTracks-Matched.pdf");
 
     TCanvas *CC2 = new TCanvas("CC2", "CC2", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1740,7 +1740,7 @@ void myAnalyzeStage1()
     DVreco_RecoLinesMinDistance_NotMatched->Draw();
     gPad->SetLogx();
     gPad->Update();
-    CC2->SaveAs("Paper/DVreco-RecoTracks/DVreco-RecoTracks-NotMatched.pdf");
+    CC2->SaveAs("Hists_Separated/DVreco-RecoTracks/DVreco-RecoTracks-NotMatched.pdf");
 
     //! Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors !//
     TCanvas *CCC1 = new TCanvas("CCC1", "CCC1", 200, 150);
@@ -1750,7 +1750,7 @@ void myAnalyzeStage1()
     Angle_ODV_AB_max_Matched->SetMinimum(0);
     Angle_ODV_AB_max_Matched->SetLineColor(kBlack);
     Angle_ODV_AB_max_Matched->Draw();
-    CCC1->SaveAs("Paper/MaxAngle/MaxAngle-Matched.pdf");
+    CCC1->SaveAs("Hists_Separated/MaxAngle/MaxAngle-Matched.pdf");
 
     TCanvas *CCC2 = new TCanvas("CCC2", "CCC2", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1759,7 +1759,7 @@ void myAnalyzeStage1()
     Angle_ODV_AB_max_NotMatched->SetMinimum(0);
     Angle_ODV_AB_max_NotMatched->SetLineColor(kBlack);
     Angle_ODV_AB_max_NotMatched->Draw();
-    CCC2->SaveAs("Paper/MaxAngle/MaxAngle-NotMatched.pdf");
+    CCC2->SaveAs("Hists_Separated/MaxAngle/MaxAngle-NotMatched.pdf");
 
     //! Track Distance Between Tracks Used to Reconstruct the DVreco !//
     TCanvas *CCCC1 = new TCanvas("CCCC1", "CCCC1", 200, 150);
@@ -1771,7 +1771,7 @@ void myAnalyzeStage1()
     Track_Distance_Matched->Draw();
     gPad->SetLogx();
     gPad->Update();
-    CCCC1->SaveAs("Paper/RecoTracks-Distance/RecoTracks-Distance-Matched.pdf");
+    CCCC1->SaveAs("Hists_Separated/RecoTracks-Distance/RecoTracks-Distance-Matched.pdf");
 
     TCanvas *CCCC2 = new TCanvas("CCCC2", "CCCC2", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1782,7 +1782,7 @@ void myAnalyzeStage1()
     Track_Distance_NotMatched->Draw();
     gPad->SetLogx();
     gPad->Update();
-    CCCC2->SaveAs("Paper/RecoTracks-Distance/RecoTracks-Distance-NotMatched.pdf");
+    CCCC2->SaveAs("Hists_Separated/RecoTracks-Distance/RecoTracks-Distance-NotMatched.pdf");
 
     //! Distance of Closest to DVreco Additional Track (If It Exists) !//
     TCanvas *CCCCC1 = new TCanvas("CCCCC1", "CCCCC1", 200, 150);
@@ -1794,7 +1794,7 @@ void myAnalyzeStage1()
     ClosestTrackDV_Matched->Draw();
     gPad->SetLogx();
     gPad->Update();
-    CCCCC1->SaveAs("Paper/DVreco-AdditionalTrack/DVreco-AdditionalTrack-Matched.pdf");
+    CCCCC1->SaveAs("Hists_Separated/DVreco-AdditionalTrack/DVreco-AdditionalTrack-Matched.pdf");
 
     TCanvas *CCCCC2 = new TCanvas("CCCCC2", "CCCCC2", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1805,7 +1805,7 @@ void myAnalyzeStage1()
     ClosestTrackDV_NotMatched->Draw();
     gPad->SetLogx();
     gPad->Update();
-    CCCCC2->SaveAs("Paper/DVreco-AdditionalTrack/DVreco-AdditionalTrack-NotMatched.pdf");
+    CCCCC2->SaveAs("Hists_Separated/DVreco-AdditionalTrack/DVreco-AdditionalTrack-NotMatched.pdf");
 
     //! Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
     TCanvas *CI = new TCanvas("CI", "CI", 200, 150);
@@ -1815,7 +1815,7 @@ void myAnalyzeStage1()
     RDVreco_Rmin_Matched->SetMinimum(0);
     RDVreco_Rmin_Matched->SetLineColor(kBlack);
     RDVreco_Rmin_Matched->Draw();
-    CI->SaveAs("Paper/IT_DVreco-IT_RecoTracks/IT_DVreco-IT_RecoTracks-Matched.pdf");
+    CI->SaveAs("Hists_Separated/IT_DVreco-IT_RecoTracks/IT_DVreco-IT_RecoTracks-Matched.pdf");
 
     TCanvas *CII = new TCanvas("CII", "CII", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1824,7 +1824,7 @@ void myAnalyzeStage1()
     RDVreco_Rmin_NotMatched->SetMinimum(0);
     RDVreco_Rmin_NotMatched->SetLineColor(kBlack);
     RDVreco_Rmin_NotMatched->Draw();
-    CII->SaveAs("Paper/IT_DVreco-IT_RecoTracks/IT_DVreco-IT_RecoTracks-NotMatched.pdf");
+    CII->SaveAs("Hists_Separated/IT_DVreco-IT_RecoTracks/IT_DVreco-IT_RecoTracks-NotMatched.pdf");
 
     //! Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
     TCanvas *CCI = new TCanvas("CCI", "CCI", 200, 150);
@@ -1836,7 +1836,7 @@ void myAnalyzeStage1()
     Relative_Angle_Matched->Draw();
     gPad->SetLogx();
     gPad->Update();
-    CCI->SaveAs("Paper/MaxRelativeAngle/MaxRelativeAngle-Matched.pdf");
+    CCI->SaveAs("Hists_Separated/MaxRelativeAngle/MaxRelativeAngle-Matched.pdf");
 
     TCanvas *CCII = new TCanvas("CCII", "CCII", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1847,7 +1847,7 @@ void myAnalyzeStage1()
     Relative_Angle_NotMatched->Draw();
     gPad->SetLogx();
     gPad->Update();
-    CCII->SaveAs("Paper/MaxRelativeAngle/MaxRelativeAngle-NotMatched.pdf");
+    CCII->SaveAs("Hists_Separated/MaxRelativeAngle/MaxRelativeAngle-NotMatched.pdf");
 
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
