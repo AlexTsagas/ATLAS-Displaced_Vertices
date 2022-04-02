@@ -512,7 +512,8 @@ void myAnalyzeStage1()
     TH1 *DistanceBetweenTwoDVs = new TH1D("DistanceBetweenTwoDVs", "Distance Between DVs in Events with Two DVtrue;Distance;Counts", 100, 0, 100);
 
     //! Histograms for Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It !//
-    TH1 *DVreco_RecoLinesMinDistance = new TH1D("DVreco_RecoLinesMinDistance", "Minimum Distance Between DVreco and Reconstructing Lines;Distance;Counts", 151, 0, 50);
+    TH1 *DVreco_RecoLinesMinDistance_Matched = new TH1D("DVreco_RecoLinesMinDistance_Matched", "Minimum Distance Between DVreco and Reconstructing Lines (Matched);Distance;Counts", 200, 0, 100);
+    TH1 *DVreco_RecoLinesMinDistance_NotMatched = new TH1D("DVreco_RecoLinesMinDistance_NotMatched", "Minimum Distance Between DVreco and Reconstructing Lines (Not Matched);Distance;Counts", 200, 0, 100);
 
     //! Histograms for Canvas 6 -  Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors !//
     TH1 *Angle_ODV_AB_max_Matched = new TH1D("Angle_ODV_AB_max_Matched", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors (Matched);Angle;Counts", 89, 0, 180);
@@ -869,20 +870,6 @@ void myAnalyzeStage1()
                     // If it passes the previous condition it means that we have a DV
                     DVnumber_Total++;
 
-                    //! Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It !//
-                    // Compute distance between DVreco and lines that reconstructed it
-                    // Line_i
-                    DVrecoLine[0] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x0[leastDistance[4]], track_y0[leastDistance[4]], track_z0[leastDistance[4]]);
-                    DVrecoLine[1] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[4]], track_y1[leastDistance[4]], track_z1[leastDistance[4]]);
-                    // Line_j
-                    DVrecoLine[2] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x0[leastDistance[5]], track_y0[leastDistance[5]], track_z0[leastDistance[5]]);
-                    DVrecoLine[3] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[5]], track_y1[leastDistance[5]], track_z1[leastDistance[5]]);
-                    // Minimum Distance
-                    DVrecoLine_min = minimumValuefromArrayElements(DVrecoLine, 4);
-                    //? Make if-statement to get negative distances when DVreco is futher to IT that point A_i of line ?//
-                    // Make Histogram
-                    DVreco_RecoLinesMinDistance->Fill(DVrecoLine_min); 
-                    
                     // Store line indexes that have been used to calculate the DV
                     for(int k=4; k<6; k++)
                     {
@@ -894,6 +881,17 @@ void myAnalyzeStage1()
                     displacedVertexArray[0] = leastDistance[1]; // DV_x
                     displacedVertexArray[1] = leastDistance[2]; // DV_y
                     displacedVertexArray[2] = leastDistance[3]; // DV_z
+
+                    //! Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It !//
+                    // Compute distance between DVreco and lines that reconstructed it
+                    // Line_i
+                    DVrecoLine[0] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x0[leastDistance[4]], track_y0[leastDistance[4]], track_z0[leastDistance[4]]);
+                    DVrecoLine[1] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[4]], track_y1[leastDistance[4]], track_z1[leastDistance[4]]);
+                    // Line_j
+                    DVrecoLine[2] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x0[leastDistance[5]], track_y0[leastDistance[5]], track_z0[leastDistance[5]]);
+                    DVrecoLine[3] = Error(leastDistance[1], leastDistance[2], leastDistance[3], track_x1[leastDistance[5]], track_y1[leastDistance[5]], track_z1[leastDistance[5]]);
+                    // Minimum Distance
+                    DVrecoLine_min = minimumValuefromArrayElements(DVrecoLine, 4);
 
                     //! Maximum Angle Between ODV and A_iAA_i, B_iBB_i vectors !//   
                     // Line_i
@@ -1049,20 +1047,23 @@ void myAnalyzeStage1()
                         //! Matched Dvreco  - Repsect Both Limits!//
                         if(minErrorXY[0] <= limitXY && minErrorXYZ[0] <= limitXYZ)
                         {
-                            // Distance Between Tracks Used to Reconstruct the DVreco
+                            // Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It
+                            DVreco_RecoLinesMinDistance_Matched->Fill(DVrecoLine_min); 
+
+                            // Canvas 6 - Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors
+                            Angle_ODV_AB_max_Matched->Fill(theta_ODVAB_max);
+
+                            // Canvas 7 - Distance Between Tracks Used to Reconstruct the DVreco
                             Track_Distance_DVrecoMatch = leastDistance[0];
                             Track_Distance_Matched->Fill(Track_Distance_DVrecoMatch);
 
-                            // Distance of Closest to DVreco Additional Track (If It Exists)
+                            // Canvas 8 - Distance of Closest to DVreco Additional Track (If It Exists)
                             if(ClosestTrack_DV>0) ClosestTrackDV_Matched->Fill(ClosestTrack_DV);
 
-                            // Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors
-                            Angle_ODV_AB_max_Matched->Fill(theta_ODVAB_max);
-
-                            // Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT
+                            // Canvas 9 - Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT
                             RDVreco_Rmin_Matched->Fill(R_DVreco-Rmin);
 
-                            // Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks
+                            // Canvas 10 -Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks
                             if(RelativeAngle[0]>-1000 && RelativeAngle[1]>-1000)
                             {
                                 Relative_Angle_Matched->Fill(RelativeAngle[0]);
@@ -1073,20 +1074,23 @@ void myAnalyzeStage1()
                         //! No Match Dvreco  - Does not Repsect Both Limits!//
                         if(minErrorXY[0] > limitXY || minErrorXYZ[0] > limitXYZ)
                         {
-                            // Distance Between Tracks Used to Reconstruct the DVreco
+                            // Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It
+                            DVreco_RecoLinesMinDistance_NotMatched->Fill(DVrecoLine_min); 
+
+                            // Canvas 6 - Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors
+                            Angle_ODV_AB_max_NotMatched->Fill(theta_ODVAB_max);
+
+                            // Canvas 7 - Distance Between Tracks Used to Reconstruct the DVreco
                             Track_Distance_DVrecoNoMatch = leastDistance[0];
                             if(Track_Distance_DVrecoNoMatch>0) Track_Distance_NotMatched->Fill(Track_Distance_DVrecoNoMatch);
 
-                            // Distance of Closest to DVreco Additional Track (If It Exists)
+                            // Canvas 8 - Distance of Closest to DVreco Additional Track (If It Exists)
                             if(ClosestTrack_DV>0) ClosestTrackDV_NotMatched->Fill(ClosestTrack_DV);
 
-                            // Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors
-                            Angle_ODV_AB_max_NotMatched->Fill(theta_ODVAB_max);
-
-                            // Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT
+                            // Canvas 9 - Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT
                             RDVreco_Rmin_NotMatched->Fill(R_DVreco-Rmin);
 
-                            // Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks
+                            // Canvas 10 - Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks
                             if(Relative_Angle[0]>-1000 && Relative_Angle[1]>-1000)
                             {
                                 Relative_Angle_NotMatched->Fill(Relative_Angle[0]);
@@ -1346,12 +1350,20 @@ void myAnalyzeStage1()
     c4->Print();
 
     //! Canvas 5 !//
-    TCanvas *c5 = new TCanvas("c5", "Minimum Distance Between DVreco and Reconstructing Lines", 400, 300);
+    TCanvas *c5 = new TCanvas("c5", "Minimum Distance Between DVreco and Reconstructing Lines", 800, 300);
+    c5->Divide(2,1);
 
     c5->cd(1);
-    DVreco_RecoLinesMinDistance->SetFillColor(kRed);
-    DVreco_RecoLinesMinDistance->SetMinimum(0);
-    DVreco_RecoLinesMinDistance->Draw();
+    DVreco_RecoLinesMinDistance_Matched->SetFillColor(kAzure+1);
+    DVreco_RecoLinesMinDistance_Matched->SetMinimum(0);
+    DVreco_RecoLinesMinDistance_Matched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+
+    c5->cd(2);
+    DVreco_RecoLinesMinDistance_NotMatched->SetFillColor(kRed);
+    DVreco_RecoLinesMinDistance_NotMatched->SetMinimum(0);
+    DVreco_RecoLinesMinDistance_NotMatched->Draw();
     gPad->SetLogx();
     gPad->Update();
 
