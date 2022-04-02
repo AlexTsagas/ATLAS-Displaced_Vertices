@@ -1502,6 +1502,353 @@ void myAnalyzeStage1()
 
     c10->SaveAs("Histograms/MaxRelativeAngle.pdf");
 
+    //! Hists for Presentation !//
+    //! Errors !//
+    TCanvas *cc1 = new TCanvas("cc1", "cc1", 200, 150);
+    gStyle->SetOptStat(1111111);
+    cc1->cd(1);
+    error_XYZ->SetFillColor(kAzure+1);
+    error_XYZ->SetMinimum(0);
+    error_XYZ->SetLineColor(kBlack);
+    error_XYZ->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    cc1->SaveAs("Paper/Errors/Errors-sz.pdf");
+
+    TCanvas *cc2 = new TCanvas("cc2", "cc2", 200, 150);
+    gStyle->SetOptStat(1111111);
+    cc2->cd(1);
+    error_XY->SetFillColor(kRed);
+    error_XY->SetMinimum(0);
+    error_XY->SetLineColor(kBlack);
+    error_XY->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    cc2->SaveAs("Paper/Errors/Errors-xy.pdf");
+
+    TCanvas *cc3 = new TCanvas("cc3", "cc3", 200, 150);
+    gStyle->SetOptStat(1111111);
+    cc3->cd(1);
+    error_XYZ_OneDV->SetFillColor(kOrange+7);
+    error_XYZ_OneDV->SetMinimum(0);
+    error_XYZ_OneDV->SetLineColor(kBlack);
+    error_XYZ_OneDV->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    cc3->SaveAs("Paper/Errors/Errors-sz-OneDV.pdf");
+
+    TCanvas *cc4 = new TCanvas("cc4", "cc4", 200, 150);
+    gStyle->SetOptStat(1111111);
+    cc4->cd(1);
+    error_XY_OneDV->SetFillColor(kGreen);
+    error_XY_OneDV->SetMinimum(0);
+    error_XY_OneDV->SetLineColor(kBlack);
+    error_XY_OneDV->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    cc4->SaveAs("Paper/Errors/Errors-xy-OneDV.pdf");
+
+    TCanvas *cc5 = new TCanvas("cc5", "cc5", 200, 150);
+    gStyle->SetOptStat(1111111);
+    cc5->cd(1);
+    error_XYZ_TwoDVs->SetFillColor(kMagenta);
+    error_XYZ_TwoDVs->SetMinimum(0);
+    error_XYZ_TwoDVs->SetLineColor(kBlack);
+    error_XYZ_TwoDVs->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    cc5->SaveAs("Paper/Errors/Errors-sz-TwoDVs.pdf");
+
+    TCanvas *cc6 = new TCanvas("cc6", "cc6", 200, 150);
+    gStyle->SetOptStat(1111111);
+    cc6->cd(1);
+    error_XY_TwoDVs->SetFillColor(kYellow);
+    error_XY_TwoDVs->SetMinimum(0);
+    error_XY_TwoDVs->SetLineColor(kBlack);
+    error_XY_TwoDVs->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    cc6->SaveAs("Paper/Errors/Errors-xy-TwoDVs.pdf");
+
+    //! Number of DVreco and DVtrue !//
+    TCanvas *ccc1 = new TCanvas("ccc1", "ccc1", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc1->cd(1);
+    DvNumber->SetFillColor(kMagenta);
+    DvNumber->SetMinimum(0);
+    DvNumber->SetLineColor(kBlack);
+    DvNumber->Draw();
+    ccc1->SaveAs("Paper/Number of DVreco-DVtrue/Total/DVtrue-Number-Total.pdf");
+
+    TCanvas *ccc2 = new TCanvas("ccc2", "ccc2", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc2->cd(1);
+    clarity->SetFillColor(kRed);
+    clarity->SetMinimum(0);
+    clarity->SetLineColor(kBlack);
+    clarity->Draw();
+    ccc2->SaveAs("Paper/Number of DVreco-DVtrue/Total/DVreco-Number-Total.pdf");
+
+    TCanvas *ccc3 = new TCanvas("ccc3", "ccc3", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc3->cd(1);
+    performance->SetFillColor(kAzure+1);
+    performance->SetMinimum(0);
+    performance->SetLineColor(kBlack);
+    performance->Draw();
+    ccc3->SaveAs("Paper/Number of DVreco-DVtrue/Total/DVreco-Number-Close.pdf");
+
+    TCanvas *ccc4 = new TCanvas("ccc4", "ccc4", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc4->cd(1);
+    OffErrorPerformance->SetFillColor(kGreen);
+    OffErrorPerformance->SetMinimum(0);
+    OffErrorPerformance->SetLineColor(kBlack);
+    OffErrorPerformance->Draw();
+    ccc4->SaveAs("Paper/Number of DVreco-DVtrue/Total/DVreco-Number-Far.pdf");
+
+    TCanvas *ccc5 = new TCanvas("ccc5", "ccc5", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc5->cd(1);
+    DvNumber_OneDV->SetFillColor(kMagenta);
+    DvNumber_OneDV->SetMinimum(0);
+    DvNumber_OneDV->SetLineColor(kBlack);
+    DvNumber_OneDV->Draw();
+    ccc5->SaveAs("Paper/Number of DVreco-DVtrue/1 DVtrue/Dvtrue-Total-OneDVtrue.pdf");
+
+    TCanvas *ccc6 = new TCanvas("ccc6", "ccc6", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc6->cd(1);
+    clarity_OneDV->SetFillColor(kRed);
+    clarity_OneDV->SetMinimum(0);
+    clarity_OneDV->SetLineColor(kBlack);
+    clarity_OneDV->Draw();
+    ccc6->SaveAs("Paper/Number of DVreco-DVtrue/1 DVtrue/DVreco-Total-OneDVtrue.pdf");
+
+    TCanvas *ccc7 = new TCanvas("ccc7", "ccc7", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc7->cd(1);
+    performance_OneDV->SetFillColor(kAzure+1);
+    performance_OneDV->SetMinimum(0);
+    performance_OneDV->SetLineColor(kBlack);
+    performance_OneDV->Draw();
+    ccc7->SaveAs("Paper/Number of DVreco-DVtrue/1 DVtrue/DVreco-Close-OneDVtrue.pdf");
+
+    TCanvas *ccc8 = new TCanvas("ccc8", "ccc8", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc8->cd(1);
+    OffErrorPerformance_OneDV->SetFillColor(kGreen);
+    OffErrorPerformance_OneDV->SetMinimum(0);
+    OffErrorPerformance_OneDV->SetLineColor(kBlack);
+    OffErrorPerformance_OneDV->Draw();
+    ccc8->SaveAs("Paper/Number of DVreco-DVtrue/1 DVtrue/DVreco-far-OneDVtrue.pdf");
+
+    TCanvas *ccc9 = new TCanvas("ccc9", "ccc9", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc9->cd(1);
+    DvNumber_TwoDVs->SetFillColor(kMagenta);
+    DvNumber_TwoDVs->SetMinimum(0);
+    DvNumber_TwoDVs->SetLineColor(kBlack);
+    DvNumber_TwoDVs->Draw();
+    ccc9->SaveAs("Paper/Number of DVreco-DVtrue/2 DVtrue/DVtrue-Total-TwoDVtrue.pdf");
+
+    TCanvas *ccc10 = new TCanvas("ccc10", "ccc10", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc10->cd(1);
+    clarity_TwoDVs->SetFillColor(kRed);
+    clarity_TwoDVs->SetMinimum(0);
+    clarity_TwoDVs->SetLineColor(kBlack);
+    clarity_TwoDVs->Draw();
+    ccc10->SaveAs("Paper/Number of DVreco-DVtrue/2 DVtrue/DVreco-Total-TwoDVtrue.pdf");
+
+    TCanvas *ccc11 = new TCanvas("ccc11", "ccc11", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc11->cd(1);
+    performance_TwoDVs->SetFillColor(kAzure+1);
+    performance_TwoDVs->SetMinimum(0);
+    performance_TwoDVs->SetLineColor(kBlack);
+    performance_TwoDVs->Draw();
+    ccc11->SaveAs("Paper/Number of DVreco-DVtrue/2 DVtrue/DVreco-Close-TwoDVtrue.pdf");
+
+    TCanvas *ccc12 = new TCanvas("ccc12", "ccc12", 200, 150);
+    gStyle->SetOptStat(1111111);
+    ccc12->cd(1);
+    OffErrorPerformance_TwoDVs->SetFillColor(kGreen);
+    OffErrorPerformance_TwoDVs->SetMinimum(0);
+    OffErrorPerformance_TwoDVs->SetLineColor(kBlack);
+    OffErrorPerformance_TwoDVs->Draw();
+    ccc12->SaveAs("Paper/Number of DVreco-DVtrue/2 DVtrue/DVreco-Far-TwoDVtrue.pdf");
+
+    //! Relative Number of DVreco with Respect to DVtrue !//
+    TCanvas *cccc1 = new TCanvas("cccc1", "cccc1", 200, 150);
+    gStyle->SetOptStat(1111111);
+    cccc1->cd(1);
+    RelativeNumber->SetFillColor(kRed);
+    RelativeNumber->SetMinimum(0);
+    RelativeNumber->SetLineColor(kBlack);
+    RelativeNumber->Draw();
+    cccc1->SaveAs("Paper/Relative DVreco Number/DVreco-Relative-Number.pdf");
+
+    TCanvas *cccc2 = new TCanvas("cccc2", "cccc2", 200, 150);
+    gStyle->SetOptStat(1111111);
+    cccc2->cd(1);
+    RelativeNumber_OneDV->SetFillColor(kAzure+1);
+    RelativeNumber_OneDV->SetMinimum(0);
+    RelativeNumber_OneDV->SetLineColor(kBlack);
+    RelativeNumber_OneDV->Draw();
+    cccc2->SaveAs("Paper/Relative DVreco Number/DVreco-Relative-Number-OneDV.pdf");
+
+    TCanvas *cccc3 = new TCanvas("cccc3", "cccc3", 200, 150);
+    gStyle->SetOptStat(1111111);
+    cccc3->cd(1);
+    RelativeNumber_TwoDVs->SetFillColor(kGreen);
+    RelativeNumber_TwoDVs->SetMinimum(0);
+    RelativeNumber_TwoDVs->SetLineColor(kBlack);
+    RelativeNumber_TwoDVs->Draw();
+    cccc3->SaveAs("Paper/Relative DVreco Number/DVreco-Relative-Number-TwoDVs.pdf");
+
+    //! Distance Between Two DVtrue - Events with Two DVtrue !//
+    TCanvas *C1 = new TCanvas("C1", "C1", 200, 150);
+    gStyle->SetOptStat(1111111);
+    C1->cd(1);
+    DistanceBetweenTwoDVs->SetFillColor(kGreen);
+    DistanceBetweenTwoDVs->SetMinimum(0);
+    DistanceBetweenTwoDVs->SetLineColor(kBlack);
+    DistanceBetweenTwoDVs->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    C1->SaveAs("Paper/DVtrue-Distance.pdf");    
+
+    //! Minimum Distance Between DVreco and Reconstructing Lines Points Given !//
+    TCanvas *CC1 = new TCanvas("CC1", "CC1", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CC1->cd(1);
+    DVreco_RecoLinesMinDistance_Matched->SetFillColor(kAzure+1);
+    DVreco_RecoLinesMinDistance_Matched->SetMinimum(0);
+    DVreco_RecoLinesMinDistance_Matched->SetLineColor(kBlack);
+    DVreco_RecoLinesMinDistance_Matched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    CC1->SaveAs("Paper/DVreco-RecoTracks/DVreco-RecoTracks-Matched.pdf");
+
+    TCanvas *CC2 = new TCanvas("CC2", "CC2", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CC2->cd(1);
+    DVreco_RecoLinesMinDistance_NotMatched->SetFillColor(kRed);
+    DVreco_RecoLinesMinDistance_NotMatched->SetMinimum(0);
+    DVreco_RecoLinesMinDistance_NotMatched->SetLineColor(kBlack);
+    DVreco_RecoLinesMinDistance_NotMatched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    CC2->SaveAs("Paper/DVreco-RecoTracks/DVreco-RecoTracks-NotMatched.pdf");
+
+    //! Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors !//
+    TCanvas *CCC1 = new TCanvas("CCC1", "CCC1", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CCC1->cd(1);
+    Angle_ODV_AB_max_Matched->SetFillColor(kAzure+1);
+    Angle_ODV_AB_max_Matched->SetMinimum(0);
+    Angle_ODV_AB_max_Matched->SetLineColor(kBlack);
+    Angle_ODV_AB_max_Matched->Draw();
+    CCC1->SaveAs("Paper/MaxAngle/MaxAngle-Matched.pdf");
+
+    TCanvas *CCC2 = new TCanvas("CCC2", "CCC2", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CCC2->cd(1);
+    Angle_ODV_AB_max_NotMatched->SetFillColor(kRed);
+    Angle_ODV_AB_max_NotMatched->SetMinimum(0);
+    Angle_ODV_AB_max_NotMatched->SetLineColor(kBlack);
+    Angle_ODV_AB_max_NotMatched->Draw();
+    CCC2->SaveAs("Paper/MaxAngle/MaxAngle-NotMatched.pdf");
+
+    //! Track Distance Between Tracks Used to Reconstruct the DVreco !//
+    TCanvas *CCCC1 = new TCanvas("CCCC1", "CCCC1", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CCCC1->cd(1);
+    Track_Distance_Matched->SetFillColor(kAzure+1);
+    Track_Distance_Matched->SetMinimum(0);
+    Track_Distance_Matched->SetLineColor(kBlack);
+    Track_Distance_Matched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    CCCC1->SaveAs("Paper/RecoTracks-Distance/RecoTracks-Distance-Matched.pdf");
+
+    TCanvas *CCCC2 = new TCanvas("CCCC2", "CCCC2", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CCCC2->cd(1);
+    Track_Distance_NotMatched->SetFillColor(kRed);
+    Track_Distance_NotMatched->SetMinimum(0);
+    Track_Distance_NotMatched->SetLineColor(kBlack);
+    Track_Distance_NotMatched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    CCCC2->SaveAs("Paper/RecoTracks-Distance/RecoTracks-Distance-NotMatched.pdf");
+
+    //! Distance of Closest to DVreco Additional Track (If It Exists) !//
+    TCanvas *CCCCC1 = new TCanvas("CCCCC1", "CCCCC1", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CCCCC1->cd(1);
+    ClosestTrackDV_Matched->SetFillColor(kAzure+1);
+    ClosestTrackDV_Matched->SetMinimum(0);
+    ClosestTrackDV_Matched->SetLineColor(kBlack);
+    ClosestTrackDV_Matched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    CCCCC1->SaveAs("Paper/DVreco-AdditionalTrack/DVreco-AdditionalTrack-Matched.pdf");
+
+    TCanvas *CCCCC2 = new TCanvas("CCCCC2", "CCCCC2", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CCCCC2->cd(1);
+    ClosestTrackDV_NotMatched->SetFillColor(kRed);
+    ClosestTrackDV_NotMatched->SetMinimum(0);
+    ClosestTrackDV_NotMatched->SetLineColor(kBlack);
+    ClosestTrackDV_NotMatched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    CCCCC2->SaveAs("Paper/DVreco-AdditionalTrack/DVreco-AdditionalTrack-NotMatched.pdf");
+
+    //! Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
+    TCanvas *CI = new TCanvas("CI", "CI", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CI->cd(1);
+    RDVreco_Rmin_Matched->SetFillColor(kAzure+1);
+    RDVreco_Rmin_Matched->SetMinimum(0);
+    RDVreco_Rmin_Matched->SetLineColor(kBlack);
+    RDVreco_Rmin_Matched->Draw();
+    CI->SaveAs("Paper/IT_DVreco-IT_RecoTracks/IT_DVreco-IT_RecoTracks-Matched.pdf");
+
+    TCanvas *CII = new TCanvas("CII", "CII", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CII->cd(1);
+    RDVreco_Rmin_NotMatched->SetFillColor(kRed);
+    RDVreco_Rmin_NotMatched->SetMinimum(0);
+    RDVreco_Rmin_NotMatched->SetLineColor(kBlack);
+    RDVreco_Rmin_NotMatched->Draw();
+    CII->SaveAs("Paper/IT_DVreco-IT_RecoTracks/IT_DVreco-IT_RecoTracks-NotMatched.pdf");
+
+    //! Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
+    TCanvas *CCI = new TCanvas("CCI", "CCI", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CCI->cd(1);
+    Relative_Angle_Matched->SetFillColor(kAzure+1);
+    Relative_Angle_Matched->SetMinimum(0);
+    Relative_Angle_Matched->SetLineColor(kBlack);
+    Relative_Angle_Matched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    CCI->SaveAs("Paper/MaxRelativeAngle/MaxRelativeAngle-Matched.pdf");
+
+    TCanvas *CCII = new TCanvas("CCII", "CCII", 200, 150);
+    gStyle->SetOptStat(1111111);
+    CCII->cd(1);
+    Relative_Angle_NotMatched->SetFillColor(kRed);
+    Relative_Angle_NotMatched->SetMinimum(0);
+    Relative_Angle_NotMatched->SetLineColor(kBlack);
+    Relative_Angle_NotMatched->Draw();
+    gPad->SetLogx();
+    gPad->Update();
+    CCII->SaveAs("Paper/MaxRelativeAngle/MaxRelativeAngle-NotMatched.pdf");
+
     //! Efficiency !//
     Eff_xy = 1.*DV_true_with_match_XY/DV_Total;
     Eff_xy_OneDV = 1.*DV_true_with_match_XY_OneDV/DVnumber_OneDV_Total;
