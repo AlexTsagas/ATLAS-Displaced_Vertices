@@ -1071,7 +1071,7 @@ void myAnalyzeStage1()
                             }
                         }
 
-                        //! No Match Dvreco  - Does not Repsect Both Limits!//
+                        //! No Match Dvreco - Does not Repsect Both Limits!//
                         if(minErrorXY[0] > limitXY || minErrorXYZ[0] > limitXYZ)
                         {
                             // Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It
@@ -1097,6 +1097,33 @@ void myAnalyzeStage1()
                                 Relative_Angle_NotMatched->Fill(Relative_Angle[1]);   
                             }
                         }
+                    }
+
+                    //! No Match Dvreco - More DVreco than Dvtrue!//
+                    if(DVnumber_Total > *truthvtx_n && !(minErrorXY[0] > limitXY || minErrorXYZ[0] > limitXYZ))
+                    {
+                        // Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It
+                        DVreco_RecoLinesMinDistance_NotMatched->Fill(DVrecoLine_min); 
+
+                        // Canvas 6 - Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors
+                        Angle_ODV_AB_max_NotMatched->Fill(theta_ODVAB_max);
+
+                        // Canvas 7 - Distance Between Tracks Used to Reconstruct the DVreco
+                        Track_Distance_DVrecoNoMatch = leastDistance[0];
+                        if(Track_Distance_DVrecoNoMatch>0) Track_Distance_NotMatched->Fill(Track_Distance_DVrecoNoMatch);
+
+                        // Canvas 8 - Distance of Closest to DVreco Additional Track (If It Exists)
+                        if(ClosestTrack_DV>0) ClosestTrackDV_NotMatched->Fill(ClosestTrack_DV);
+
+                        // Canvas 9 - Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT
+                        RDVreco_Rmin_NotMatched->Fill(R_DVreco-Rmin);
+
+                        // Canvas 10 - Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks
+                        if(Relative_Angle[0]>-1000 && Relative_Angle[1]>-1000)
+                        {
+                            Relative_Angle_NotMatched->Fill(Relative_Angle[0]);
+                            Relative_Angle_NotMatched->Fill(Relative_Angle[1]);   
+                        }   
                     }
 
                     // DV_reco that respect both limits
@@ -1398,15 +1425,19 @@ void myAnalyzeStage1()
 
     c6->cd(1);
     Angle_ODV_AB_max_Matched->SetFillColor(kAzure+1);
-    Angle_ODV_AB_max_Matched->SetMinimum(0);
+    Angle_ODV_AB_max_Matched->SetMinimum(1);
     Angle_ODV_AB_max_Matched->SetLineColor(kBlack);
     Angle_ODV_AB_max_Matched->Draw();
+    gPad->SetLogy();
+    gPad->Update();
 
     c6->cd(2);
     Angle_ODV_AB_max_NotMatched->SetFillColor(kRed);
-    Angle_ODV_AB_max_NotMatched->SetMinimum(0);
+    Angle_ODV_AB_max_NotMatched->SetMinimum(1);
     Angle_ODV_AB_max_NotMatched->SetLineColor(kBlack);
     Angle_ODV_AB_max_NotMatched->Draw();
+    gPad->SetLogy();
+    gPad->Update();
 
     c6->SaveAs("Histograms/MaxAngle.pdf");
 
@@ -1751,18 +1782,22 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     CCC1->cd(1);
     Angle_ODV_AB_max_Matched->SetFillColor(kAzure+1);
-    Angle_ODV_AB_max_Matched->SetMinimum(0);
+    Angle_ODV_AB_max_Matched->SetMinimum(1);
     Angle_ODV_AB_max_Matched->SetLineColor(kBlack);
     Angle_ODV_AB_max_Matched->Draw();
+    gPad->SetLogy();
+    gPad->Update();
     CCC1->SaveAs("Hists_Separated/MaxAngle/MaxAngle-Matched.pdf");
 
     TCanvas *CCC2 = new TCanvas("CCC2", "CCC2", 200, 150);
     gStyle->SetOptStat(1111111);
     CCC2->cd(1);
     Angle_ODV_AB_max_NotMatched->SetFillColor(kRed);
-    Angle_ODV_AB_max_NotMatched->SetMinimum(0);
+    Angle_ODV_AB_max_NotMatched->SetMinimum(1);
     Angle_ODV_AB_max_NotMatched->SetLineColor(kBlack);
     Angle_ODV_AB_max_NotMatched->Draw();
+    gPad->SetLogy();
+    gPad->Update();
     CCC2->SaveAs("Hists_Separated/MaxAngle/MaxAngle-NotMatched.pdf");
 
     //! Track Distance Between Tracks Used to Reconstruct the DVreco !//
