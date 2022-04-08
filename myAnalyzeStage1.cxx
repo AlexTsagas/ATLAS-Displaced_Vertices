@@ -528,8 +528,8 @@ void myAnalyzeStage1()
     TH1 *ClosestTrackDV_NotMatched = new TH1D("ClosestTrackDV_NotMatched", "Distance of Closest to DVreco Additional Track (Not Mathced);Track to DV Distance;Counts", 200, 0, 100);
 
     //! Histogram for Canvas 9 - Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
-    TH1 *RDVreco_Rmin_Matched = new TH1D("RDVreco_Rmin_Matched", "Difference of Distances of DVreco and Point of Reconstructing Tracks from IT (Matched);R_DVreco - Rmin;Counts", 200, -20, 20);
-    TH1 *RDVreco_Rmin_NotMatched = new TH1D("RDVreco_Rmin_NotMatched", "Difference of Distances of DVreco and Point of Reconstructing Tracks from IT (Not Matched);R_DVreco - Rmin;Counts", 200, -40, 40);
+    TH1 *RDVreco_Rmin_Matched = new TH1D("RDVreco_Rmin_Matched", "Difference of Distances of DVreco and Point of Reconstructing Tracks from IT (Matched);R_DVreco - Rmin;Counts", 200, -35, 35);
+    TH1 *RDVreco_Rmin_NotMatched = new TH1D("RDVreco_Rmin_NotMatched", "Difference of Distances of DVreco and Point of Reconstructing Tracks from IT (Not Matched);R_DVreco - Rmin;Counts", 200, -35, 35);
 
     //! Histogram for Canvas 10 - Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks !//
     TH1 *Relative_Angle_Matched = new TH1D("Relative_Angle_Matched", "Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks (Matched);Relative Angle;Counts", 100, 0, 180);
@@ -1187,50 +1187,50 @@ void myAnalyzeStage1()
 
     c1->cd(1);
     error_XYZ->SetFillColor(kAzure+1);
-    error_XYZ->SetMinimum(0);
+    error_XYZ->SetMinimum(1);
     error_XYZ->SetLineColor(kBlack);
     error_XYZ->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c1->cd(2);
     error_XY->SetFillColor(kRed);
-    error_XY->SetMinimum(0);
+    error_XY->SetMinimum(1);
     error_XY->SetLineColor(kBlack);
     error_XY->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c1->cd(3);
     error_XYZ_OneDV->SetFillColor(kOrange+7);
-    error_XYZ_OneDV->SetMinimum(0);
+    error_XYZ_OneDV->SetMinimum(1);
     error_XYZ_OneDV->SetLineColor(kBlack);
     error_XYZ_OneDV->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c1->cd(4);
     error_XY_OneDV->SetFillColor(kGreen);
-    error_XY_OneDV->SetMinimum(0);
+    error_XY_OneDV->SetMinimum(1);
     error_XY_OneDV->SetLineColor(kBlack);
     error_XY_OneDV->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c1->cd(5);
     error_XYZ_TwoDVs->SetFillColor(kMagenta);
-    error_XYZ_TwoDVs->SetMinimum(0);
+    error_XYZ_TwoDVs->SetMinimum(1);
     error_XYZ_TwoDVs->SetLineColor(kBlack);
     error_XYZ_TwoDVs->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c1->cd(6);
     error_XY_TwoDVs->SetFillColor(kYellow);
-    error_XY_TwoDVs->SetMinimum(0);
+    error_XY_TwoDVs->SetMinimum(1);
     error_XY_TwoDVs->SetLineColor(kBlack);
     error_XY_TwoDVs->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c1->SaveAs("Histograms/Errors.pdf");
@@ -1362,10 +1362,10 @@ void myAnalyzeStage1()
 
     c4->cd(1);
     DistanceBetweenTwoDVs->SetFillColor(kGreen);
-    DistanceBetweenTwoDVs->SetMinimum(0);
+    DistanceBetweenTwoDVs->SetMinimum(1);
     DistanceBetweenTwoDVs->SetLineColor(kBlack);
     DistanceBetweenTwoDVs->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c4->SaveAs("Histograms/DVtrue_Distance-Events_With_Two_DVtrue.pdf");
@@ -1376,18 +1376,18 @@ void myAnalyzeStage1()
 
     c5->cd(1);
     DVreco_RecoLinesMinDistance_Matched->SetFillColor(kAzure+1);
-    DVreco_RecoLinesMinDistance_Matched->SetMinimum(0);
+    DVreco_RecoLinesMinDistance_Matched->SetMinimum(1);
     DVreco_RecoLinesMinDistance_Matched->SetLineColor(kBlack);
     DVreco_RecoLinesMinDistance_Matched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c5->cd(2);
     DVreco_RecoLinesMinDistance_NotMatched->SetFillColor(kRed);
-    DVreco_RecoLinesMinDistance_NotMatched->SetMinimum(0);
+    DVreco_RecoLinesMinDistance_NotMatched->SetMinimum(1);
     DVreco_RecoLinesMinDistance_NotMatched->SetLineColor(kBlack);
     DVreco_RecoLinesMinDistance_NotMatched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c5->SaveAs("Histograms/DVreco-RecoTracksGivenPoints-MinDistance.pdf");
@@ -1418,18 +1418,18 @@ void myAnalyzeStage1()
 
     c7->cd(1);
     Track_Distance_Matched->SetFillColor(kAzure+1);
-    Track_Distance_Matched->SetMinimum(0);
+    Track_Distance_Matched->SetMinimum(1);
     Relative_Angle_Matched->SetLineColor(kBlack);
     Track_Distance_Matched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c7->cd(2);
     Track_Distance_NotMatched->SetFillColor(kRed);
-    Track_Distance_NotMatched->SetMinimum(0);
+    Track_Distance_NotMatched->SetMinimum(1);
     Track_Distance_NotMatched->SetLineColor(kBlack);
     Track_Distance_NotMatched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c7->SaveAs("Histograms/RecoTracksDistance.pdf");
@@ -1442,18 +1442,18 @@ void myAnalyzeStage1()
 
     c8->cd(1);
     ClosestTrackDV_Matched->SetFillColor(kAzure+1);
-    ClosestTrackDV_Matched->SetMinimum(0);
+    ClosestTrackDV_Matched->SetMinimum(1);
     ClosestTrackDV_Matched->SetLineColor(kBlack);
     ClosestTrackDV_Matched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c8->cd(2);
     ClosestTrackDV_NotMatched->SetFillColor(kRed);
-    ClosestTrackDV_NotMatched->SetMinimum(0);
+    ClosestTrackDV_NotMatched->SetMinimum(1);
     ClosestTrackDV_NotMatched->SetLineColor(kBlack);
     ClosestTrackDV_NotMatched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c8->SaveAs("Histograms/Distance_of_ClosestAdditinalTrack_DVreco.pdf");
@@ -1466,15 +1466,19 @@ void myAnalyzeStage1()
 
     c9->cd(1);
     RDVreco_Rmin_Matched->SetFillColor(kAzure+1);
-    RDVreco_Rmin_Matched->SetMinimum(0);
+    RDVreco_Rmin_Matched->SetMinimum(1);
     RDVreco_Rmin_Matched->SetLineColor(kBlack);
     RDVreco_Rmin_Matched->Draw();
+    gPad->SetLogy();
+    gPad->Update();
 
     c9->cd(2);
     RDVreco_Rmin_NotMatched->SetFillColor(kRed);
-    RDVreco_Rmin_NotMatched->SetMinimum(0);
+    RDVreco_Rmin_NotMatched->SetMinimum(1);
     RDVreco_Rmin_NotMatched->SetLineColor(kBlack);
     RDVreco_Rmin_NotMatched->Draw();
+    gPad->SetLogy();
+    gPad->Update();
 
     c9->SaveAs("Histograms/R_DVreco-Rmin.pdf");
 
@@ -1486,18 +1490,18 @@ void myAnalyzeStage1()
 
     c10->cd(1);
     Relative_Angle_Matched->SetFillColor(kAzure+1);
-    Relative_Angle_Matched->SetMinimum(0);
+    Relative_Angle_Matched->SetMinimum(1);
     Relative_Angle_Matched->SetLineColor(kBlack);
     Relative_Angle_Matched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c10->cd(2);
     Relative_Angle_NotMatched->SetFillColor(kRed);
-    Relative_Angle_NotMatched->SetMinimum(0);
+    Relative_Angle_NotMatched->SetMinimum(1);
     Relative_Angle_NotMatched->SetLineColor(kBlack);
     Relative_Angle_NotMatched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
 
     c10->SaveAs("Histograms/MaxRelativeAngle.pdf");
@@ -1508,10 +1512,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     cc1->cd(1);
     error_XYZ->SetFillColor(kAzure+1);
-    error_XYZ->SetMinimum(0);
+    error_XYZ->SetMinimum(1);
     error_XYZ->SetLineColor(kBlack);
     error_XYZ->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     cc1->SaveAs("Hists_Separated/Errors/Errors-sz.pdf");
 
@@ -1519,10 +1523,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     cc2->cd(1);
     error_XY->SetFillColor(kRed);
-    error_XY->SetMinimum(0);
+    error_XY->SetMinimum(1);
     error_XY->SetLineColor(kBlack);
     error_XY->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     cc2->SaveAs("Hists_Separated/Errors/Errors-xy.pdf");
 
@@ -1530,10 +1534,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     cc3->cd(1);
     error_XYZ_OneDV->SetFillColor(kOrange+7);
-    error_XYZ_OneDV->SetMinimum(0);
+    error_XYZ_OneDV->SetMinimum(1);
     error_XYZ_OneDV->SetLineColor(kBlack);
     error_XYZ_OneDV->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     cc3->SaveAs("Hists_Separated/Errors/Errors-sz-OneDV.pdf");
 
@@ -1541,10 +1545,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     cc4->cd(1);
     error_XY_OneDV->SetFillColor(kGreen);
-    error_XY_OneDV->SetMinimum(0);
+    error_XY_OneDV->SetMinimum(1);
     error_XY_OneDV->SetLineColor(kBlack);
     error_XY_OneDV->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     cc4->SaveAs("Hists_Separated/Errors/Errors-xy-OneDV.pdf");
 
@@ -1552,10 +1556,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     cc5->cd(1);
     error_XYZ_TwoDVs->SetFillColor(kMagenta);
-    error_XYZ_TwoDVs->SetMinimum(0);
+    error_XYZ_TwoDVs->SetMinimum(1);
     error_XYZ_TwoDVs->SetLineColor(kBlack);
     error_XYZ_TwoDVs->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     cc5->SaveAs("Hists_Separated/Errors/Errors-sz-TwoDVs.pdf");
 
@@ -1563,10 +1567,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     cc6->cd(1);
     error_XY_TwoDVs->SetFillColor(kYellow);
-    error_XY_TwoDVs->SetMinimum(0);
+    error_XY_TwoDVs->SetMinimum(1);
     error_XY_TwoDVs->SetLineColor(kBlack);
     error_XY_TwoDVs->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     cc6->SaveAs("Hists_Separated/Errors/Errors-xy-TwoDVs.pdf");
 
@@ -1712,10 +1716,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     C1->cd(1);
     DistanceBetweenTwoDVs->SetFillColor(kGreen);
-    DistanceBetweenTwoDVs->SetMinimum(0);
+    DistanceBetweenTwoDVs->SetMinimum(1);
     DistanceBetweenTwoDVs->SetLineColor(kBlack);
     DistanceBetweenTwoDVs->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     C1->SaveAs("Hists_Separated/DVtrue-Distance.pdf");    
 
@@ -1724,10 +1728,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     CC1->cd(1);
     DVreco_RecoLinesMinDistance_Matched->SetFillColor(kAzure+1);
-    DVreco_RecoLinesMinDistance_Matched->SetMinimum(0);
+    DVreco_RecoLinesMinDistance_Matched->SetMinimum(1);
     DVreco_RecoLinesMinDistance_Matched->SetLineColor(kBlack);
     DVreco_RecoLinesMinDistance_Matched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     CC1->SaveAs("Hists_Separated/DVreco-RecoTracks/DVreco-RecoTracks-Matched.pdf");
 
@@ -1735,10 +1739,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     CC2->cd(1);
     DVreco_RecoLinesMinDistance_NotMatched->SetFillColor(kRed);
-    DVreco_RecoLinesMinDistance_NotMatched->SetMinimum(0);
+    DVreco_RecoLinesMinDistance_NotMatched->SetMinimum(1);
     DVreco_RecoLinesMinDistance_NotMatched->SetLineColor(kBlack);
     DVreco_RecoLinesMinDistance_NotMatched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     CC2->SaveAs("Hists_Separated/DVreco-RecoTracks/DVreco-RecoTracks-NotMatched.pdf");
 
@@ -1766,10 +1770,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     CCCC1->cd(1);
     Track_Distance_Matched->SetFillColor(kAzure+1);
-    Track_Distance_Matched->SetMinimum(0);
+    Track_Distance_Matched->SetMinimum(1);
     Track_Distance_Matched->SetLineColor(kBlack);
     Track_Distance_Matched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     CCCC1->SaveAs("Hists_Separated/RecoTracks-Distance/RecoTracks-Distance-Matched.pdf");
 
@@ -1777,10 +1781,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     CCCC2->cd(1);
     Track_Distance_NotMatched->SetFillColor(kRed);
-    Track_Distance_NotMatched->SetMinimum(0);
+    Track_Distance_NotMatched->SetMinimum(1);
     Track_Distance_NotMatched->SetLineColor(kBlack);
     Track_Distance_NotMatched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     CCCC2->SaveAs("Hists_Separated/RecoTracks-Distance/RecoTracks-Distance-NotMatched.pdf");
 
@@ -1789,10 +1793,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     CCCCC1->cd(1);
     ClosestTrackDV_Matched->SetFillColor(kAzure+1);
-    ClosestTrackDV_Matched->SetMinimum(0);
+    ClosestTrackDV_Matched->SetMinimum(1);
     ClosestTrackDV_Matched->SetLineColor(kBlack);
     ClosestTrackDV_Matched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     CCCCC1->SaveAs("Hists_Separated/DVreco-AdditionalTrack/DVreco-AdditionalTrack-Matched.pdf");
 
@@ -1800,10 +1804,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     CCCCC2->cd(1);
     ClosestTrackDV_NotMatched->SetFillColor(kRed);
-    ClosestTrackDV_NotMatched->SetMinimum(0);
+    ClosestTrackDV_NotMatched->SetMinimum(1);
     ClosestTrackDV_NotMatched->SetLineColor(kBlack);
     ClosestTrackDV_NotMatched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     CCCCC2->SaveAs("Hists_Separated/DVreco-AdditionalTrack/DVreco-AdditionalTrack-NotMatched.pdf");
 
@@ -1812,18 +1816,22 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     CI->cd(1);
     RDVreco_Rmin_Matched->SetFillColor(kAzure+1);
-    RDVreco_Rmin_Matched->SetMinimum(0);
+    RDVreco_Rmin_Matched->SetMinimum(1);
     RDVreco_Rmin_Matched->SetLineColor(kBlack);
     RDVreco_Rmin_Matched->Draw();
+    gPad->SetLogy();
+    gPad->Update();
     CI->SaveAs("Hists_Separated/IT_DVreco-IT_RecoTracks/IT_DVreco-IT_RecoTracks-Matched.pdf");
 
     TCanvas *CII = new TCanvas("CII", "CII", 200, 150);
     gStyle->SetOptStat(1111111);
     CII->cd(1);
     RDVreco_Rmin_NotMatched->SetFillColor(kRed);
-    RDVreco_Rmin_NotMatched->SetMinimum(0);
+    RDVreco_Rmin_NotMatched->SetMinimum(1);
     RDVreco_Rmin_NotMatched->SetLineColor(kBlack);
     RDVreco_Rmin_NotMatched->Draw();
+    gPad->SetLogy();
+    gPad->Update();
     CII->SaveAs("Hists_Separated/IT_DVreco-IT_RecoTracks/IT_DVreco-IT_RecoTracks-NotMatched.pdf");
 
     //! Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
@@ -1831,10 +1839,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     CCI->cd(1);
     Relative_Angle_Matched->SetFillColor(kAzure+1);
-    Relative_Angle_Matched->SetMinimum(0);
+    Relative_Angle_Matched->SetMinimum(1);
     Relative_Angle_Matched->SetLineColor(kBlack);
     Relative_Angle_Matched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     CCI->SaveAs("Hists_Separated/MaxRelativeAngle/MaxRelativeAngle-Matched.pdf");
 
@@ -1842,10 +1850,10 @@ void myAnalyzeStage1()
     gStyle->SetOptStat(1111111);
     CCII->cd(1);
     Relative_Angle_NotMatched->SetFillColor(kRed);
-    Relative_Angle_NotMatched->SetMinimum(0);
+    Relative_Angle_NotMatched->SetMinimum(1);
     Relative_Angle_NotMatched->SetLineColor(kBlack);
     Relative_Angle_NotMatched->Draw();
-    gPad->SetLogx();
+    gPad->SetLogy();
     gPad->Update();
     CCII->SaveAs("Hists_Separated/MaxRelativeAngle/MaxRelativeAngle-NotMatched.pdf");
 
