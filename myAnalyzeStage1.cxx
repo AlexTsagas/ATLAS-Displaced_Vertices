@@ -728,6 +728,8 @@ void myAnalyzeStage1()
     int ErrorsComputed = 0;
     int ErrorsComputed_OneDV = 0;
     int ErrorsComputed_TwoDVs = 0;
+    int statement = 0;
+    double DVcut_Exponential;
 
     // Event Counter
     int event = 1;
@@ -802,6 +804,8 @@ void myAnalyzeStage1()
 
                 //! As the number of DVreco increases should be exponentially more difficult to find other DVs !//
                 // DVcut = 1;
+                // DVcut_Exponential = DVcut;
+                // statement = 1;
                 // for(int k=1; k<7; k++)
                 // {
                 //     if(DVnumber_Total == k)
@@ -1961,6 +1965,69 @@ void myAnalyzeStage1()
 
     // Print time needed for the program to complete
     printf("\nTime taken: %.2fs\n\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
+
+    //! Write Results on File !//
+    // Create and open a text file
+    ofstream MyFile("Results.txt");
+
+    // Write to the file
+    if(statement==0) MyFile<<"3rd Track (DVcut="<<DVcut<<"):"<<endl;
+    else if(statement==1) MyFile<<"Exponential Drop (DVcut="<<DVcut_Exponential<<"):"<<endl;
+
+    MyFile<<endl;
+    for(int k = 0; k<50; k++) MyFile<<"~";
+    MyFile<<endl;
+
+    MyFile<<endl<<"Errors Computated: "<<ErrorsComputed<<endl;;
+    MyFile<<endl<<"Events: "<<event<<endl;
+    MyFile<<"Total Number of Dvs: "<<DV_Total<<endl;
+    MyFile<<"Total Number of Dvs in events with one DV: "<<DVnumber_OneDV_Total<<endl;
+    MyFile<<"Total Number of Dvs in events with two DVs: "<<DVnumber_TwoDVs_Total<<endl;
+    MyFile<<"Total Number of Dvs in events with three DVs: "<<DVnumber_ThreeDVs_Total<<endl;
+    MyFile<<"Total Number of Dvs in events with four DVs: "<<DVnumber_FourDVs_Total<<endl;
+
+    MyFile<<endl;
+    for(int k = 0; k<50; k++) MyFile<<"~";
+    MyFile<<endl;
+
+    MyFile<<endl<<"Efficiency:"<<endl<<endl;
+    MyFile<<"A_xy: "<<Eff_xy<<endl;
+    MyFile<<"One DV - A_xy: "<<Eff_xy_OneDV<<endl;
+    MyFile<<"Two DVs - A_xy: "<<Eff_xy_TwoDVs<<endl;
+    MyFile<<endl<<"A_sz: "<<Eff_sz<<endl;
+    MyFile<<"One DV - A_sz: "<<Eff_sz_OneDV<<endl;
+    MyFile<<"Two DVs - A_sz: "<<Eff_sz_TwoDVs<<endl;
+
+    MyFile<<endl;
+    for(int k = 0; k<50; k++) MyFile<<"~";
+    MyFile<<endl;
+
+    MyFile<<endl<<"Purity:"<<endl<<endl;
+    MyFile<<"Pu_xy: "<<Pu_xy<<endl;
+    MyFile<<"One DV - Pu_xy: "<<Pu_xy_OneDV<<endl;
+    MyFile<<"Two DVs - Pu_xy: "<<Pu_xy_TwoDVs<<endl;
+    MyFile<<endl<<"Pu_sz: "<<Pu_sz<<endl;
+    MyFile<<"One DV - Pu_sz: "<<Pu_sz_OneDV<<endl;
+    MyFile<<"Two DVs - Pu_sz: "<<Pu_sz_TwoDVs<<endl;
+
+    MyFile<<endl;
+    for(int k = 0; k<50; k++) MyFile<<"~";
+    MyFile<<endl;
+
+    MyFile<<endl<<"Accuraty:"<<endl<<endl;
+    MyFile<<"Total: "<<accuracy_total<<endl;
+    MyFile<<"Event with One DV: "<<accuracy_OneDV<<endl;
+    MyFile<<"Event with Two DVs: "<<accuracy_TwoDVs<<endl;
+
+    MyFile<<endl;
+    for(int k = 0; k<50; k++) MyFile<<"~";
+    MyFile<<endl;
+
+    // // Print time needed for the program to complete
+    MyFile<<"\nTime taken: "<<setprecision(2)<<(double)(clock() - tStart)/CLOCKS_PER_SEC<<"s";
+
+    // Close the file
+    MyFile.close();
 
     infile->Close();
     }
