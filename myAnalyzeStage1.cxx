@@ -572,7 +572,7 @@ void myAnalyzeStage1()
 
     //! Application of Restrictions  !//
     // Condition to decide if two trajectories form a DV //? DVcut = 0.08
-    double DVcut = 1;
+    double DVcut = 0.2;
     // Condition to decide if a trajectory belongs to a DV without constructing it 
     double TrajectoryCut = DVcut/2;
 
