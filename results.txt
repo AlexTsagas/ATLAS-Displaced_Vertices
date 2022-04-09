@@ -1,0 +1,48 @@
+3rd Track (DVcut=0.2):
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Errors Computated: 5003
+
+Events: 4300
+Total Number of Dvs: 5247
+Total Number of Dvs in events with one DV: 3358
+Total Number of Dvs in events with two DVs: 1868
+Total Number of Dvs in events with three DVs: 21
+Total Number of Dvs in events with four DVs: 0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Efficiency:
+
+A_xy: 0.93482
+One DV - A_xy: 0.952948
+Two DVs - A_xy: 0.904711
+
+A_sz: 0.951782
+One DV - A_sz: 0.963669
+Two DVs - A_sz: 0.932548
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Purity:
+
+Pu_xy: 0.667256
+One DV - Pu_xy: 0.626468
+Two DVs - Pu_xy: 0.759892
+
+Pu_sz: 0.679363
+One DV - Pu_sz: 0.633516
+Two DVs - Pu_sz: 0.783273
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Accuraty:
+
+Total: 0.998201
+Event with One DV: 0.997842
+Event with Two DVs: 0.999426
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Time taken: 0.95s
