@@ -1,5 +1,10 @@
 # Project - In Search for Displaced Vertices
 
+## How to Run the Algorithm
+
+For the production of the algorithm root framework has been used. More information can be found in the root's website:
+[root.cern](https://root.cern).
+
 ## Goal of Project
 
 The purpose of the project is to find long lived particles/Displaved Vertices (DVs) which are depicted as points where
