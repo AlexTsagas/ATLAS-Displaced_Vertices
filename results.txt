@@ -1,8 +1,8 @@
-Exponential Drop (DVcut=1):
+3rd Track (DVcut=0.2):
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Errors Computated: 4500
+Errors Computated: 4352
 
 Events: 4300
 Total Number of Dvs: 5247
@@ -15,34 +15,34 @@ Total Number of Dvs in events with four DVs: 0
 
 Efficiency:
 
-A_xy: 0.838574
-One DV - A_xy: 0.848719
-Two DVs - A_xy: 0.821734
+A_xy: 0.815323
+One DV - A_xy: 0.818046
+Two DVs - A_xy: 0.811028
 
-A_sz: 0.85668
-One DV - A_sz: 0.865396
-Two DVs - A_sz: 0.842612
+A_sz: 0.829045
+One DV - A_sz: 0.827278
+Two DVs - A_sz: 0.832976
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Purity:
 
-Pu_xy: 0.750981
-One DV - Pu_xy: 0.680353
-Two DVs - Pu_xy: 0.927492
+Pu_xy: 0.69982
+One DV - Pu_xy: 0.648795
+Two DVs - Pu_xy: 0.813205
 
-Pu_sz: 0.767196
-One DV - Pu_sz: 0.693722
-Two DVs - Pu_sz: 0.951057
+Pu_sz: 0.711598
+One DV - Pu_sz: 0.656117
+Two DVs - Pu_sz: 0.835212
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Accuraty:
 
-Total: 0.998889
-Event with One DV: 0.998282
+Total: 0.99954
+Event with One DV: 0.999281
 Event with Two DVs: 1
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Time taken: 4.2s
+Time taken: 1.1s
