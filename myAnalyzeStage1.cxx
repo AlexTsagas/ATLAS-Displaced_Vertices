@@ -1506,7 +1506,7 @@ void myAnalyzeStage1()
     c8->SaveAs("Histograms/Distance_of_ClosestAdditinalTrack_DVreco.pdf");
 
     //! Canvas 9 !//
-    TCanvas *c9 = new TCanvas("c9", "Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT", 800, 300);
+    TCanvas *c9 = new TCanvas("c9", "Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IP", 800, 300);
     c9->Divide(2,1);
 
     gStyle->SetOptStat(1111111);
@@ -1872,7 +1872,7 @@ void myAnalyzeStage1()
     RDVreco_Rmin_Matched->Draw();
     gPad->SetLogy();
     gPad->Update();
-    CI->SaveAs("Hists_Separated/IT_DVreco-IT_RecoTracks/IT_DVreco-IT_RecoTracks-Matched.pdf");
+    CI->SaveAs("Hists_Separated/IT_DVreco-IT_RecoTracks/IP_DVreco-IP_RecoTracks-Matched.pdf");
 
     TCanvas *CII = new TCanvas("CII", "CII", 200, 150);
     gStyle->SetOptStat(1111111);
@@ -1883,7 +1883,7 @@ void myAnalyzeStage1()
     RDVreco_Rmin_NotMatched->Draw();
     gPad->SetLogy();
     gPad->Update();
-    CII->SaveAs("Hists_Separated/IT_DVreco-IT_RecoTracks/IT_DVreco-IT_RecoTracks-NotMatched.pdf");
+    CII->SaveAs("Hists_Separated/IT_DVreco-IT_RecoTracks/IP_DVreco-IP_RecoTracks-NotMatched.pdf");
 
     //! Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
     TCanvas *CCI = new TCanvas("CCI", "CCI", 200, 150);
