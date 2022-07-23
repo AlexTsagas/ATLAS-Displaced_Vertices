@@ -8,10 +8,13 @@ For the production of the algorithm root framework has been used. More informati
 ## Goal of Project
 
 The purpose of the project is to find long lived particles/Displaced Vertices (DVs) which are depicted as points where
-trajectories of its products (stable particles) converge. To specify, two points that belong the trajectories are given.
-The DVs are calculated as follows:
+trajectories of its products (stable particles) converge. The data used for the trajectories points are simulated open
+data from ATLAS Experiment. The DVs are calculated as follows:
 
 ## Event Processing
+
+Specifically, for every trajectory two points are given, the beginning and the end point of the trajectory. Considering
+that the trajectories are linear, two points are enough to specify the whole trajectory.
 
 ### Events with One DV
 
