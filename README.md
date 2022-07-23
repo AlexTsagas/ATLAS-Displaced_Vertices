@@ -1,4 +1,4 @@
-# Project - In Search for Displaced Vertices
+# In Search for Displaced Vertices
 
 ## How to Run the Algorithm
 
