@@ -2026,7 +2026,7 @@ void myAnalyzeStage1()
     for(int k = 0; k<50; k++) MyFile<<"~";
     MyFile<<endl;
 
-    MyFile<<endl<<"Accuraty:"<<endl<<endl;
+    MyFile<<endl<<"Accuracy:"<<endl<<endl;
     MyFile<<"Total: "<<accuracy_total<<endl;
     MyFile<<"Event with One DV: "<<accuracy_OneDV<<endl;
     MyFile<<"Event with Two DVs: "<<accuracy_TwoDVs<<endl;

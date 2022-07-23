@@ -37,7 +37,7 @@ Two DVs - Pu_sz: 0.835212
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Accuraty:
+Accuracy:
 
 Total: 0.99954
 Event with One DV: 0.999281
