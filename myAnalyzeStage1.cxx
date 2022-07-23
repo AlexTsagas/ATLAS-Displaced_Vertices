@@ -852,7 +852,7 @@ void myAnalyzeStage1()
                                 // Distance of Line_j Points to IT
                                 R_track[2] = Error(track_x0[line_j],track_y0[line_j],track_z0[line_j],0,0,0);
                                 R_track[3] = Error(track_x1[line_j],track_y1[line_j],track_z1[line_j],0,0,0);
-                                // Minimun of Lines Points Distance from IT
+                                // Minimum of Lines Points Distance from IT
                                 Rmin = minimumValuefromArrayElements(R_track, 4);
                             
                                 if(AnglesRel[0]>=thetaRel_min && AnglesRel[0]<=thetaRel_max && AnglesRel[1]>=thetaRel_min && AnglesRel[1]<=thetaRel_max && Rmin-R_DVreco>=0)
@@ -1060,7 +1060,7 @@ void myAnalyzeStage1()
                             if(*truthvtx_n==2) DV_reco_xy_TwoDVs++;
                         }
 
-                        //! Matched Dvreco  - Repsect Both Limits!//
+                        //! Matched Dvreco  - Respect Both Limits!//
                         if(minErrorXY[0] <= limitXY && minErrorXYZ[0] <= limitXYZ)
                         {
                             // Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It
