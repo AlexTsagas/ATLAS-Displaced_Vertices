@@ -488,17 +488,17 @@ void myAnalyzeStage1()
     TH1 *error_XY_TwoDVs = new TH1D("error_XY_TwoDVs", "Error in xy Plane for Two DVs;Error;Counts", 50, 0, 14);
 
     //! Histograms for Canvas 2 - Number of DV_total and DV_close !//
-    TH1 *DvNumber = new TH1D("DvNumber", "Total Number of DV_true;DV_true;Counts", 41, 0, 4);
+    TH1 *DvNumber = new TH1D("DvNumber", "Total Number of DV_true;DV_true;Counts", 41, 0, 6);
     TH1 *clarity = new TH1D("clarity", "DV_reco Independent of Distance from DV_true;DV_reco;Counts", 61, 0, 6);
     TH1 *performance = new TH1D("performance", "DV_reco that are Close to DV_true;DV_reco;Counts", 61, 0, 6);
     TH1 *OffErrorPerformance = new TH1D("OffErrorPerformance", "DV_reco Out of Limit Territory;DV_reco;Counts", 61, 0, 6);
     // One DV
-    TH1 *DvNumber_OneDV = new TH1D("DvNumber_OneDV", "Number of DV_true = 1;DV_true;Counts", 41, 0, 4);
+    TH1 *DvNumber_OneDV = new TH1D("DvNumber_OneDV", "Number of DV_true = 1;DV_true;Counts", 41, 0, 6);
     TH1 *clarity_OneDV = new TH1D("clarity_OneDV", "DV_reco Independent of Distance from DV_true - One DV;DV_reco;Counts", 61, 0, 6);
     TH1 *performance_OneDV = new TH1D("performance_OneDV", "DV_reco that are Close to DV_true - One DV;DV_reco;Counts", 61, 0, 6);
     TH1 *OffErrorPerformance_OneDV = new TH1D("OffErrorPerformance_OneDv", "DV_reco Out of Limit Territory - One DV;DV_reco;Counts", 61, 0, 6);
     // Two DVs
-    TH1 *DvNumber_TwoDVs = new TH1D("DvNumber_TwoDVs", "Number of DV_true = 2;DV_true;Counts", 41, 0, 4);
+    TH1 *DvNumber_TwoDVs = new TH1D("DvNumber_TwoDVs", "Number of DV_true = 2;DV_true;Counts", 41, 0, 6.);
     TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_true - Two DVs;DV_reco;Counts", 61, 0, 6);
     TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_true - Two DVs;DV_reco;Counts", 61, 0, 6);
     TH1 *OffErrorPerformance_TwoDVs = new TH1D("OffErrorPerformance_TwoDvs", "DV_reco Out of Limit Territory - Two DVs;DV_reco;Counts", 61, 0, 6);
