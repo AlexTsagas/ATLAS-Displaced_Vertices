@@ -480,7 +480,7 @@ void myAnalyzeStage1()
     clock_t tStart = clock();
 
     // Stat Box Width
-    gStyle->SetStatW(0.4);
+    gStyle->SetStatW(0.45);
 
     //! Histograms for Canvas 1 - Errors in XYZ Space and xy Plane !//
     TH1 *error_XYZ = new TH1D("error_XYZ", ";Error;Counts", 100, 0, 35);
