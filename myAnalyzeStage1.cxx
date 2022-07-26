@@ -479,61 +479,64 @@ void myAnalyzeStage1()
     // For time capture
     clock_t tStart = clock();
 
+    // Stat Box Width
+    gStyle->SetStatW(0.4);
+
     //! Histograms for Canvas 1 - Errors in XYZ Space and xy Plane !//
-    TH1 *error_XYZ = new TH1D("error_XYZ", "Error in 3D Space;Error;Counts", 100, 0, 35);
-    TH1 *error_XYZ_OneDV = new TH1D("error_XYZ_OneDV", "Error in 3D Space for One DV;Error;Counts", 100, 0, 35);
-    TH1 *error_XYZ_TwoDVs = new TH1D("error_XYZ_TwoDVs", "Error in 3D Space for Two DVs;Error;Counts", 100, 0, 35);
-    TH1 *error_XY = new TH1D("error_XY", "Error in xy Plane;Error;Counts", 50, 0, 14);
-    TH1 *error_XY_OneDV = new TH1D("error_XY_OneDV", "Error in xy Plane for One DV;Error;Counts", 50, 0, 14);
-    TH1 *error_XY_TwoDVs = new TH1D("error_XY_TwoDVs", "Error in xy Plane for Two DVs;Error;Counts", 50, 0, 14);
+    TH1 *error_XYZ = new TH1D("error_XYZ", ";Error;Counts", 100, 0, 35);
+    TH1 *error_XYZ_OneDV = new TH1D("error_XYZ_OneDV", ";Error;Counts", 100, 0, 35);
+    TH1 *error_XYZ_TwoDVs = new TH1D("error_XYZ_TwoDVs", ";Error;Counts", 100, 0, 35);
+    TH1 *error_XY = new TH1D("error_XY", ";Error;Counts", 50, 0, 14);
+    TH1 *error_XY_OneDV = new TH1D("error_XY_OneDV", ";Error;Counts", 50, 0, 14);
+    TH1 *error_XY_TwoDVs = new TH1D("error_XY_TwoDVs", ";Error;Counts", 50, 0, 14);
 
     //! Histograms for Canvas 2 - Number of DV_total and DV_close !//
-    TH1 *DvNumber = new TH1D("DvNumber", "Total Number of DV_true;DV_true;Counts", 41, 0, 6);
-    TH1 *clarity = new TH1D("clarity", "DV_reco Independent of Distance from DV_true;DV_reco;Counts", 61, 0, 6);
-    TH1 *performance = new TH1D("performance", "DV_reco that are Close to DV_true;DV_reco;Counts", 61, 0, 6);
-    TH1 *OffErrorPerformance = new TH1D("OffErrorPerformance", "DV_reco Out of Limit Territory;DV_reco;Counts", 61, 0, 6);
+    TH1 *DvNumber = new TH1D("DvNumber", ";DV_true;Counts", 41, 0, 6);
+    TH1 *clarity = new TH1D("clarity", ";DV_reco;Counts", 61, 0, 6);
+    TH1 *performance = new TH1D("performance", ";DV_reco;Counts", 61, 0, 6);
+    TH1 *OffErrorPerformance = new TH1D("OffErrorPerformance", ";DV_reco;Counts", 61, 0, 6);
     // One DV
-    TH1 *DvNumber_OneDV = new TH1D("DvNumber_OneDV", "Number of DV_true = 1;DV_true;Counts", 41, 0, 6);
-    TH1 *clarity_OneDV = new TH1D("clarity_OneDV", "DV_reco Independent of Distance from DV_true - One DV;DV_reco;Counts", 61, 0, 6);
-    TH1 *performance_OneDV = new TH1D("performance_OneDV", "DV_reco that are Close to DV_true - One DV;DV_reco;Counts", 61, 0, 6);
-    TH1 *OffErrorPerformance_OneDV = new TH1D("OffErrorPerformance_OneDv", "DV_reco Out of Limit Territory - One DV;DV_reco;Counts", 61, 0, 6);
+    TH1 *DvNumber_OneDV = new TH1D("DvNumber_OneDV", ";DV_true;Counts", 41, 0, 6);
+    TH1 *clarity_OneDV = new TH1D("clarity_OneDV", ";DV_reco;Counts", 61, 0, 6);
+    TH1 *performance_OneDV = new TH1D("performance_OneDV", ";DV_reco;Counts", 61, 0, 6);
+    TH1 *OffErrorPerformance_OneDV = new TH1D("OffErrorPerformance_OneDv", ";DV_reco;Counts", 61, 0, 6);
     // Two DVs
-    TH1 *DvNumber_TwoDVs = new TH1D("DvNumber_TwoDVs", "Number of DV_true = 2;DV_true;Counts", 41, 0, 6.);
-    TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", "DV_reco Independent of Distance from DV_true - Two DVs;DV_reco;Counts", 61, 0, 6);
-    TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", "DV_reco that are Close to DV_true - Two DVs;DV_reco;Counts", 61, 0, 6);
-    TH1 *OffErrorPerformance_TwoDVs = new TH1D("OffErrorPerformance_TwoDvs", "DV_reco Out of Limit Territory - Two DVs;DV_reco;Counts", 61, 0, 6);
+    TH1 *DvNumber_TwoDVs = new TH1D("DvNumber_TwoDVs", ";DV_true;Counts", 41, 0, 6.);
+    TH1 *clarity_TwoDVs = new TH1D("clarity_TwoDVs", ";DV_reco;Counts", 61, 0, 6);
+    TH1 *performance_TwoDVs = new TH1D("performance_TwoDVs", ";DV_reco;Counts", 61, 0, 6);
+    TH1 *OffErrorPerformance_TwoDVs = new TH1D("OffErrorPerformance_TwoDvs", ";DV_reco;Counts", 61, 0, 6);
 
     //! Histograms for Canvas 3 - Relative Number of DV_reco with respect to DV_true !//
-    TH1 *RelativeNumber = new TH1D("RelativeNumber", "Relative Number of DV_reco and DV_true;DV_true-DV_reco;Counts", 101, -5, 5);
-    TH1 *RelativeNumber_OneDV = new TH1D("RelativeNumber_OneDV", "Relative Number of DV_reco and DV_true - One DV;DV_true-DV_reco;Counts", 101, -5, 5);
-    TH1 *RelativeNumber_TwoDVs = new TH1D("RelativeNumber_TwoDVs", "Relative Number of DV_reco and DV_true - Two DVs;DV_true-DV_reco;Counts", 101, -5, 5);
+    TH1 *RelativeNumber = new TH1D("RelativeNumber", ";DV_true-DV_reco;Counts", 101, -5, 5);
+    TH1 *RelativeNumber_OneDV = new TH1D("RelativeNumber_OneDV", ";DV_true-DV_reco;Counts", 101, -5, 5);
+    TH1 *RelativeNumber_TwoDVs = new TH1D("RelativeNumber_TwoDVs", ";DV_true-DV_reco;Counts", 101, -5, 5);
 
     //! Histograms for Canvas 4 - Distances Between DVtrue in Events with Two DVs !//
-    TH1 *DistanceBetweenTwoDVs = new TH1D("DistanceBetweenTwoDVs", "Distance Between DVs in Events with Two DVtrue;Distance;Counts", 100, 0, 100);
+    TH1 *DistanceBetweenTwoDVs = new TH1D("DistanceBetweenTwoDVs", ";Distance;Counts", 100, 0, 100);
 
     //! Histograms for Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It !//
-    TH1 *DVreco_RecoLinesMinDistance_Matched = new TH1D("DVreco_RecoLinesMinDistance_Matched", "Minimum Distance Between DVreco and Reconstructing Lines (Matched);Distance;Counts", 200, 0, 100);
-    TH1 *DVreco_RecoLinesMinDistance_NotMatched = new TH1D("DVreco_RecoLinesMinDistance_NotMatched", "Minimum Distance Between DVreco and Reconstructing Lines (Not Matched);Distance;Counts", 200, 0, 100);
+    TH1 *DVreco_RecoLinesMinDistance_Matched = new TH1D("DVreco_RecoLinesMinDistance_Matched", ";Distance;Counts", 200, 0, 100);
+    TH1 *DVreco_RecoLinesMinDistance_NotMatched = new TH1D("DVreco_RecoLinesMinDistance_NotMatched", ";Distance;Counts", 200, 0, 100);
 
     //! Histograms for Canvas 6 -  Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors !//
-    TH1 *Angle_ODV_AB_max_Matched = new TH1D("Angle_ODV_AB_max_Matched", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors (Matched);Angle;Counts", 89, 0, 180);
-    TH1 *Angle_ODV_AB_max_NotMatched = new TH1D("Angle_ODV_AB_max_NotMatched", "Maximum Angle Between ODV and A_iAA_i, B_jBB_j vectors (Not Matched);Angle;Counts", 89, 0, 180);
+    TH1 *Angle_ODV_AB_max_Matched = new TH1D("Angle_ODV_AB_max_Matched", ";Angle;Counts", 89, 0, 180);
+    TH1 *Angle_ODV_AB_max_NotMatched = new TH1D("Angle_ODV_AB_max_NotMatched", ";Angle;Counts", 89, 0, 180);
 
     //! Histogram for Canvas 7 - Distance Between Tracks Used to Reconstruct the DVreco !//
-    TH1 *Track_Distance_Matched = new TH1D("Track_Distance_Matched", "Distance Between Tracks Used to Reconstruct the DVreco (Mathced);Track Distance;Counts", 200, 0, 1);
-    TH1 *Track_Distance_NotMatched = new TH1D("Track_Distance_NotMatched", "Distance Between Tracks Used to Reconstruct the DVreco (Not Mathced);Track Distance;Counts", 200, 0, 1);
+    TH1 *Track_Distance_Matched = new TH1D("Track_Distance_Matched", ";Track Distance;Counts", 200, 0, 1);
+    TH1 *Track_Distance_NotMatched = new TH1D("Track_Distance_NotMatched", ";Track Distance;Counts", 200, 0, 1);
 
     //! Histogram for Canvas 8 - Distance of Closest to DVreco Additional Track (If It Exists) !//
-    TH1 *ClosestTrackDV_Matched = new TH1D("ClosestTrackDV_Matched", "Distance of Closest to DVreco Additional Track (Matched);Track to DV Distance;Counts", 200, 0, 100);
-    TH1 *ClosestTrackDV_NotMatched = new TH1D("ClosestTrackDV_NotMatched", "Distance of Closest to DVreco Additional Track (Not Mathced);Track to DV Distance;Counts", 200, 0, 100);
+    TH1 *ClosestTrackDV_Matched = new TH1D("ClosestTrackDV_Matched", ";Track to DV Distance;Counts", 200, 0, 100);
+    TH1 *ClosestTrackDV_NotMatched = new TH1D("ClosestTrackDV_NotMatched", ";Track to DV Distance;Counts", 200, 0, 100);
 
     //! Histogram for Canvas 9 - Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
-    TH1 *RDVreco_Rmin_Matched = new TH1D("RDVreco_Rmin_Matched", "Difference of Distances of DVreco and Point of Reconstructing Tracks from IT (Matched);Rmin - R_DVreco;Counts", 200, -35, 35);
-    TH1 *RDVreco_Rmin_NotMatched = new TH1D("RDVreco_Rmin_NotMatched", "Difference of Distances of DVreco and Point of Reconstructing Tracks from IT (Not Matched);Rmin - R_DVreco;Counts", 200, -35, 35);
+    TH1 *RDVreco_Rmin_Matched = new TH1D("RDVreco_Rmin_Matched", ";Rmin - R_DVreco;Counts", 200, -35, 35);
+    TH1 *RDVreco_Rmin_NotMatched = new TH1D("RDVreco_Rmin_NotMatched", ";Rmin - R_DVreco;Counts", 200, -35, 35);
 
     //! Histogram for Canvas 10 - Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks !//
-    TH1 *Relative_Angle_Matched = new TH1D("Relative_Angle_Matched", "Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks (Matched);Relative Angle;Counts", 100, 0, 180);
-    TH1 *Relative_Angle_NotMatched = new TH1D("Relative_Angle_NotMatched", "Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks (Not Matched);Relative Angle;Counts", 100, 0, 180);
+    TH1 *Relative_Angle_Matched = new TH1D("Relative_Angle_Matched", ";Relative Angle;Counts", 100, 0, 180);
+    TH1 *Relative_Angle_NotMatched = new TH1D("Relative_Angle_NotMatched", ";Relative Angle;Counts", 100, 0, 180);
 
     TFile* infile = TFile::Open("stage1.root");
     TTree* tree   = (TTree*)infile->Get("stage1");
@@ -1555,8 +1558,13 @@ void myAnalyzeStage1()
 
     //! Hists for Presentation !//
     //! Errors !//
+    gStyle->SetStatW(10);
+    gStyle->SetStatH(10); 
+
     TCanvas *cc1 = new TCanvas("cc1", "cc1", 200, 150);
     gStyle->SetOptStat(1111111);
+    // gStyle->SetStatW(10);
+    // gStyle->SetStatH(10); 
     cc1->cd(1);
     error_XYZ->SetFillColor(kAzure+1);
     error_XYZ->SetMinimum(1);
@@ -1797,7 +1805,7 @@ void myAnalyzeStage1()
     TCanvas *CCC1 = new TCanvas("CCC1", "CCC1", 200, 150);
     gStyle->SetOptStat(1111111);
     CCC1->cd(1);
-    Angle_ODV_AB_max_Matched->SetFillColor(kAzure+1);
+    Angle_ODV_AB_max_Matched->SetFillColor(kMagenta);
     Angle_ODV_AB_max_Matched->SetMinimum(1);
     Angle_ODV_AB_max_Matched->SetLineColor(kBlack);
     Angle_ODV_AB_max_Matched->Draw();
@@ -1808,7 +1816,7 @@ void myAnalyzeStage1()
     TCanvas *CCC2 = new TCanvas("CCC2", "CCC2", 200, 150);
     gStyle->SetOptStat(1111111);
     CCC2->cd(1);
-    Angle_ODV_AB_max_NotMatched->SetFillColor(kRed);
+    Angle_ODV_AB_max_NotMatched->SetFillColor(kOrange+7);
     Angle_ODV_AB_max_NotMatched->SetMinimum(1);
     Angle_ODV_AB_max_NotMatched->SetLineColor(kBlack);
     Angle_ODV_AB_max_NotMatched->Draw();
@@ -1831,7 +1839,7 @@ void myAnalyzeStage1()
     TCanvas *CCCC2 = new TCanvas("CCCC2", "CCCC2", 200, 150);
     gStyle->SetOptStat(1111111);
     CCCC2->cd(1);
-    Track_Distance_NotMatched->SetFillColor(kRed);
+    Track_Distance_NotMatched->SetFillColor(kGreen);
     Track_Distance_NotMatched->SetMinimum(1);
     Track_Distance_NotMatched->SetLineColor(kBlack);
     Track_Distance_NotMatched->Draw();
@@ -1843,7 +1851,7 @@ void myAnalyzeStage1()
     TCanvas *CCCCC1 = new TCanvas("CCCCC1", "CCCCC1", 200, 150);
     gStyle->SetOptStat(1111111);
     CCCCC1->cd(1);
-    ClosestTrackDV_Matched->SetFillColor(kAzure+1);
+    ClosestTrackDV_Matched->SetFillColor(kYellow);
     ClosestTrackDV_Matched->SetMinimum(1);
     ClosestTrackDV_Matched->SetLineColor(kBlack);
     ClosestTrackDV_Matched->Draw();
@@ -1854,7 +1862,7 @@ void myAnalyzeStage1()
     TCanvas *CCCCC2 = new TCanvas("CCCCC2", "CCCCC2", 200, 150);
     gStyle->SetOptStat(1111111);
     CCCCC2->cd(1);
-    ClosestTrackDV_NotMatched->SetFillColor(kRed);
+    ClosestTrackDV_NotMatched->SetFillColor(kMagenta);
     ClosestTrackDV_NotMatched->SetMinimum(1);
     ClosestTrackDV_NotMatched->SetLineColor(kBlack);
     ClosestTrackDV_NotMatched->Draw();
@@ -1877,7 +1885,7 @@ void myAnalyzeStage1()
     TCanvas *CII = new TCanvas("CII", "CII", 200, 150);
     gStyle->SetOptStat(1111111);
     CII->cd(1);
-    RDVreco_Rmin_NotMatched->SetFillColor(kRed);
+    RDVreco_Rmin_NotMatched->SetFillColor(kOrange+7);
     RDVreco_Rmin_NotMatched->SetMinimum(1);
     RDVreco_Rmin_NotMatched->SetLineColor(kBlack);
     RDVreco_Rmin_NotMatched->Draw();
@@ -1889,7 +1897,7 @@ void myAnalyzeStage1()
     TCanvas *CCI = new TCanvas("CCI", "CCI", 200, 150);
     gStyle->SetOptStat(1111111);
     CCI->cd(1);
-    Relative_Angle_Matched->SetFillColor(kAzure+1);
+    Relative_Angle_Matched->SetFillColor(kGreen);
     Relative_Angle_Matched->SetMinimum(1);
     Relative_Angle_Matched->SetLineColor(kBlack);
     Relative_Angle_Matched->Draw();
@@ -1900,7 +1908,7 @@ void myAnalyzeStage1()
     TCanvas *CCII = new TCanvas("CCII", "CCII", 200, 150);
     gStyle->SetOptStat(1111111);
     CCII->cd(1);
-    Relative_Angle_NotMatched->SetFillColor(kRed);
+    Relative_Angle_NotMatched->SetFillColor(kOrange+7);
     Relative_Angle_NotMatched->SetMinimum(1);
     Relative_Angle_NotMatched->SetLineColor(kBlack);
     Relative_Angle_NotMatched->Draw();
