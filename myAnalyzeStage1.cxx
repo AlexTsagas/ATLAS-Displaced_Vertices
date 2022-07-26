@@ -1563,8 +1563,6 @@ void myAnalyzeStage1()
 
     TCanvas *cc1 = new TCanvas("cc1", "cc1", 200, 150);
     gStyle->SetOptStat(1111111);
-    // gStyle->SetStatW(10);
-    // gStyle->SetStatH(10); 
     cc1->cd(1);
     error_XYZ->SetFillColor(kAzure+1);
     error_XYZ->SetMinimum(1);
