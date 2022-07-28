@@ -531,8 +531,8 @@ void myAnalyzeStage1()
     TH1 *ClosestTrackDV_NotMatched = new TH1D("ClosestTrackDV_NotMatched", ";Track to DV Distance;Counts", 200, 0, 100);
 
     //! Histogram for Canvas 9 - Difference of Distances of DVreco (R_DVreco) and Point of Reconstructing Tracks (Rmin) from IT !//
-    TH1 *RDVreco_Rmin_Matched = new TH1D("RDVreco_Rmin_Matched", ";Rmin - R_DVreco;Counts", 200, -35, 35);
-    TH1 *RDVreco_Rmin_NotMatched = new TH1D("RDVreco_Rmin_NotMatched", ";Rmin - R_DVreco;Counts", 200, -35, 35);
+    TH1 *RDVreco_Rmin_Matched = new TH1D("RDVreco_Rmin_Matched", ";Rmin - R_DVreco;Counts", 200, 0, 35);
+    TH1 *RDVreco_Rmin_NotMatched = new TH1D("RDVreco_Rmin_NotMatched", ";Rmin - R_DVreco;Counts", 200, 0, 35);
 
     //! Histogram for Canvas 10 - Maximum Relative Angle Between DVreco and Given Points of Reconstructed Tracks !//
     TH1 *Relative_Angle_Matched = new TH1D("Relative_Angle_Matched", ";Relative Angle;Counts", 100, 0, 180);
@@ -1088,9 +1088,12 @@ void myAnalyzeStage1()
                                 Relative_Angle_Matched->Fill(RelativeAngle[0]);
                                 Relative_Angle_Matched->Fill(RelativeAngle[1]);   
                             }
+
+                            // DV_reco that respect both limits
+                            DVnumber_Close++;
                         }
 
-                        //! No Match Dvreco - Does not Repsect Both Limits!//
+                        //! No Match Dvreco - Does not Respect at Least one Limit!//
                         if(minErrorXY[0] > limitXY || minErrorXYZ[0] > limitXYZ)
                         {
                             // Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It
@@ -1115,6 +1118,9 @@ void myAnalyzeStage1()
                                 Relative_Angle_NotMatched->Fill(Relative_Angle[0]);
                                 Relative_Angle_NotMatched->Fill(Relative_Angle[1]);   
                             }
+
+                            // DV_reco that does not respect at least one limit
+                            DVnumber_Far++;
                         }
                     }
 
@@ -1143,13 +1149,10 @@ void myAnalyzeStage1()
                             Relative_Angle_NotMatched->Fill(Relative_Angle[0]);
                             Relative_Angle_NotMatched->Fill(Relative_Angle[1]);   
                         }   
-                    }
 
-                    // DV_reco that respect both limits
-                    if(minErrorXYZ[0] <= limitXYZ && minErrorXY[0] <= limitXY) DVnumber_Close++;
-                        
-                    // DV_reco that do not respect at least one limit
-                    if((minErrorXYZ[0] > limitXYZ || minErrorXY[0] > limitXY)) DVnumber_Far++;
+                        // DV_reco that exceeds the number of DV_true
+                        DVnumber_Far++;
+                    }
 
                     // Distances Between DVs in Events with Two DVs //
                     if(*truthvtx_n == 2)
