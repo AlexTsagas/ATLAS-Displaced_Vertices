@@ -1125,7 +1125,7 @@ void myAnalyzeStage1()
                     }
 
                     //! No Match Dvreco - More DVreco than Dvtrue!//
-                    if(DVnumber_Total > *truthvtx_n && !(minErrorXY[0] > limitXY || minErrorXYZ[0] > limitXYZ))
+                    if(DVnumber_Total > *truthvtx_n)
                     {
                         // Canvas 5 - Minimum Distance Between DVreco and Beginning of Lines Used to Reconstruct It
                         DVreco_RecoLinesMinDistance_NotMatched->Fill(DVrecoLine_min); 
