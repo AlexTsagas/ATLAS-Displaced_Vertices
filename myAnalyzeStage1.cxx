@@ -1997,7 +1997,7 @@ void myAnalyzeStage1()
     else if(statement==1) MyFile<<"Exponential Drop (DVcut="<<DVcut_Exponential<<"):"<<endl;
 
     MyFile<<endl;
-    for(int k = 0; k<50; k++) MyFile<<"~";
+    for(int k = 0; k<43; k++) MyFile<<"~";
     MyFile<<endl;
 
     MyFile<<endl<<"Errors Computated: "<<ErrorsComputed<<endl;;
@@ -2013,36 +2013,36 @@ void myAnalyzeStage1()
     MyFile<<endl;
 
     MyFile<<endl<<"Efficiency:"<<endl<<endl;
-    MyFile<<"A_xy: "<<setprecision(4)<<Eff_xy<<"\t"<<"Total"<<endl;
-    MyFile<<"A_xy: "<<setprecision(4)<<Eff_xy_OneDV<<"\t"<<"One DVtrue"<<endl;
-    MyFile<<"A_xy: "<<setprecision(4)<<Eff_xy_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
-    MyFile<<endl<<"A_sz: "<<setprecision(4)<<Eff_sz<<"\t"<<"Total"<<endl;
-    MyFile<<"A_sz: "<<setprecision(4)<<Eff_sz_OneDV<<"\t"<<"One DVtrue"<<endl;
-    MyFile<<"A_sz: "<<setprecision(4)<<Eff_sz_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
+    MyFile<<"A_xy: "<<fixed<<setprecision(4)<<Eff_xy<<"\t"<<"Total"<<endl;
+    MyFile<<"A_xy: "<<fixed<<setprecision(4)<<Eff_xy_OneDV<<"\t"<<"One DVtrue"<<endl;
+    MyFile<<"A_xy: "<<fixed<<setprecision(4)<<Eff_xy_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
+    MyFile<<endl<<"A_sz: "<<fixed<<setprecision(4)<<Eff_sz<<"\t"<<"Total"<<endl;
+    MyFile<<"A_sz: "<<fixed<<setprecision(4)<<Eff_sz_OneDV<<"\t"<<"One DVtrue"<<endl;
+    MyFile<<"A_sz: "<<fixed<<setprecision(4)<<Eff_sz_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
 
     MyFile<<endl;
-    for(int k = 0; k<50; k++) MyFile<<"~";
+    for(int k = 0; k<43; k++) MyFile<<"~";
     MyFile<<endl;
 
     MyFile<<endl<<"Purity:"<<endl<<endl;
-    MyFile<<"Pu_xy: "<<setprecision(4)<<Pu_xy<<"\t"<<"Total"<<endl;
-    MyFile<<"Pu_xy: "<<setprecision(4)<<Pu_xy_OneDV<<"\t"<<"One DVtrue"<<endl;
-    MyFile<<"Pu_xy: "<<setprecision(4)<<Pu_xy_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
-    MyFile<<endl<<"Pu_sz: "<<setprecision(4)<<Pu_sz<<"\t"<<"Total"<<endl;
-    MyFile<<"Pu_sz: "<<setprecision(4)<<Pu_sz_OneDV<<"\t"<<"One DVtrue"<<endl;
-    MyFile<<"Pu_sz: "<<setprecision(4)<<Pu_sz_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
+    MyFile<<"Pu_xy: "<<fixed<<setprecision(4)<<Pu_xy<<"\t"<<"Total"<<endl;
+    MyFile<<"Pu_xy: "<<fixed<<setprecision(4)<<Pu_xy_OneDV<<"\t"<<"One DVtrue"<<endl;
+    MyFile<<"Pu_xy: "<<fixed<<setprecision(4)<<Pu_xy_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
+    MyFile<<endl<<"Pu_sz: "<<fixed<<setprecision(4)<<Pu_sz<<"\t"<<"Total"<<endl;
+    MyFile<<"Pu_sz: "<<fixed<<setprecision(4)<<Pu_sz_OneDV<<"\t"<<"One DVtrue"<<endl;
+    MyFile<<"Pu_sz: "<<fixed<<setprecision(4)<<Pu_sz_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
 
     MyFile<<endl;
-    for(int k = 0; k<50; k++) MyFile<<"~";
+    for(int k = 0; k<43; k++) MyFile<<"~";
     MyFile<<endl;
 
     MyFile<<endl<<"Accuracy:"<<endl<<endl;
-    MyFile<<"Ac: "<<setprecision(4)<<accuracy_total<<"\t"<<"Total"<<endl;
-    MyFile<<"Ac: "<<setprecision(4)<<accuracy_OneDV<<"\t"<<"One DVtrue"<<endl;
-    MyFile<<"Ac: "<<setprecision(4)<<1.*accuracy_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
+    MyFile<<"Ac: "<<fixed<<setprecision(4)<<accuracy_total<<"\t"<<"Total"<<endl;
+    MyFile<<"Ac: "<<fixed<<setprecision(4)<<accuracy_OneDV<<"\t"<<"One DVtrue"<<endl;
+    MyFile<<"Ac: "<<fixed<<setprecision(4)<<1.*accuracy_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
 
     MyFile<<endl;
-    for(int k = 0; k<50; k++) MyFile<<"~";
+    for(int k = 0; k<43; k++) MyFile<<"~";
     MyFile<<endl;
 
     // Print time needed for the program to complete

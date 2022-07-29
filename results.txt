@@ -1,6 +1,6 @@
 3rd Track (DVcut=0.2):
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Errors Computated: 4352
 
@@ -16,14 +16,14 @@ Total Number of Dvs in events with four DVs: 0
 Efficiency:
 
 A_xy: 0.8153	Total
-A_xy: 0.818	One DVtrue
-A_xy: 0.811	Two DVtrue
+A_xy: 0.8180	One DVtrue
+A_xy: 0.8110	Two DVtrue
 
-A_sz: 0.829	Total
+A_sz: 0.8290	Total
 A_sz: 0.8273	One DVtrue
-A_sz: 0.833	Two DVtrue
+A_sz: 0.8330	Two DVtrue
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Purity:
 
@@ -35,14 +35,14 @@ Pu_sz: 0.7116	Total
 Pu_sz: 0.6561	One DVtrue
 Pu_sz: 0.8352	Two DVtrue
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Accuracy:
 
 Ac: 0.9995	Total
 Ac: 0.9993	One DVtrue
-Ac: 1	Two DVtrue
+Ac: 1.0000	Two DVtrue
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Time taken: 0.89s
+Time taken: 0.94s
