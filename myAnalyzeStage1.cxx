@@ -2009,43 +2009,43 @@ void myAnalyzeStage1()
     MyFile<<"Total Number of Dvs in events with four DVs: "<<DVnumber_FourDVs_Total<<endl;
 
     MyFile<<endl;
-    for(int k = 0; k<50; k++) MyFile<<"~";
+    for(int k = 0; k<43; k++) MyFile<<"~";
     MyFile<<endl;
 
     MyFile<<endl<<"Efficiency:"<<endl<<endl;
-    MyFile<<"A_xy: "<<Eff_xy<<endl;
-    MyFile<<"One DV - A_xy: "<<Eff_xy_OneDV<<endl;
-    MyFile<<"Two DVs - A_xy: "<<Eff_xy_TwoDVs<<endl;
-    MyFile<<endl<<"A_sz: "<<Eff_sz<<endl;
-    MyFile<<"One DV - A_sz: "<<Eff_sz_OneDV<<endl;
-    MyFile<<"Two DVs - A_sz: "<<Eff_sz_TwoDVs<<endl;
+    MyFile<<"A_xy: "<<setprecision(4)<<Eff_xy<<"\t"<<"Total"<<endl;
+    MyFile<<"A_xy: "<<setprecision(4)<<Eff_xy_OneDV<<"\t"<<"One DVtrue"<<endl;
+    MyFile<<"A_xy: "<<setprecision(4)<<Eff_xy_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
+    MyFile<<endl<<"A_sz: "<<setprecision(4)<<Eff_sz<<"\t"<<"Total"<<endl;
+    MyFile<<"A_sz: "<<setprecision(4)<<Eff_sz_OneDV<<"\t"<<"One DVtrue"<<endl;
+    MyFile<<"A_sz: "<<setprecision(4)<<Eff_sz_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
 
     MyFile<<endl;
     for(int k = 0; k<50; k++) MyFile<<"~";
     MyFile<<endl;
 
     MyFile<<endl<<"Purity:"<<endl<<endl;
-    MyFile<<"Pu_xy: "<<Pu_xy<<endl;
-    MyFile<<"One DV - Pu_xy: "<<Pu_xy_OneDV<<endl;
-    MyFile<<"Two DVs - Pu_xy: "<<Pu_xy_TwoDVs<<endl;
-    MyFile<<endl<<"Pu_sz: "<<Pu_sz<<endl;
-    MyFile<<"One DV - Pu_sz: "<<Pu_sz_OneDV<<endl;
-    MyFile<<"Two DVs - Pu_sz: "<<Pu_sz_TwoDVs<<endl;
+    MyFile<<"Pu_xy: "<<setprecision(4)<<Pu_xy<<"\t"<<"Total"<<endl;
+    MyFile<<"Pu_xy: "<<setprecision(4)<<Pu_xy_OneDV<<"\t"<<"One DVtrue"<<endl;
+    MyFile<<"Pu_xy: "<<setprecision(4)<<Pu_xy_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
+    MyFile<<endl<<"Pu_sz: "<<setprecision(4)<<Pu_sz<<"\t"<<"Total"<<endl;
+    MyFile<<"Pu_sz: "<<setprecision(4)<<Pu_sz_OneDV<<"\t"<<"One DVtrue"<<endl;
+    MyFile<<"Pu_sz: "<<setprecision(4)<<Pu_sz_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
 
     MyFile<<endl;
     for(int k = 0; k<50; k++) MyFile<<"~";
     MyFile<<endl;
 
     MyFile<<endl<<"Accuracy:"<<endl<<endl;
-    MyFile<<"Total: "<<accuracy_total<<endl;
-    MyFile<<"Event with One DV: "<<accuracy_OneDV<<endl;
-    MyFile<<"Event with Two DVs: "<<accuracy_TwoDVs<<endl;
+    MyFile<<"Ac: "<<setprecision(4)<<accuracy_total<<"\t"<<"Total"<<endl;
+    MyFile<<"Ac: "<<setprecision(4)<<accuracy_OneDV<<"\t"<<"One DVtrue"<<endl;
+    MyFile<<"Ac: "<<setprecision(4)<<1.*accuracy_TwoDVs<<"\t"<<"Two DVtrue"<<endl;
 
     MyFile<<endl;
     for(int k = 0; k<50; k++) MyFile<<"~";
     MyFile<<endl;
 
-    // // Print time needed for the program to complete
+    // Print time needed for the program to complete
     MyFile<<"\nTime taken: "<<setprecision(2)<<(double)(clock() - tStart)/CLOCKS_PER_SEC<<"s";
 
     // Close the file

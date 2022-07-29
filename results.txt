@@ -11,38 +11,38 @@ Total Number of Dvs in events with two DVs: 1868
 Total Number of Dvs in events with three DVs: 21
 Total Number of Dvs in events with four DVs: 0
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Efficiency:
 
-A_xy: 0.815323
-One DV - A_xy: 0.818046
-Two DVs - A_xy: 0.811028
+A_xy: 0.8153	Total
+A_xy: 0.818	One DVtrue
+A_xy: 0.811	Two DVtrue
 
-A_sz: 0.829045
-One DV - A_sz: 0.827278
-Two DVs - A_sz: 0.832976
+A_sz: 0.829	Total
+A_sz: 0.8273	One DVtrue
+A_sz: 0.833	Two DVtrue
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Purity:
 
-Pu_xy: 0.69982
-One DV - Pu_xy: 0.648795
-Two DVs - Pu_xy: 0.813205
+Pu_xy: 0.6998	Total
+Pu_xy: 0.6488	One DVtrue
+Pu_xy: 0.8132	Two DVtrue
 
-Pu_sz: 0.711598
-One DV - Pu_sz: 0.656117
-Two DVs - Pu_sz: 0.835212
+Pu_sz: 0.7116	Total
+Pu_sz: 0.6561	One DVtrue
+Pu_sz: 0.8352	Two DVtrue
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Accuracy:
 
-Total: 0.99954
-Event with One DV: 0.999281
-Event with Two DVs: 1
+Ac: 0.9995	Total
+Ac: 0.9993	One DVtrue
+Ac: 1	Two DVtrue
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Time taken: 0.96s
+Time taken: 0.89s
