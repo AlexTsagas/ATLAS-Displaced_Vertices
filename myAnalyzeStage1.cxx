@@ -2004,9 +2004,9 @@ void myAnalyzeStage1()
     MyFile<<endl<<"Events: "<<event<<endl;
     MyFile<<"Total Number of Dvs: "<<DV_Total<<endl;
     MyFile<<"Total Number of Dvs in events with one DV: "<<DVnumber_OneDV_Total<<endl;
-    MyFile<<"Total Number of Dvs in events with two DVs: "<<DVnumber_TwoDVs_Total<<endl;
-    MyFile<<"Total Number of Dvs in events with three DVs: "<<DVnumber_ThreeDVs_Total<<endl;
-    MyFile<<"Total Number of Dvs in events with four DVs: "<<DVnumber_FourDVs_Total<<endl;
+    MyFile<<"Total Number of Dvs in events with two DVs: "<<DVnumber_TwoDVs_Total/2<<endl;
+    MyFile<<"Total Number of Dvs in events with three DVs: "<<DVnumber_ThreeDVs_Total/3<<endl;
+    MyFile<<"Total Number of Dvs in events with four DVs: "<<DVnumber_FourDVs_Total/4<<endl;
 
     MyFile<<endl;
     for(int k = 0; k<43; k++) MyFile<<"~";

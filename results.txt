@@ -7,8 +7,8 @@ Errors Computated: 4352
 Events: 4300
 Total Number of Dvs: 5247
 Total Number of Dvs in events with one DV: 3358
-Total Number of Dvs in events with two DVs: 1868
-Total Number of Dvs in events with three DVs: 21
+Total Number of Dvs in events with two DVs: 934
+Total Number of Dvs in events with three DVs: 7
 Total Number of Dvs in events with four DVs: 0
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,4 +45,4 @@ Ac: 1.0000	Two DVtrue
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Time taken: 0.94s
+Time taken: 0.97s
